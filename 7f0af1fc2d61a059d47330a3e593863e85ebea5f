@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a405715_328b63a6",
+        "filename": "docs/index.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 94
+      },
+      "writtenOn": "2018-07-06T13:40:16Z",
+      "side": 1,
+      "message": "these need to be the file name with \u0027.rst\u0027",
+      "range": {
+        "startLine": 26,
+        "startChar": 7,
+        "endLine": 27,
+        "endChar": 22
+      },
+      "revId": "7f0af1fc2d61a059d47330a3e593863e85ebea5f",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
