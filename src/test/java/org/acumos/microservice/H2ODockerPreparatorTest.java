@@ -18,59 +18,77 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
+package org.acumos.microservice;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
-import org.acumos.onboarding.component.docker.preparation.JavaGenericDockerPreparator;
+import org.acumos.onboarding.component.docker.preparation.H2ODockerPreparator;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.util.Assert;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JavaGenericDockerPreparatorTest {
+public class H2ODockerPreparatorTest {
 
-	 String filePath = FilePathTest.filePath();
-
-	public static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(JavaGenericDockerPreparatorTest.class);
-	File jsonFile = new File(filePath+"java_genric.json");
+	 
+	String filePath = FilePathTest.filePath(); 
+	File outFolder = new File(filePath);
+	File jsonFile = new File(filePath+"modelDetails.json");
+	File reqtxt = new File(filePath+"requirements.txt");
 	File srcFile = new File(filePath+"Dockerfile");
-	File outFile = new File(filePath+"Dockerfile");
-	File outFolder = new File(filePath+"inFile.csv");
-	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
-	@InjectMocks
-	JavaGenericDockerPreparator javaGenericDockerPreparator = new JavaGenericDockerPreparator(metadataParser);
-
-	public JavaGenericDockerPreparatorTest() throws AcumosServiceException {
+	public H2ODockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
 	}
+	
+	MetadataParser metadataParser = new MetadataParser(jsonFile);
+	
+	@Mock
+	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser);
 
 	@Test
 	public void compareVersionTest() {
 
 		int[] baseVersion = { 1, 2, 3 };
 		int[] currentVersion = { 4, 5, 6 };
-		int result = JavaGenericDockerPreparator.compareVersion(baseVersion, currentVersion);
+		int result = H2ODockerPreparator.compareVersion(baseVersion, currentVersion);
+		assertNotNull(result);
 	}
 
 	@Test
 	public void versionAsArrayTest() {
 
-		int[] baseVersion = JavaGenericDockerPreparator.versionAsArray("1234");
+		int[] baseVersion = H2ODockerPreparator.versionAsArray("1234");
+		assertNotNull(baseVersion);
 	}
-
+	
 	@Test
-	public void createDockerFile() {
-		try {
-			javaGenericDockerPreparator.createDockerFile(srcFile, outFile);
-		} catch (AcumosServiceException e) {
-			Assert.fail("createDockerFile failed : " + e.getMessage());
-		}
+	public void prepareDockerAppTest() throws AcumosServiceException {
+		
+		doNothing().when(h2ODockerPreparator).prepareDockerApp(outFolder);
+
+	}
+	
+	@Test
+	public void createDockerFileTest() throws AcumosServiceException {
+		
+		doNothing().when(h2ODockerPreparator).createDockerFile(srcFile, srcFile);
+
+	}
+	
+	@Test
+	public void createRequirementsTest() throws AcumosServiceException {
+		doNothing().when(h2ODockerPreparator).createRequirements(reqtxt, reqtxt);
+		
 	}
 }

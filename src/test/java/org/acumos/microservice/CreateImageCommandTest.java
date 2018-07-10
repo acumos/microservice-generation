@@ -18,50 +18,36 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
+package org.acumos.microservice;
 
-import org.acumos.onboarding.component.docker.cmd.SaveImageCommand;
+import java.io.File;
+
+import org.acumos.onboarding.component.docker.cmd.CreateImageCommand;
+import org.acumos.onboarding.component.docker.cmd.DockerCommand;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.InjectMocks;
 
-/**
- * 
- * @author ****
- *
- */
-@RunWith(MockitoJUnitRunner.class)
-public class SaveImageCommandTest {
-
-	SaveImageCommand saveImageCommand = new SaveImageCommand("H2O", "1.0.0", "SOHIL", "h20", true);
-
-	@Test
-	public void getDisplayName() {
-		try {
-			Assert.assertNotNull(saveImageCommand.getDisplayName());
-		} catch (Exception e) {
-			Assert.fail("getDisplayName failed : " + e.getMessage());
-		}
+public class CreateImageCommandTest {
+	
+	@InjectMocks
+	DockerCommand dockerCommand;
+	File srcFile = new File("inFile.csv");
+	
+	CreateImageCommand createImageCommand = new CreateImageCommand(srcFile,"H2O","1.0.0","H20",true,true);
+	
+     @Test
+	public void testCommon() {
+		CreateImageCommand createImageCommand = new CreateImageCommand(new File("tmp"), "genericjava","latest", "Dockerfile", true, true);
+		createImageCommand.setBuildArgs("run");
+		createImageCommand.getBuildArgs();
+		String str = createImageCommand.getImageId();
+		Assert.assertNotNull(createImageCommand.getBuildArgs());	
 	}
-	@Test
-	public void getImageName(){
-		saveImageCommand.getImageName();
-	}
-	@Test
-	public void getImageTag(){
-		saveImageCommand.getImageTag();
-	}
-	@Test
-	public void getDestination(){
-		saveImageCommand.getDestination();
-	}
-	@Test
-	public void getFilename(){
-		saveImageCommand.getFilename();
-	}
-	@Test
-	public void getIgnoreIfNotFound(){
-		saveImageCommand.getIgnoreIfNotFound();
-	}
+     
+    @Test
+ 	public void getDisplayName() {
+    	Assert.assertNotNull(createImageCommand.getDisplayName());
+     }
 }
+	

@@ -18,77 +18,63 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+package org.acumos.microservice;
 
 import java.io.File;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
-import org.acumos.onboarding.component.docker.preparation.H2ODockerPreparator;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
+import org.acumos.onboarding.component.docker.preparation.RDockerPreparator;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.util.Assert;
+import static org.mockito.Mockito.doNothing;
 
 @RunWith(MockitoJUnitRunner.class)
-public class H2ODockerPreparatorTest {
+public class RDockerPreparatorTest {
 
-	 
 	String filePath = FilePathTest.filePath(); 
-	File outFolder = new File(filePath);
 	File jsonFile = new File(filePath+"modelDetails.json");
-	File reqtxt = new File(filePath+"requirements.txt");
-	File srcFile = new File(filePath+"Dockerfile");
-	
-	public H2ODockerPreparatorTest() throws AcumosServiceException {
+
+	public RDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
 	}
-	
+
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
-	
+	private String httpProxy= "http://10.1.0.6:3128";
+
 	@Mock
-	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser);
+	RDockerPreparator rDockerPreparator = new RDockerPreparator(metadataParser, httpProxy);
 
 	@Test
 	public void compareVersionTest() {
 
 		int[] baseVersion = { 1, 2, 3 };
 		int[] currentVersion = { 4, 5, 6 };
-		int result = H2ODockerPreparator.compareVersion(baseVersion, currentVersion);
-		assertNotNull(result);
+		int result = RDockerPreparator.compareVersion(baseVersion, currentVersion);
+		Assert.assertEquals(result,-1);
 	}
 
 	@Test
 	public void versionAsArrayTest() {
 
-		int[] baseVersion = H2ODockerPreparator.versionAsArray("1234");
-		assertNotNull(baseVersion);
+		int[] baseVersion = RDockerPreparator.versionAsArray("1234");
+		Assert.assertNotNull(baseVersion);
 	}
-	
-	@Test
-	public void prepareDockerAppTest() throws AcumosServiceException {
-		
-		doNothing().when(h2ODockerPreparator).prepareDockerApp(outFolder);
 
-	}
-	
 	@Test
-	public void createDockerFileTest() throws AcumosServiceException {
-		
-		doNothing().when(h2ODockerPreparator).createDockerFile(srcFile, srcFile);
+	public void prepareDockerAppTest(){
 
-	}
-	
-	@Test
-	public void createRequirementsTest() throws AcumosServiceException {
-		doNothing().when(h2ODockerPreparator).createRequirements(reqtxt, reqtxt);
-		
-	}
+		try {
+			File f1 = new File(FilePathTest.filePath());
+			doNothing().when(rDockerPreparator).prepareDockerApp(f1);
+		} catch (AcumosServiceException e) {
+			Assert.fail("prepareDockerAppTest failed : " + e.getMessage());
+		}
+
+  }
+
 }
+

@@ -87,50 +87,6 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 		// Property values are injected after the constructor finishes
 	}
 
-	/*@SuppressWarnings("unchecked")
-	@Override
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Check User authentication and returns JWT token", response = ServiceResponse.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 500, message = "Something bad happened", response = ServiceResponse.class),
-			@ApiResponse(code = 400, message = "Invalid request", response = ServiceResponse.class) })
-	@RequestMapping(value = "/auth", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<ServiceResponse> OnboardingWithAuthentication(@RequestBody JsonRequest<Crediantials> cred,
-			HttpServletResponse response) throws AcumosServiceException {
-		logger.debug(EELFLoggerDelegate.debugLogger, "Started User Authentication");
-		try {
-			Crediantials obj = cred.getBody();
-
-			String user = obj.getUsername();
-			String pass = obj.getPassword();
-
-			JSONObject crediantials = new JSONObject();
-			crediantials.put("username", user);
-			crediantials.put("password", pass);
-
-			JSONObject reqObj = new JSONObject();
-			reqObj.put("request_body", crediantials);
-
-			String token = portalClient.loginToAcumos(reqObj);
-
-			if (token != null) {
-				// Setting JWT token in header
-				response.setHeader("jwtToken", token);
-				logger.debug(EELFLoggerDelegate.debugLogger, "User Authentication Successful");
-				return new ResponseEntity<ServiceResponse>(ServiceResponse.successJWTResponse(token), HttpStatus.OK);
-			} else {
-				logger.debug(EELFLoggerDelegate.debugLogger, "Either Username/Password is invalid.");
-				throw new AcumosServiceException(AcumosServiceException.ErrorCode.OBJECT_NOT_FOUND,
-						"Either Username/Password is invalid.");
-			}
-
-		} catch (AcumosServiceException e) {
-			logger.error(EELFLoggerDelegate.errorLogger, e.getMessage(), e);
-			return new ResponseEntity<ServiceResponse>(ServiceResponse.errorResponse(e.getErrorCode(), e.getMessage()),
-					HttpStatus.UNAUTHORIZED);
-		}
-	}*/
-
 	/************************************************
 	 * End of Authentication
 	 *****************************************************/
@@ -143,7 +99,8 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 			@ApiResponse(code = 400, message = "Invalid request", response = ServiceResponse.class) })
 	@RequestMapping(value = "/generateMicroservice", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request,
-			@RequestParam(required = false) String modName, String solutioId, String revisionId,
+			@RequestParam(required = true) String solutioId, String revisionId,
+			@RequestParam(required = false) String modName,
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider,
@@ -159,16 +116,8 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 		dcaeflag = true;
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
+		MLPSolution mlpSolution = null;
 		try {
-
-			if (trackingID != null) {
-				onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd);
-				onboardingStatus.setTrackingId(trackingID);
-				logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
-			} else {
-
-				onboardingStatus = null;
-			}
 
 			// Nexus Integration....!
 
@@ -224,6 +173,15 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 					trackingID = UUID.randomUUID().toString();
 					onboardingStatus.setTrackingId(trackingID);
 					logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
+				}
+				
+				if(solutioId != null && revisionId != null){
+					mlpSolution.setSolutionId(solutioId);
+					mlpSolution.setName(mData.getSolutionName());
+					mlpSolution.setDescription(mData.getSolutionName());
+					mlpSolution.setOwnerId(mData.getOwnerId());
+					mData.setSolutionId(solutioId);
+					mData.setRevisionId(revisionId);
 				}
 
 				String fileName = trackingID + ".log";
@@ -298,24 +256,9 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 					File outputFolder = new File("tmp", modelId);
 					outputFolder.mkdirs();
 					boolean isSuccess = false;
-					MLPSolution mlpSolution = null;
+					
 					try {
 						mData.setOwnerId(ownerId);
-
-						List<MLPSolution> solList = getExistingSolution(mData);
-
-						boolean isListEmpty = solList.isEmpty();
-
-						if (isListEmpty) {
-							mlpSolution = createSolution(mData, onboardingStatus);
-							mData.setSolutionId(mlpSolution.getSolutionId());
-							logger.debug("New solution created Successfully " + mlpSolution.getSolutionId());
-						} else {
-							mlpSolution = solList.get(0);
-							mData.setSolutionId(mlpSolution.getSolutionId());
-						}
-
-						createSolutionRevision(mData);
 
 						// Solution id creation completed
 						// Notify Creation of solution ID is successful

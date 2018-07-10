@@ -18,42 +18,50 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
+package org.acumos.microservice;
 
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
-import org.acumos.onboarding.component.docker.cmd.TagImageCommand;
+import org.acumos.onboarding.component.docker.cmd.SaveImageCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * 
+ * @author ****
+ *
+ */
 @RunWith(MockitoJUnitRunner.class)
-public class TagImageCommandTest {
+public class SaveImageCommandTest {
 
-	public static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(TagImageCommandTest.class);
-
-	TagImageCommand tagImageCommand = new TagImageCommand("H2O", "Nexus", "H2O", true, true);
+	SaveImageCommand saveImageCommand = new SaveImageCommand("H2O", "1.0.0", "SOHIL", "h20", true);
 
 	@Test
 	public void getDisplayName() {
 		try {
-
-			Assert.assertNotNull(tagImageCommand.getImage());
+			Assert.assertNotNull(saveImageCommand.getDisplayName());
 		} catch (Exception e) {
-			Assert.fail("tagImageCommand failed : " + e.getMessage());
-
+			Assert.fail("getDisplayName failed : " + e.getMessage());
 		}
 	}
-
 	@Test
-	public void getImage() {
-
-		tagImageCommand.getImage();
-		tagImageCommand.getDisplayName();
-		tagImageCommand.getIgnoreIfNotFound();
-		tagImageCommand.getRepository();
-		tagImageCommand.getTag();
-		tagImageCommand.getWithForce();
-		Assert.assertNotNull(tagImageCommand);
+	public void getImageName(){
+		saveImageCommand.getImageName();
+	}
+	@Test
+	public void getImageTag(){
+		saveImageCommand.getImageTag();
+	}
+	@Test
+	public void getDestination(){
+		saveImageCommand.getDestination();
+	}
+	@Test
+	public void getFilename(){
+		saveImageCommand.getFilename();
+	}
+	@Test
+	public void getIgnoreIfNotFound(){
+		saveImageCommand.getIgnoreIfNotFound();
 	}
 }

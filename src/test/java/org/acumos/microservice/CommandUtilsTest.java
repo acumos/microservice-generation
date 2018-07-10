@@ -18,35 +18,38 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
+package org.acumos.microservice;
 
-public class FilePathTest {
+import org.acumos.onboarding.component.docker.cmd.CommandUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
+public class CommandUtilsTest {
 	
-	public static boolean isWindowsSys() {
-		String osName = System.getProperty("os.name");
-		String osNameMatch = osName.toLowerCase();
-		if (osNameMatch.contains("windows"))
-			return true;
-		return false;
+	CommandUtils commandUtilsTest =new CommandUtils();
+
+	@Test
+	public void addLatestTagIfNeededTest() {
+
+		String str = CommandUtils.addLatestTagIfNeeded("genericmodel");
+		Assert.assertNotNull(str);
 	}
-	
-	
-	public static String filePath(){
-		
-		boolean windowsFlag = isWindowsSys();
-		
-		String filePath =  System.getProperty("user.dir");
-		
-		if(windowsFlag){
-			  filePath = filePath+"\\src\\test\\resources\\";
-		  } else {
-			  filePath = filePath+"/src/test/resources/";
-		  }
-		
-		return filePath;
-		
-		
-		
+
+	@Test
+	public void sizeInBytesTest() {
+		String str = "Dockerimages";
+		long bytes = CommandUtils.sizeInBytes(str);
+		Assert.assertNotNull(bytes);
+	}
+
+	@Test
+	public void imageFullNameFromTest() {
+
+		String imageName = CommandUtils.imageFullNameFrom("docker", "nexus", "latst");
+		Assert.assertNotNull(imageName);
 	}
 
 }

@@ -18,41 +18,46 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
+package org.acumos.microservice;
 
-import org.acumos.onboarding.component.docker.cmd.DeleteImageCommand;
+import org.acumos.onboarding.component.docker.cmd.PushImageCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+/**
+ * 
+ * @author *****
+ *
+ */
 @RunWith(MockitoJUnitRunner.class)
-public class DeleteImageCommandTest {
+public class PushImageCommandTest {
 
-	DeleteImageCommand deleteImageCommand = new DeleteImageCommand("H2O", "1.0.0-SNAPSHOT", "Nexus");
+	PushImageCommand pushImageCommand = new PushImageCommand("H2O", "1.0.0-SNAPSHOT", "Nexus");
 
 	@Test
 	public void getDisplayName() {
 		try {
-            Assert.assertNotNull(deleteImageCommand.getDisplayName());
+			pushImageCommand.getDisplayName();
 		} catch (Exception e) {
-			Assert.fail("Exception occured while createSolutionTest(): " + e.getMessage());
+			Assert.fail("getDisplayName failed : " + e.getMessage());
 		}
 	}
 
 	@Test
 	public void getImage() {
-		Assert.assertNotNull(deleteImageCommand.getImageName());
+		pushImageCommand.getImage();
 	}
 
 	@Test
 	public void getTag() {
-		Assert.assertNotNull(deleteImageCommand.getTag());
+		pushImageCommand.getTag();
 	}
 
 	@Test
 	public void getRegistry() {
-		Assert.assertNotNull(deleteImageCommand.getRegistry());
+		pushImageCommand.getRegistry();
 	}
-
+	
 }

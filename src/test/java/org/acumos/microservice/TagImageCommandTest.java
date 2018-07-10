@@ -18,36 +18,42 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
+package org.acumos.microservice;
 
-import java.io.File;
-
-import org.acumos.onboarding.component.docker.cmd.CreateImageCommand;
-import org.acumos.onboarding.component.docker.cmd.DockerCommand;
+import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.component.docker.cmd.TagImageCommand;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
-public class CreateImageCommandTest {
-	
-	@InjectMocks
-	DockerCommand dockerCommand;
-	File srcFile = new File("inFile.csv");
-	
-	CreateImageCommand createImageCommand = new CreateImageCommand(srcFile,"H2O","1.0.0","H20",true,true);
-	
-     @Test
-	public void testCommon() {
-		CreateImageCommand createImageCommand = new CreateImageCommand(new File("tmp"), "genericjava","latest", "Dockerfile", true, true);
-		createImageCommand.setBuildArgs("run");
-		createImageCommand.getBuildArgs();
-		String str = createImageCommand.getImageId();
-		Assert.assertNotNull(createImageCommand.getBuildArgs());	
+@RunWith(MockitoJUnitRunner.class)
+public class TagImageCommandTest {
+
+	public static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(TagImageCommandTest.class);
+
+	TagImageCommand tagImageCommand = new TagImageCommand("H2O", "Nexus", "H2O", true, true);
+
+	@Test
+	public void getDisplayName() {
+		try {
+
+			Assert.assertNotNull(tagImageCommand.getImage());
+		} catch (Exception e) {
+			Assert.fail("tagImageCommand failed : " + e.getMessage());
+
+		}
 	}
-     
-    @Test
- 	public void getDisplayName() {
-    	Assert.assertNotNull(createImageCommand.getDisplayName());
-     }
+
+	@Test
+	public void getImage() {
+
+		tagImageCommand.getImage();
+		tagImageCommand.getDisplayName();
+		tagImageCommand.getIgnoreIfNotFound();
+		tagImageCommand.getRepository();
+		tagImageCommand.getTag();
+		tagImageCommand.getWithForce();
+		Assert.assertNotNull(tagImageCommand);
+	}
 }
-	

@@ -18,7 +18,7 @@
  * ===============LICENSE_END=========================================================
  */
 
-package org.acumos.onboarding;
+package org.acumos.microservice;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.component.docker.DockerConfiguration;
