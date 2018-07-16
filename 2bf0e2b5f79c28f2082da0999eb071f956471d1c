@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f78a9eb_5a27c5d1",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-07-16T19:26:55Z",
+      "side": 1,
+      "message": "Don\u0027t use this enormous image - look at the small ones that others are using.",
+      "range": {
+        "startLine": 195,
+        "startChar": 14,
+        "endLine": 195,
+        "endChar": 27
+      },
+      "revId": "2bf0e2b5f79c28f2082da0999eb071f956471d1c",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
