@@ -1,5 +1,5 @@
-server.contextPath=/onboarding-app
-server.port=8090
+server.contextPath=/microservice-generation
+server.port=8336
 spring.http.multipart.max-file-size=1024MB
 spring.http.multipart.max-request-size=1024MB
 ###########################################################################

@@ -93,7 +93,7 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 
 	@Override
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@ApiOperation(value = "Upload model file and its meta data as string to dockerize", response = ServiceResponse.class)
+	@ApiOperation(value = "Dockerize the model artifact by solution and revision ID", response = ServiceResponse.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 500, message = "Something bad happened", response = ServiceResponse.class),
 			@ApiResponse(code = 400, message = "Invalid request", response = ServiceResponse.class) })
