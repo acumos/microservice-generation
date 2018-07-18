@@ -21,7 +21,7 @@
 package org.acumos.microservice;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
-import org.acumos.onboarding.component.docker.DockerConfiguration;
+import org.acumos.microservice.component.docker.DockerConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

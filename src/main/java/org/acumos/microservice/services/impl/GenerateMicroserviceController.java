@@ -39,6 +39,7 @@ import org.acumos.cds.domain.MLPSolution;
 import org.acumos.cds.domain.MLPUser;
 import org.acumos.cds.transport.RestPageRequest;
 import org.acumos.cds.transport.RestPageResponse;
+import org.acumos.microservice.component.docker.DockerizeModel;
 import org.acumos.microservice.services.DockerService;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.models.OnboardingNotification;
@@ -79,9 +80,11 @@ import io.swagger.annotations.ApiResponses;
  * @author *****
  *
  */
-public class GenerateMicroserviceController extends CommonOnboarding implements DockerService {
+public class GenerateMicroserviceController extends DockerizeModel implements DockerService {
 	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(GenerateMicroserviceController.class);
 	Map<String, String> artifactsDetails = new HashMap<>();
+
+	CommonOnboarding commonOnboarding;
 
 	public GenerateMicroserviceController() {
 		// Property values are injected after the constructor finishes
@@ -101,6 +104,7 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request,
 			@RequestParam(required = true) String solutioId, String revisionId,
 			@RequestParam(required = false) String modName,
+			@RequestParam(required = false) int deployment_env,
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider,
@@ -113,7 +117,6 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 
 		String artifactName = null;
 		File files = null;
-		dcaeflag = true;
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
 		MLPSolution mlpSolution = null;
@@ -221,7 +224,7 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 				}
 
 				// Call to validate JWT Token.....!
-				JsonResponse<Object> valid = validate(authorization, provider);
+				JsonResponse<Object> valid = commonOnboarding.validate(authorization, provider);
 
 				boolean isValidToken = valid.getStatus();
 
@@ -283,7 +286,7 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 						}
 
 						try {
-							imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId());
+							imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(), deployment_env);
 						} catch (Exception e) {
 							// Notify Create docker image failed
 							if (onboardingStatus != null) {
@@ -298,22 +301,14 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 							onboardingStatus.notifyOnboardingStatus("Dockerize", "SU",
 									"Created Docker Image Successfully for solution " + mData.getSolutionId());
 						}
-						String actualModelName = getActualModelName(mData, mlpSolution.getSolutionId());
+						
 						// Add artifacts started. Notification will be handed by
 						// addArtifact method itself for started/success/failure
 						artifactsDetails = getArtifactsDetails();
-						addArtifact(mData, imageUri, getArtifactTypeCode("Docker Image"), onboardingStatus);
-
-						// Notify TOSCA generation started
-						if (onboardingStatus != null) {
-							onboardingStatus.notifyOnboardingStatus("CreateTOSCA", "ST", "TOSCA Generation Started");
-						}
-
-						generateTOSCA(protoFile, MetaFile, mData, onboardingStatus);
-
-						// Notify TOSCA generation successful
-						if (onboardingStatus != null) {
-							onboardingStatus.notifyOnboardingStatus("CreateTOSCA", "SU", "TOSCA Generation Successful");
+						commonOnboarding.addArtifact(mData, imageUri, getArtifactTypeCode("Docker Image"), onboardingStatus);
+						
+						if (deployment_env == 2) {
+							addDCAEArrtifacts(mData, outputFolder, mlpSolution.getSolutionId(), onboardingStatus);
 						}
 
 						isSuccess = true;
@@ -340,12 +335,10 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Onboarding Failed, Reverting failed solutions and artifacts.");
 								if (metadataParser != null && mData != null) {
-									revertbackOnboarding(metadataParser.getMetadata(), imageUri,
-											mlpSolution.getSolutionId());
+									commonOnboarding.revertbackOnboarding(metadataParser.getMetadata(), mlpSolution.getSolutionId());
 								}
 							}
 
-							dcaeflag = false;
 							// push docker build log into nexus
 							File file = new java.io.File(OnboardingConstants.lOG_DIR_LOC + File.separator + fileName);
 							logger.debug(EELFLoggerDelegate.debugLogger, "Log file length " + file.length(),
@@ -353,9 +346,11 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 							if (metadataParser != null && mData != null) {
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Adding of log artifacts into nexus started " + fileName);
+								
+								String actualModelName = getActualModelName(mData, mlpSolution.getSolutionId());
 
-								addArtifact(mData, file, getArtifactTypeCode(OnboardingConstants.ARTIFACT_TYPE_LOG),
-										getActualModelName(mData, mlpSolution.getSolutionId()), onboardingStatus);
+								commonOnboarding.addArtifact(mData, file, getArtifactTypeCode(OnboardingConstants.ARTIFACT_TYPE_LOG),
+										actualModelName, onboardingStatus);
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Artifacts log pushed to nexus successfully", fileName);
 								// info as log file not available to write
@@ -368,7 +363,6 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 							mData = null;
 						} catch (AcumosServiceException e) {
 							mData = null;
-							dcaeflag = false;
 							logger.error(EELFLoggerDelegate.errorLogger, "RevertbackOnboarding Failed");
 							HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
 							return new ResponseEntity<ServiceResponse>(
@@ -457,10 +451,10 @@ public class GenerateMicroserviceController extends CommonOnboarding implements 
 		File ons = new File(filePathoutputF, "onsdemo1.yaml");
 
 		try {
-			addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
-			addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
-			addArtifact(mData, compo, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
-			addArtifact(mData, ons, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
+			commonOnboarding.addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
+			commonOnboarding.addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
+			commonOnboarding.addArtifact(mData, compo, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
+			commonOnboarding.addArtifact(mData, ons, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
 		}
 
 		catch (AcumosServiceException e) {

@@ -20,7 +20,7 @@
 
 package org.acumos.microservice;
 
-import org.acumos.onboarding.component.docker.cmd.PushImageCommand;
+import org.acumos.microservice.component.docker.cmd.PushImageCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

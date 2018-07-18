@@ -22,8 +22,8 @@ package org.acumos.microservice;
 
 import java.io.File;
 
-import org.acumos.onboarding.component.docker.cmd.CreateImageCommand;
-import org.acumos.onboarding.component.docker.cmd.DockerCommand;
+import org.acumos.microservice.component.docker.cmd.CreateImageCommand;
+import org.acumos.microservice.component.docker.cmd.DockerCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
-import org.acumos.onboarding.component.docker.preparation.H2ODockerPreparator;
+import org.acumos.microservice.component.docker.preparation.H2ODockerPreparator;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;

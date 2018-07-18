@@ -21,7 +21,7 @@
 package org.acumos.microservice;
 
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
-import org.acumos.onboarding.component.docker.cmd.TagImageCommand;
+import org.acumos.microservice.component.docker.cmd.TagImageCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
