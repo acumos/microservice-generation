@@ -70,7 +70,7 @@ public class DockerizeModel {
 	@Autowired
 	protected ResourceLoader resourceLoader;
 
-	@Autowired
+	//@Autowired
 	protected DockerConfiguration dockerConfiguration;
 	
 	protected MetadataParser metadataParser = null;
