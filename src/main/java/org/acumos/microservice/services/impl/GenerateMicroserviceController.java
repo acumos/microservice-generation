@@ -104,12 +104,16 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request,
 			@RequestParam(required = true) String solutioId, String revisionId,
 			@RequestParam(required = false) String modName,
-			@RequestParam(required = false) int deployment_env,
+			@RequestParam(required = false) Integer deployment_env,
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider,
 			@RequestHeader(value = "shareUserName", required = false) String shareUserName)
 			throws AcumosServiceException {
+		
+		if (deployment_env == null){
+			deployment_env = 1;
+		}
 
 		logger.debug(EELFLoggerDelegate.debugLogger, "Started Onboarding");
 
@@ -119,24 +123,22 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		File files = null;
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
-		MLPSolution mlpSolution = null;
+		MLPSolution mlpSolution = new MLPSolution();
 		try {
 
 			// Nexus Integration....!
 
 			DownloadModelArtifacts download = new DownloadModelArtifacts();
-			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId, "cmnDataSvcUser: {}", cmnDataSvcUser);
-			logger.debug(EELFLoggerDelegate.debugLogger, "cmnDataSvcPwd: {}", cmnDataSvcPwd, "nexusEndPointURL: {}", nexusEndPointURL, "cmnDataSvcUser: {}", cmnDataSvcUser);
-			logger.debug(EELFLoggerDelegate.debugLogger, "nexusPassword: {}", nexusPassword, "cmnDataSvcEndPoinURL: {}", cmnDataSvcEndPoinURL);
+			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId);
 			artifactName = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 					nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
 
 			if (artifactName.indexOf(".") > 0)
 				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));
-
+			
 			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
 			
-			logger.info("Invoking Onboarding API");
+			logger.info("Starting Microservice Generation");
 
 			files = new File("model");
 
@@ -205,7 +207,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				// create log file to capture logs as artifact
 				UtilityFunction.createLogFile();
 
-				logger.debug(EELFLoggerDelegate.debugLogger, "Started JWT token validation");
 				MLPUser shareUser = null;
 
 				// try {
@@ -233,6 +234,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				}
 
 				// Call to validate JWT Token.....!
+				logger.debug(EELFLoggerDelegate.debugLogger, "Started JWT token validation");
 				JsonResponse<Object> valid = commonOnboarding.validate(authorization, provider);
 
 				boolean isValidToken = valid.getStatus();
@@ -257,12 +259,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					logger.debug(EELFLoggerDelegate.debugLogger,
 							"Dockerization request recieved with " + model.getOriginalFilename());
 
-					// Notify Create solution or get existing solution ID has
-					// started
-					if (onboardingStatus != null) {
-						onboardingStatus.notifyOnboardingStatus("CreateSolution", "ST", "CreateSolution Started");
-					}
-
 					modelOriginalName = model.getOriginalFilename();
 					String modelId = UtilityFunction.getGUID();
 					File outputFolder = new File("tmp", modelId);
@@ -283,9 +279,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							if (mData.getRevisionId() != null) {
 								onboardingStatus.setRevisionId(mData.getRevisionId());
 							}
-							// notify
-							onboardingStatus.notifyOnboardingStatus("CreateMicroservice", "SU",
-									"CreateSolution Successful");
 						}
 
 						// Notify Create docker image has started
@@ -344,7 +337,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Onboarding Failed, Reverting failed solutions and artifacts.");
 								if (metadataParser != null && mData != null) {
-									commonOnboarding.revertbackOnboarding(metadataParser.getMetadata(), mlpSolution.getSolutionId());
+									revertbackOnboarding(metadataParser.getMetadata(), mlpSolution.getSolutionId(), imageUri);
 								}
 							}
 
