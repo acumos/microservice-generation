@@ -28,12 +28,11 @@ import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPArtifact;
 import org.acumos.nexus.client.NexusArtifactClient;
 import org.acumos.nexus.client.RepositoryLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 
 public class DownloadModelArtifacts {
 
-	private static final Logger logger = LoggerFactory.getLogger(DownloadModelArtifacts.class);
+	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(DownloadModelArtifacts.class);
 
 	String artifactFileName;
 	
@@ -41,9 +40,9 @@ public class DownloadModelArtifacts {
 	
 	public String getModelArtifacts(String solutionId, String revisionId, String userName, String password,
 			String nexusUrl, String nexusUserName, String nexusPassword, String dataSource) throws Exception {
-		logger.debug("------ Start getBluePrintNexus-----------------");
-		logger.debug("-------solutionId-----------" + solutionId);
-		logger.debug("-------revisionId-----------" + revisionId);
+		logger.debug(EELFLoggerDelegate.debugLogger, "------ Start getBluePrintNexus-----------------");
+		logger.debug(EELFLoggerDelegate.debugLogger, "-------solutionId-----------" + solutionId);
+		logger.debug(EELFLoggerDelegate.debugLogger, "-------revisionId-----------" + revisionId);
 		
 		List<MLPArtifact> mlpArtifactList;
 		String nexusURI = "";
@@ -51,7 +50,7 @@ public class DownloadModelArtifacts {
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		this.cmnDataService = new CommonDataServiceRestClientImpl(dataSource, userName, password);
 		
-		File outputFolder = new File("dcae_model");
+		File outputFolder = new File("model");
 		outputFolder.mkdirs();
 
 		if (revisionId != null) {
@@ -66,7 +65,7 @@ public class DownloadModelArtifacts {
 
 						nexusURI = mlpArtifactList.get(i).getUri();
 
-						logger.debug("------ Nexus URI : " + nexusURI + " -------");
+						logger.debug(EELFLoggerDelegate.debugLogger, "------ Nexus URI : " + nexusURI + " -------");
 						if (nexusURI != null) {
 							RepositoryLocation repositoryLocation = new RepositoryLocation();
 							repositoryLocation.setId("1");

@@ -125,21 +125,30 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			// Nexus Integration....!
 
 			DownloadModelArtifacts download = new DownloadModelArtifacts();
+			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId, "cmnDataSvcUser: {}", cmnDataSvcUser);
+			logger.debug(EELFLoggerDelegate.debugLogger, "cmnDataSvcPwd: {}", cmnDataSvcPwd, "nexusEndPointURL: {}", nexusEndPointURL, "cmnDataSvcUser: {}", cmnDataSvcUser);
+			logger.debug(EELFLoggerDelegate.debugLogger, "nexusPassword: {}", nexusPassword, "cmnDataSvcEndPoinURL: {}", cmnDataSvcEndPoinURL);
 			artifactName = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 					nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
 
 			if (artifactName.indexOf(".") > 0)
 				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));
 
+			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
+			
 			logger.info("Invoking Onboarding API");
 
 			files = new File("model");
 
 			MultipartFile model = null, meta = null, proto = null;
-
+			
+			
 			File modelFile = new File(files, artifactName + ".zip");
+			logger.debug(EELFLoggerDelegate.debugLogger, "modelFile: {}", modelFile.getName());
 			File MetaFile = new File(files, artifactName + ".json");
+			logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: {}", MetaFile.getName());
 			File protoFile = new File(files, artifactName + ".proto");
+			logger.debug(EELFLoggerDelegate.debugLogger, "protoFile: {}", protoFile.getName());
 
 			if (modName != null) {
 				Object obj = new JSONParser().parse(new FileReader(MetaFile));
