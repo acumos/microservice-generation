@@ -55,6 +55,9 @@ import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.services.impl.CommonOnboarding;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -71,6 +74,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+
 @RestController 
 @RequestMapping(value="/v2")
 @Api(value="Operation to to onboard a ML model",tags="Onboarding Service APIs")
@@ -83,7 +87,8 @@ import io.swagger.annotations.ApiResponses;
 public class GenerateMicroserviceController extends DockerizeModel implements DockerService {
 	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(GenerateMicroserviceController.class);
 	Map<String, String> artifactsDetails = new HashMap<>();
-
+	
+	@Autowired
 	CommonOnboarding commonOnboarding;
 
 	public GenerateMicroserviceController() {
@@ -128,7 +133,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			// Nexus Integration....!
 
-			DownloadModelArtifacts download = new DownloadModelArtifacts();
+/*			DownloadModelArtifacts download = new DownloadModelArtifacts();
 			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId);
 			artifactName = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 					nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
@@ -136,7 +141,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			if (artifactName.indexOf(".") > 0)
 				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));
 			
-			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
+			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);*/
+			
+			artifactName = "word_embeddings0717_5578f443-6329-430e-898a-190734a74264-3";
 			
 			logger.info("Starting Microservice Generation");
 

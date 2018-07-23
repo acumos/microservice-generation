@@ -11,7 +11,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootApplication
-@ComponentScan("org.acumos.microservice")
+@ComponentScan({"org.acumos"})
 public class MicroserviceApplication implements ApplicationContextAware {
 	private static final EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(MicroserviceApplication.class);
 
