@@ -55,6 +55,7 @@ import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.services.impl.CommonOnboarding;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
@@ -84,6 +85,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(GenerateMicroserviceController.class);
 	Map<String, String> artifactsDetails = new HashMap<>();
 
+	@Autowired
 	CommonOnboarding commonOnboarding;
 
 	public GenerateMicroserviceController() {
