@@ -22,7 +22,7 @@ package org.acumos.microservice.common.config;
 
 
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
-import org.acumos.onboarding.component.docker.DockerConfiguration;
+import org.acumos.microservice.component.docker.DockerConfiguration;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
