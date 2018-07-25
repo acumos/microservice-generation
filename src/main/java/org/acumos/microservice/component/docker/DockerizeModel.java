@@ -80,7 +80,7 @@ public class DockerizeModel {
 	@Autowired
 	protected DockerConfiguration dockerConfiguration;
 	
-	protected MetadataParser metadataParser = null;
+	protected MetadataParser metadataParser;
 	
 	protected CommonDataServiceRestClientImpl cdmsClient;
 
@@ -99,9 +99,9 @@ public class DockerizeModel {
 	/*
 	 * @Method Name : dockerizeFile Performs complete dockerization process.
 	 */
-	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, Integer deployment_env) throws AcumosServiceException {
+	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, Integer deployment_env, Metadata metadata) throws AcumosServiceException {
 		File outputFolder = localmodelFile.getParentFile();
-		Metadata metadata = metadataParser.getMetadata();
+		//Metadata metadata = metadataParser.getMetadata();
 		logger.debug(EELFLoggerDelegate.debugLogger,"Preparing app in: {}", outputFolder);
 		if (metadata.getRuntimeName().equals("python")) {
 			outputFolder = new File(localmodelFile.getParentFile(), "app");

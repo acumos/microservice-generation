@@ -130,13 +130,15 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			// Nexus Integration....!
 
-			DownloadModelArtifacts download = new DownloadModelArtifacts();
+			/*DownloadModelArtifacts download = new DownloadModelArtifacts();
 			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId);
 			artifactName = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 					nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
 
 			if (artifactName.indexOf(".") > 0)
-				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));
+				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));*/
+			
+			artifactName = "word_embeddings0717_5578f443-6329-430e-898a-190734a74264-3";
 			
 			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
 			
@@ -192,12 +194,12 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				}
 				
 				if(solutioId != null && revisionId != null){
+					mData.setSolutionId(solutioId);
+					mData.setRevisionId(revisionId);
 					mlpSolution.setSolutionId(solutioId);
 					mlpSolution.setName(mData.getSolutionName());
 					mlpSolution.setDescription(mData.getSolutionName());
 					mlpSolution.setOwnerId(mData.getOwnerId());
-					mData.setSolutionId(solutioId);
-					mData.setRevisionId(revisionId);
 				}
 
 				String fileName = trackingID + ".log";
@@ -284,13 +286,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						}
 
 						// Notify Create docker image has started
-						if (onboardingStatus != null) {
+						/*if (onboardingStatus != null) {
 							onboardingStatus.notifyOnboardingStatus("Dockerize", "ST",
 									"Create Docker Image Started for solution " + mData.getSolutionId());
-						}
+						}*/
 
 						try {
-							imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(), deployment_env);
+							imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(), deployment_env, mData);
 						} catch (Exception e) {
 							// Notify Create docker image failed
 							if (onboardingStatus != null) {
