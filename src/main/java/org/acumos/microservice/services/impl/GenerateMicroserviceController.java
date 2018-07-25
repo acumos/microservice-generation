@@ -137,9 +137,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			if (artifactName.indexOf(".") > 0)
 				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));
-			
-			artifactName = "word_embeddings0717_5578f443-6329-430e-898a-190734a74264-3";
-			
+						
 			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
 			
 			logger.info("Starting Microservice Generation");
@@ -170,8 +168,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				metadataParser = new MetadataParser(MetaFile);
 				mData = metadataParser.getMetadata();
 				
-				
-
 				FileInputStream fisModel = new FileInputStream(modelFile);
 				model = new MockMultipartFile("Model", modelFile.getName(), "", fisModel);
 
@@ -207,7 +203,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				String version = mData.getVersion();
 
 				if (version == null) {
-					version = commonOnboarding.getModelVersion(mData.getSolutionId());
+					version = getModelVersion(mData.getSolutionId(), mData.getRevisionId());
 					mData.setVersion(version);
 				}
 
@@ -295,10 +291,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						}
 
 						// Notify Create docker image has started
-						/*if (onboardingStatus != null) {
+						if (onboardingStatus != null) {
 							onboardingStatus.notifyOnboardingStatus("Dockerize", "ST",
 									"Create Docker Image Started for solution " + mData.getSolutionId());
-						}*/
+						}
 
 						try {
 							imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(), deployment_env);
@@ -362,7 +358,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Adding of log artifacts into nexus started " + fileName);
 								
-								String actualModelName = getActualModelName(mData, mlpSolution.getSolutionId());
+								String actualModelName = "MicroServiceGeneration_"+mData.getSolutionId();
 
 								commonOnboarding.addArtifact(mData, file, getArtifactTypeCode(OnboardingConstants.ARTIFACT_TYPE_LOG),
 										actualModelName, onboardingStatus);

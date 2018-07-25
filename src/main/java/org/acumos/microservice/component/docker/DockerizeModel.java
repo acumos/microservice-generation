@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPArtifact;
+import org.acumos.cds.domain.MLPSolutionRevision;
 import org.acumos.microservice.component.docker.cmd.CreateImageCommand;
 import org.acumos.microservice.component.docker.cmd.DeleteImageCommand;
 import org.acumos.microservice.component.docker.cmd.PushImageCommand;
@@ -131,15 +132,7 @@ public class DockerizeModel {
 				logger.error(EELFLoggerDelegate.errorLogger,"Python templatization failed: {}", e);
 			}
 			dockerPreprator.prepareDockerAppV2(outputFolder);
-		} else if (metadata.getRuntimeName().equals("r")) {
-			/*DockerClient dockerClient = DockerClientFactory.getDockerClient(dockerConfiguration);
-			logger.debug(EELFLoggerDelegate.debugLogger, "Pull onboarding-base-r image from Nexus call started");
-			String repo = "nexus3.acumos.org:10004/onboarding-base-r:1.0";
-			PullImageCommand pullImageCommand = new PullImageCommand(repo);
-			pullImageCommand.setClient(dockerClient);
-			pullImageCommand.execute();
-			logger.debug(EELFLoggerDelegate.debugLogger, "Pull onboarding-base-r image from Nexus call ended");	*/	
-			
+		} else if (metadata.getRuntimeName().equals("r")) {			
 			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/r/*");
 			for (Resource resource : resources) {
@@ -372,5 +365,12 @@ public class DockerizeModel {
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INTERNAL_SERVER_ERROR,
 					"Fail to revert back onboarding changes : " + e.getMessage());
 		}
+	}
+	
+	public String getModelVersion(String solutionId, String revisionId) {
+		MLPSolutionRevision revData;
+		revData = cdmsClient.getSolutionRevision(solutionId, revisionId);
+
+		return revData.getVersion();
 	}
 }
