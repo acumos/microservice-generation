@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70f3eab0_02985d2d",
+        "filename": "src/main/java/org/acumos/microservice/services/impl/GenerateMicroserviceController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-07-25T13:13:58Z",
+      "side": 1,
+      "message": "Please do not commit test data such as this!!",
+      "range": {
+        "startLine": 141,
+        "startChar": 19,
+        "endLine": 141,
+        "endChar": 47
+      },
+      "revId": "a00e0151d8f9cddfc920d6b477a4f228cda582c6",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
