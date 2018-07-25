@@ -80,7 +80,7 @@ public class DockerizeModel {
 	@Autowired
 	protected DockerConfiguration dockerConfiguration;
 	
-	protected MetadataParser metadataParser = null;
+	protected MetadataParser metadataParser;
 	
 	protected CommonDataServiceRestClientImpl cdmsClient;
 
