@@ -30,7 +30,9 @@ EXPOSE {0}
 #Deploy Model service
 ADD {1} /app/app.jar
 ADD {2} /app/models/Model.zip
-ADD default.proto /app/models/default.proto
+ADD *.proto /app/models/default.proto
+#This should be - ADD *.proto /app/models/- so that all proto files copied here else means overwrite same file
+
 #RUN mkdir plugin_root /app/plugin_root
 #RUN mkdir src /app/plugin_root/src
 #ADD classes /app/plugin_root/classes
