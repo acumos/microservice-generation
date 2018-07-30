@@ -117,7 +117,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			deployment_env = 1;
 		}
 
-		logger.debug(EELFLoggerDelegate.debugLogger, "Started Onboarding");
+		logger.debug(EELFLoggerDelegate.debugLogger, "Generate Microservice Started");
 
 		logger.info("Fetching model from Nexus...!");
 
@@ -137,11 +137,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			if (artifactName.indexOf(".") > 0)
 				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));
-						
+									
 			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
 			
-			logger.info("Starting Microservice Generation");
-
 			files = new File("model");
 
 			MultipartFile model = null, meta = null, proto = null;
@@ -179,8 +177,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				// If trackingID is provided in the header create a
 				// OnboardingNotification object that will be used to update
-				// status
-				// against that trackingID
+				// status against that trackingID
 				onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd);
 				if (trackingID != null) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
@@ -207,7 +204,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					mData.setVersion(version);
 				}
 
-				String fileName = trackingID + ".log";
+				String fileName = "dockerLog_"+ trackingID + ".log";
 				// setting log filename in ThreadLocal
 				LogBean logBean = new LogBean();
 				logBean.setFileName(fileName);
@@ -266,7 +263,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						onboardingStatus.setUserId(ownerId);
 
 					logger.debug(EELFLoggerDelegate.debugLogger,
-							"Dockerization request recieved with " + model.getOriginalFilename());
+							"Dockerization request received with " + model.getOriginalFilename());
 
 					modelOriginalName = model.getOriginalFilename();
 					String modelId = UtilityFunction.getGUID();
@@ -342,14 +339,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 						try {
 							UtilityFunction.deleteDirectory(outputFolder);
-							if (isSuccess == false) {
-								logger.debug(EELFLoggerDelegate.debugLogger,
-										"Onboarding Failed, Reverting failed solutions and artifacts.");
-								if (metadataParser != null && mData != null) {
-									revertbackOnboarding(metadataParser.getMetadata(), mlpSolution.getSolutionId(), imageUri);
-								}
-							}
-
+							
 							// push docker build log into nexus
 							File file = new java.io.File(OnboardingConstants.lOG_DIR_LOC + File.separator + fileName);
 							logger.debug(EELFLoggerDelegate.debugLogger, "Log file length " + file.length(),
@@ -358,7 +348,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Adding of log artifacts into nexus started " + fileName);
 								
-								String actualModelName = "MicroServiceGeneration_"+mData.getSolutionId();
+								String actualModelName = getActualModelName(mData, mlpSolution.getSolutionId());
 
 								commonOnboarding.addArtifact(mData, file, getArtifactTypeCode(OnboardingConstants.ARTIFACT_TYPE_LOG),
 										actualModelName, onboardingStatus);
@@ -374,7 +364,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							mData = null;
 						} catch (AcumosServiceException e) {
 							mData = null;
-							logger.error(EELFLoggerDelegate.errorLogger, "RevertbackOnboarding Failed");
 							HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
 							return new ResponseEntity<ServiceResponse>(
 									ServiceResponse.errorResponse(e.getErrorCode(), e.getMessage()), httpCode);
