@@ -194,7 +194,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					mlpSolution.setSolutionId(solutioId);
 					mlpSolution.setName(mData.getSolutionName());
 					mlpSolution.setDescription(mData.getSolutionName());
-					mlpSolution.setOwnerId(mData.getOwnerId());
+					mlpSolution.setUserId(mData.getOwnerId());
 				}
 				
 				String version = mData.getVersion();
