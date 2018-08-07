@@ -92,7 +92,7 @@ public class DockerizeModel {
 	@PostConstruct
 	public void init() {
 		logger.debug(EELFLoggerDelegate.debugLogger,"Creating docker service instance");
-		this.cdmsClient = new CommonDataServiceRestClientImpl(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd);
+		this.cdmsClient = new CommonDataServiceRestClientImpl(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd, null);
 		this.portalClient = new PortalRestClientImpl(portalURL);
 		this.resourceUtils = new ResourceUtils(resourceLoader);
 	}
