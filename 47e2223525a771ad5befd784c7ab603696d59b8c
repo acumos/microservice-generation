@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f84b1a06_ab8f42cb",
+        "filename": "src/main/resources/templates/h2o/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-08-08T12:28:21Z",
+      "side": 1,
+      "message": "I recommend doing \"cd /app\" first because that keeps any log output in the /app directory.",
+      "range": {
+        "startLine": 37,
+        "startChar": 13,
+        "endLine": 37,
+        "endChar": 23
+      },
+      "revId": "47e2223525a771ad5befd784c7ab603696d59b8c",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
