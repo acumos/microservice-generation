@@ -109,8 +109,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			@RequestParam(required = false) Integer deployment_env,
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
-			@RequestHeader(value = "provider", required = false) String provider,
-			@RequestHeader(value = "shareUserName", required = false) String shareUserName)
+			@RequestHeader(value = "provider", required = false) String provider)
 			throws AcumosServiceException {
 		
 		if (deployment_env == null){
@@ -226,22 +225,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							"Token Not Available...!");
 				}
 
-				if (shareUserName != null) {
-					RestPageResponse<MLPUser> user = cdmsClient.findUsersBySearchTerm(shareUserName,
-							new RestPageRequest(0, 9));
-
-					List<MLPUser> uList = user.getContent();
-
-					if (uList.isEmpty()) {
-						logger.error(EELFLoggerDelegate.errorLogger,
-								"User " + shareUserName + " not found: cannot share model; onboarding aborted");
-						throw new AcumosServiceException(AcumosServiceException.ErrorCode.OBJECT_NOT_FOUND,
-								"User " + shareUserName + " not found: cannot share model; onboarding aborted");
-					} else {
-						shareUser = uList.get(0);
-					}
-				}
-
 				// Call to validate JWT Token.....!
 				logger.debug(EELFLoggerDelegate.debugLogger, "Started JWT token validation");
 				JsonResponse<Object> valid = commonOnboarding.validate(authorization, provider);
@@ -323,18 +306,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						}
 
 						isSuccess = true;
-
-						// Model Sharing
-						if (isSuccess && (shareUserName != null)) {
-							try {
-								cdmsClient.addSolutionUserAccess(mlpSolution.getSolutionId(), shareUser.getUserId());
-								logger.debug("Model Shared Successfully with " + shareUserName);
-							} catch (Exception e) {
-								logger.error(EELFLoggerDelegate.errorLogger, " Failed to share Model");
-								logger.error(EELFLoggerDelegate.errorLogger, "  " + e);
-								throw e;
-							}
-						}
 
 						return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution),
 								HttpStatus.CREATED);
