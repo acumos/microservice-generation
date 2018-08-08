@@ -28,15 +28,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface DockerService {
 
-	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request, String solutioId, String revisionId, String modName, Integer deployment_env, String authorization,String trackingID, String provider,String shareUserName)
+	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request, String solutioId, String revisionId, String modName, Integer deployment_env, String authorization,String trackingID, String provider)
 			throws AcumosServiceException;
-
-	/*public ResponseEntity<ServiceResponse> OnboardingWithAuthentication(JsonRequest<Crediantials> crediantials,
-			HttpServletResponse response) throws AcumosServiceException;*/
-	
-	/*public ResponseEntity<ServiceResponse> onboardingWithDCAE(HttpServletRequest request,String modName,String solutioId, String revisionId,
-			String authorization,
-			 String trackingID,
-			String provider,
-			String shareUserName) throws AcumosServiceException;*/
 }
