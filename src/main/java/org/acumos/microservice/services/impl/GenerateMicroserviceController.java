@@ -97,7 +97,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	 *****************************************************/
 
 	@Override
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Dockerize the model artifact by solution and revision ID", response = ServiceResponse.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 500, message = "Something bad happened", response = ServiceResponse.class),
@@ -115,8 +115,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		if (deployment_env == null){
 			deployment_env = 1;
 		}
-
-		logger.debug(EELFLoggerDelegate.debugLogger, "Started Onboarding");
 
 		logger.info("Fetching model from Nexus...!");
 
