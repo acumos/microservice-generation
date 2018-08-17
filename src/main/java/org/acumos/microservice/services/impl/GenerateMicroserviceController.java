@@ -137,7 +137,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						
 			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
 			
-			logger.info("Starting Microservice Generation");
+			logger.debug(EELFLoggerDelegate.debugLogger,"Starting Microservice Generation");
 
 			files = new File("model");
 
@@ -204,7 +204,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					mData.setVersion(version);
 				}
 
-				String fileName = trackingID + ".log";
+				String fileName = "MicroserviceGen_"+ trackingID + ".log";
 				// setting log filename in ThreadLocal
 				LogBean logBean = new LogBean();
 				logBean.setFileName(fileName);
@@ -326,11 +326,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							if (metadataParser != null && mData != null) {
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Adding of log artifacts into nexus started " + fileName);
-								
-								String actualModelName = "MicroServiceGeneration_"+mData.getSolutionId();
 
 								commonOnboarding.addArtifact(mData, file, getArtifactTypeCode(OnboardingConstants.ARTIFACT_TYPE_LOG),
-										actualModelName, onboardingStatus);
+										logThread.get().getFileName(), onboardingStatus);
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Artifacts log pushed to nexus successfully", fileName);
 								// info as log file not available to write

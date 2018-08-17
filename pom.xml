@@ -34,7 +34,7 @@
 		<dependency> 
 			<groupId>org.acumos.on-boarding</groupId> 
 			<artifactId>onboarding-common</artifactId>
-			<version>1.29.9-SNAPSHOT</version> 
+			<version>1.29.10-SNAPSHOT</version> 
 		</dependency> 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -250,7 +250,7 @@
 					</images>
 				</configuration>
 				<!-- build Docker image in install phase, push in deploy phase -->
-			 	    <executions>
+			 	   <executions>
 					<execution>
 						<goals>
 							<goal>build</goal>
