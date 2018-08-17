@@ -204,7 +204,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					mData.setVersion(version);
 				}
 
-				String fileName = "MicroserviceGen_"+ trackingID + ".log";
+				String fileName = "MSGen_"+ trackingID + ".log";
 				// setting log filename in ThreadLocal
 				LogBean logBean = new LogBean();
 				logBean.setFileName(fileName);
