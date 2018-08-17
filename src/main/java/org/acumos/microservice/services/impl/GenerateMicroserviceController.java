@@ -328,11 +328,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 										"Adding of log artifacts into nexus started " + fileName);
 
 								commonOnboarding.addArtifact(mData, file, getArtifactTypeCode(OnboardingConstants.ARTIFACT_TYPE_LOG),
-										logThread.get().getFileName(), onboardingStatus);
+										fileName, onboardingStatus);
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Artifacts log pushed to nexus successfully", fileName);
-								// info as log file not available to write
-								logger.info("Artifacts log file deleted successfully", fileName);
 							}
 
 							// delete log file
