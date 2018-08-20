@@ -21,6 +21,9 @@ import org.acumos.nexus.client.NexusArtifactClient;
 import org.acumos.nexus.client.RepositoryLocation;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LogBean;
+import org.acumos.onboarding.common.utils.LogThreadLocal;
+import org.acumos.onboarding.common.utils.OnboardingConstants;
 import org.acumos.onboarding.common.utils.ResourceUtils;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.microservice.component.docker.DockerClientFactory;
@@ -372,5 +375,25 @@ public class DockerizeModel {
 		revData = cdmsClient.getSolutionRevision(solutionId, revisionId);
 
 		return revData.getVersion();
+	}
+	
+	public static void createLogFile(String logPath) {
+		LogBean logBean = LogThreadLocal.get();
+		String fileName = logBean.getFileName();
+
+		File file = new java.io.File(logPath);
+		file.mkdirs();
+		try {
+			File f1 = new File(file.getPath() + File.separator + fileName);
+			if (!f1.exists()) {
+				f1.createNewFile();
+			}
+			logger.debug(EELFLoggerDelegate.debugLogger,
+					"Log file created successfully " + f1.getAbsolutePath());
+		} catch (Exception e) {
+			//info to avoid infinite loop.logger.debug call again calls addlog method
+			logger.info("Failed while creating log file " + e.getMessage());
+		}
+
 	}
 }

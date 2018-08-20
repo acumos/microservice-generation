@@ -37,8 +37,6 @@ import org.acumos.cds.CodeNameType;
 import org.acumos.cds.domain.MLPCodeNamePair;
 import org.acumos.cds.domain.MLPSolution;
 import org.acumos.cds.domain.MLPUser;
-import org.acumos.cds.transport.RestPageRequest;
-import org.acumos.cds.transport.RestPageResponse;
 import org.acumos.microservice.component.docker.DockerizeModel;
 import org.acumos.microservice.services.DockerService;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
@@ -212,7 +210,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				LogThreadLocal logThread = new LogThreadLocal();
 				logThread.set(logBean);
 				// create log file to capture logs as artifact
-				UtilityFunction.createLogFile();
+				createLogFile(logPath);
 
 				MLPUser shareUser = null;
 
