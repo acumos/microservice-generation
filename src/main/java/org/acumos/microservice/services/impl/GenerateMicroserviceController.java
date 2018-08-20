@@ -87,6 +87,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 	@Autowired
 	CommonOnboarding commonOnboarding;
+	String logPath = "/maven/logs/microservice-generation/applog";
 
 	public GenerateMicroserviceController() {
 		// Property values are injected after the constructor finishes
@@ -320,9 +321,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							}
 
 							// push docker build log into nexus
-							File file = new java.io.File(OnboardingConstants.lOG_DIR_LOC + File.separator + fileName);
-							logger.debug(EELFLoggerDelegate.debugLogger, "Log file length " + file.length(),
-									file.getPath(), fileName);
+							File file = new java.io.File(logPath + File.separator + fileName);
+							logger.debug(EELFLoggerDelegate.debugLogger, "Log file length " + file.length());
+							logger.debug(EELFLoggerDelegate.debugLogger, "Log file Path " + file.getPath() +" Absolute Path : "+file.getAbsolutePath() + " Canonical Path: "+ file.getCanonicalFile());
+
 							if (metadataParser != null && mData != null) {
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Adding of log artifacts into nexus started " + fileName);
