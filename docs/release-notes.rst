@@ -22,7 +22,7 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
-Version 1.0.0, 17 August 2018
+Version 1.0.0, 20 August 2018
 ---------------------------
 * Pointing to CDS-1.17.1
 * `ACUMOS-1070 <https://jira.acumos.org/browse/ACUMOS-1070/>`_
