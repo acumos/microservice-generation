@@ -24,9 +24,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.List;
-
 import java.util.Arrays;
+import java.util.List;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.utils.UtilityFunction;

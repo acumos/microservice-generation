@@ -3,10 +3,8 @@ package org.acumos.microservice.component.docker.cmd;
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.PullImageCmd;
 import com.github.dockerjava.api.exception.DockerException;
 import com.github.dockerjava.api.model.AuthConfig;
-import com.github.dockerjava.api.model.PullResponseItem;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 
 public class PullImageCommand extends DockerCommand{

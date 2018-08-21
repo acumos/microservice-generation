@@ -30,12 +30,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 import org.acumos.onboarding.common.utils.LogBean;
 import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
-import org.acumos.onboarding.common.utils.UtilityFunction;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageCmd;
