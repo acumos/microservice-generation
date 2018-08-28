@@ -85,7 +85,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 	@Autowired
 	CommonOnboarding commonOnboarding;
-	String logPath = "/maven/logs/microservice-generation/applog";
+	public static final String logPath = "/maven/logs/microservice-generation/applog";
 
 	public GenerateMicroserviceController() {
 		// Property values are injected after the constructor finishes
@@ -214,6 +214,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				// setting log filename in ThreadLocal
 				LogBean logBean = new LogBean();
 				logBean.setFileName(fileName);
+				logBean.setLogPath(logPath);
+		
 				LogThreadLocal logThread = new LogThreadLocal();
 				logThread.set(logBean);
 				// create log file to capture logs as artifact
