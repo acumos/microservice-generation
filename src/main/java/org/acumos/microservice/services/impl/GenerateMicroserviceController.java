@@ -142,8 +142,15 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			MultipartFile model = null, meta = null, proto = null;
 			
+			File modelFile = null;
 			
-			File modelFile = new File(files, artifactName + ".zip");
+			// This code change to fix defect#ACUMOS-1638. If its R model it should be .bin file 
+			if(artifactName.contains("r_cmd_model")) {
+				modelFile = new File(files, artifactName + ".bin");
+			} else {
+				modelFile = new File(files, artifactName + ".zip");	
+			}
+			
 			logger.debug(EELFLoggerDelegate.debugLogger, "modelFile: {}", modelFile.getName());
 			File MetaFile = new File(files, artifactName + ".json");
 			logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: {}", MetaFile.getName());
