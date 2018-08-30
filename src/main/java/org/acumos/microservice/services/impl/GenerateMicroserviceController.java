@@ -426,7 +426,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	}
 
 	private void addDCAEArrtifacts(Metadata mData, File outputFolder, String solutionID,
-			OnboardingNotification onboardingStatus) {
+			OnboardingNotification onboardingStatus) throws AcumosServiceException {
 
 		File filePathoutputF = new File(outputFolder, "app");
 
@@ -436,14 +436,22 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		File ons = new File(filePathoutputF, "onsdemo1.yaml");
 
 		try {
+			
+			//call microservice
+			logger.debug(EELFLoggerDelegate.debugLogger,"DCAE ADD Artifact Started ");
 			commonOnboarding.addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
 			commonOnboarding.addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
 			commonOnboarding.addArtifact(mData, compo, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
 			commonOnboarding.addArtifact(mData, ons, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
+			logger.debug(EELFLoggerDelegate.debugLogger,"DCAE ADD Artifact End ");
 		}
 
 		catch (AcumosServiceException e) {
-			e.printStackTrace();
+			logger.error(EELFLoggerDelegate.errorLogger,"Exception occured while adding DCAE Artifacts " +e);
+			throw e;
+		} catch(Exception e){
+			logger.error(EELFLoggerDelegate.errorLogger,"Exception occured while adding DCAE Artifacts " +e);
+			throw e;
 		}
 	}
 
