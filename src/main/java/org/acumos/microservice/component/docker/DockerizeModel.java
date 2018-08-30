@@ -91,7 +91,7 @@ public class DockerizeModel {
 	@Value("${requirements.trustedHost}")
 	protected String trustedHost;
 
-	@Value("${mktPlace.mktPlaceEndPoinURL}")
+	@Value("${mktPlace.mktPlaceEndPointURL}")
 	protected String portalURL;
 	
 	protected String modelOriginalName = null;
