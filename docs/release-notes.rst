@@ -22,6 +22,12 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 1.2.0, 5 September 2018
+------------------------------
+* Patch release to update nexus client version to 2.2.1
+* `ACUMOS-1678 <https://jira.acumos.org/browse/ACUMOS-1678/>`_
+* `ACUMOS-1629 <https://jira.acumos.org/browse/ACUMOS-1629/>`_
+
 Version 1.1.0, 31 August 2018
 ------------------------------
 * `ACUMOS-1638 <https://jira.acumos.org/browse/ACUMOS-1638/>`_
