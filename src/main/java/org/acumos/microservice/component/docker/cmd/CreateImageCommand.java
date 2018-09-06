@@ -131,6 +131,7 @@ public class CreateImageCommand extends DockerCommand {
 		try {
 			LogBean logBean = LogThreadLocal.get();
 			String fileName = logBean.getFileName();
+			String logPath = logBean.getLogPath();
 			logger.debug(EELFLoggerDelegate.debugLogger,"Log FileName in createImgCmd : "+fileName);
 			BuildImageResultCallback callback = new BuildImageResultCallback() {
 				@Override
@@ -152,7 +153,7 @@ public class CreateImageCommand extends DockerCommand {
                 */
 				private void addLogs(String strStep) {
 					if (fileName != null) {
-						File file = new java.io.File(OnboardingConstants.lOG_DIR_LOC);
+						File file = new java.io.File(logPath);
 						try {
 							FileWriter fout = new FileWriter(file.getPath() + File.separator + fileName, true);
 							fout.write(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) + "  "
