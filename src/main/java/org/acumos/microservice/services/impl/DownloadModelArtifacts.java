@@ -23,6 +23,7 @@ package org.acumos.microservice.services.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.acumos.cds.client.CommonDataServiceRestClientImpl;
@@ -39,7 +40,7 @@ public class DownloadModelArtifacts {
 	
 	CommonDataServiceRestClientImpl cmnDataService;
 	
-	public String getModelArtifacts(String solutionId, String revisionId, String userName, String password,
+	public List<String> getModelArtifacts(String solutionId, String revisionId, String userName, String password,
 			String nexusUrl, String nexusUserName, String nexusPassword, String dataSource) throws Exception {
 		logger.debug(EELFLoggerDelegate.debugLogger, "------ Start getBluePrintNexus-----------------");
 		logger.debug(EELFLoggerDelegate.debugLogger, "-------solutionId-----------" + solutionId);
@@ -47,6 +48,8 @@ public class DownloadModelArtifacts {
 		
 		List<MLPArtifact> mlpArtifactList;
 		String nexusURI = "";
+		
+		List<String> artifactNameArray = new ArrayList<String>();
 		
 		ByteArrayOutputStream byteArrayOutputStream = null;
 		this.cmnDataService = new CommonDataServiceRestClientImpl(dataSource, userName, password, null);
@@ -78,6 +81,7 @@ public class DownloadModelArtifacts {
 							byteArrayOutputStream = artifactClient.getArtifact(nexusURI);
 							if (!nexusURI.isEmpty()) {
 								artifactFileName = nexusURI.substring(nexusURI.lastIndexOf("/") + 1, nexusURI.length());
+								artifactNameArray.add(artifactFileName);
 
 							}
 						}
@@ -94,7 +98,6 @@ public class DownloadModelArtifacts {
 				}
 			}
 		}
-		return artifactFileName;
+		return artifactNameArray;
 	}
-	
 }

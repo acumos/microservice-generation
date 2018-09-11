@@ -14,9 +14,7 @@ RUN echo $https_proxy
 RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 
 #--proxy http://pb00365848:!PB123456a%40@10.254.40.121:8080
-RUN pip install  pytest-runner
-RUN apt-get clean && apt-get update 
-RUN apt-get -y install libgtk2.0-dev
+RUN apt-get clean && apt-get update && apt-get -y install libgtk2.0-dev
 
 RUN pip install -r requirements.txt
 
@@ -29,4 +27,4 @@ RUN echo $https_proxy
 EXPOSE 3330
 
 # Run runner.py when the container launches
-CMD ["python", "runner.py"]
+CMD ["python", "-u", "runner.py"]

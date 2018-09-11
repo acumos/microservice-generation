@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +119,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		logger.info("Fetching model from Nexus...!");
 
 		String artifactName = null;
+		List<String> artifactNameList = new ArrayList<String>();
 		File files = null;
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
@@ -128,13 +130,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			DownloadModelArtifacts download = new DownloadModelArtifacts();
 			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId);
-			artifactName = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
+			artifactNameList = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 					nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
-
-			if (artifactName.indexOf(".") > 0)
-				artifactName = artifactName.substring(0, artifactName.lastIndexOf("."));
-						
-			logger.debug(EELFLoggerDelegate.debugLogger, "artifactName: {}", artifactName);
+			
+			logger.debug(EELFLoggerDelegate.debugLogger, "Number of artifacts: ", artifactNameList.size());
 			
 			logger.debug(EELFLoggerDelegate.debugLogger,"Starting Microservice Generation");
 
@@ -142,20 +141,20 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			MultipartFile model = null, meta = null, proto = null;
 			
-			File modelFile = null;
+			File modelFile = null, MetaFile = null, protoFile = null;
 			
-			// This code change to fix defect#ACUMOS-1638. If its R model it should be .bin file 
-			if(artifactName.contains("r_cmd_model")) {
-				modelFile = new File(files, artifactName + ".bin");
-			} else {
-				modelFile = new File(files, artifactName + ".zip");	
+			for (String name : artifactNameList) {
+				if (name.contains(".json")) {
+					logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: {}", name);
+					MetaFile = new File(files, name);
+				} else if (name.contains(".proto")) {
+					logger.debug(EELFLoggerDelegate.debugLogger, "ProtoFile: {}", name);
+					protoFile = new File(files, name);
+				} else {
+					logger.debug(EELFLoggerDelegate.debugLogger, "ModelFile: {}", name);
+					modelFile = new File(files, name);
+				}
 			}
-			
-			logger.debug(EELFLoggerDelegate.debugLogger, "modelFile: {}", modelFile.getName());
-			File MetaFile = new File(files, artifactName + ".json");
-			logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: {}", MetaFile.getName());
-			File protoFile = new File(files, artifactName + ".proto");
-			logger.debug(EELFLoggerDelegate.debugLogger, "protoFile: {}", protoFile.getName());
 
 			if (modName != null) {
 				Object obj = new JSONParser().parse(new FileReader(MetaFile));

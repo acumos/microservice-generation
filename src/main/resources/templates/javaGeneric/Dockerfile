@@ -30,6 +30,8 @@ EXPOSE {0}
 #Deploy Model service
 ADD getVersion.sh /app/bin/getVersion.sh
 RUN chmod 777 /app/bin/getVersion.sh
+ADD protoc /app/bin/protoc
+RUN chmod 777 /app/bin/protoc
 ADD {1} /app/app.jar
 ADD {2} /app/models/model.jar
 ADD *.proto /app/models/
