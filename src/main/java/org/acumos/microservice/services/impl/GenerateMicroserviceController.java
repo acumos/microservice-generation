@@ -112,11 +112,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			@RequestHeader(value = "provider", required = false) String provider)
 			throws AcumosServiceException {
 		
-		if (deployment_env == null){
-			deployment_env = 1;
-		}
-
-		logger.info("Fetching model from Nexus...!");
 
 		String artifactName = null;
 		List<String> artifactNameList = new ArrayList<String>();
@@ -124,6 +119,27 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
 		MLPSolution mlpSolution = new MLPSolution();
+		
+		if (deployment_env == null){
+			deployment_env = 1;
+		}
+		
+		// If trackingID is provided in the header create a
+		// OnboardingNotification object that will be used to update
+		// status
+		// against that trackingID
+		onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd);
+		if (trackingID != null) {
+			logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
+			onboardingStatus.setTrackingId(trackingID);
+		} else {
+			trackingID = UUID.randomUUID().toString();
+			onboardingStatus.setTrackingId(trackingID);
+			logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
+		}		
+
+		logger.info("Fetching model from Nexus...!");
+		
 		try {
 
 			// Nexus Integration....!
@@ -178,20 +194,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				FileInputStream fisProto = new FileInputStream(protoFile);
 				proto = new MockMultipartFile("Proto", protoFile.getName(), "", fisProto);
-
-				// If trackingID is provided in the header create a
-				// OnboardingNotification object that will be used to update
-				// status
-				// against that trackingID
-				onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd);
-				if (trackingID != null) {
-					logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
-					onboardingStatus.setTrackingId(trackingID);
-				} else {
-					trackingID = UUID.randomUUID().toString();
-					onboardingStatus.setTrackingId(trackingID);
-					logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
-				}
 				
 				if(solutioId != null && revisionId != null){
 					mData.setSolutionId(solutioId);
@@ -232,7 +234,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				// Call to validate JWT Token.....!
 				logger.debug(EELFLoggerDelegate.debugLogger, "Started JWT token validation");
-				JsonResponse<Object> valid = commonOnboarding.validate(authorization, provider);
+				JsonResponse<Object> valid = commonOnboarding.validate(authorization, " ", provider);
 
 				boolean isValidToken = valid.getStatus();
 
@@ -338,7 +340,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								commonOnboarding.addArtifact(mData, file, "LG",
 										fileName, onboardingStatus);
 								logger.debug(EELFLoggerDelegate.debugLogger,
-										"Artifacts log pushed to nexus successfully", fileName);
+										"Artifacts log pushed to nexus successfully" + fileName);
 							}
 
 							// delete log file
