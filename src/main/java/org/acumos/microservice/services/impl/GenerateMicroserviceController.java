@@ -234,7 +234,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				// Call to validate JWT Token.....!
 				logger.debug(EELFLoggerDelegate.debugLogger, "Started JWT token validation");
-				JsonResponse<Object> valid = commonOnboarding.validate(authorization, " ", provider);
+				JsonResponse<Object> valid = commonOnboarding.validate(authorization, null, provider);
 
 				boolean isValidToken = valid.getStatus();
 
