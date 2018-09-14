@@ -22,6 +22,17 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 1.4.0, 14 Septmember 2018
+--------------------------------
+* TOSCA poinitng to 0.0.31
+* `ACUMOS-1266 <https://jira.acumos.org/browse/ACUMOS-1266/>`_
+* `ACUMOS-1317 <https://jira.acumos.org/browse/ACUMOS-1317/>`_
+* `ACUMOS-1337 <https://jira.acumos.org/browse:ACUMOS-1337/>`_
+* `ACUMOS-766 <https://jira.acumos.org/browse:ACUMOS-766/>`_
+* `ACUMOS-1638 <https://jira.acumos.org/browse/ACUMOS-1638/>`_
+* `ACUMOS-1628 <https://jira.acumos.org/browse/ACUMOS-1628/>`_
+* `ACUMOS-1583 <https://jira.acumos.org/browse/ACUMOS-1583/>`_
+
 Version 1.3.0, 7 Septmember 2018
 --------------------------------
 * Pointing to CDS-1.18.0
