@@ -32,6 +32,7 @@ Version 1.4.0, 14 Septmember 2018
 * `ACUMOS-1638 <https://jira.acumos.org/browse/ACUMOS-1638/>`_
 * `ACUMOS-1628 <https://jira.acumos.org/browse/ACUMOS-1628/>`_
 * `ACUMOS-1583 <https://jira.acumos.org/browse/ACUMOS-1583/>`_
+* `ACUMOS-1746 <https://jira.acumos.org/browse/ACUMOS-1746/>`_
 
 Version 1.3.0, 7 Septmember 2018
 --------------------------------
