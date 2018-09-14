@@ -136,7 +136,18 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			trackingID = UUID.randomUUID().toString();
 			onboardingStatus.setTrackingId(trackingID);
 			logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
-		}		
+		}	
+		
+		String fileName = "MSGen_"+ trackingID + ".log";
+		// setting log filename in ThreadLocal
+		LogBean logBean = new LogBean();
+		logBean.setFileName(fileName);
+		logBean.setLogPath(logPath);
+
+		LogThreadLocal logThread = new LogThreadLocal();
+		logThread.set(logBean);
+		// create log file to capture logs as artifact
+		createLogFile(logPath);
 
 		logger.info("Fetching model from Nexus...!");
 		
@@ -210,17 +221,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					version = getModelVersion(mData.getSolutionId(), mData.getRevisionId());
 					mData.setVersion(version);
 				}
-
-				String fileName = "MSGen_"+ trackingID + ".log";
-				// setting log filename in ThreadLocal
-				LogBean logBean = new LogBean();
-				logBean.setFileName(fileName);
-				logBean.setLogPath(logPath);
-		
-				LogThreadLocal logThread = new LogThreadLocal();
-				logThread.set(logBean);
-				// create log file to capture logs as artifact
-				createLogFile(logPath);
 
 				MLPUser shareUser = null;
 
