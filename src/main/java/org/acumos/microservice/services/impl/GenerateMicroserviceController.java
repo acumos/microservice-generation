@@ -149,7 +149,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		// create log file to capture logs as artifact
 		createLogFile(logPath);
 
-		logger.info("Fetching model from Nexus...!");
+		logger.debug(EELFLoggerDelegate.debugLogger, "Fetching model from Nexus...!");
 		
 		try {
 
