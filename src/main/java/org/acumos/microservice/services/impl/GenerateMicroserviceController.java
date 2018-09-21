@@ -51,9 +51,11 @@ import org.acumos.onboarding.common.utils.OnboardingConstants;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.onboarding.component.docker.preparation.Metadata;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
+import org.acumos.onboarding.logging.OnboardingLogConstants;
 import org.acumos.onboarding.services.impl.CommonOnboarding;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -293,6 +295,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							if (onboardingStatus != null) {
 								onboardingStatus.notifyOnboardingStatus("Dockerize", "FA", e.getMessage());
 							}
+							
+							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
+							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,e.getMessage());
 							logger.error(EELFLoggerDelegate.errorLogger, "Error {}", e);
 							throw e;
 						}
@@ -339,6 +344,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 								commonOnboarding.addArtifact(mData, file, "LG",
 										fileName, onboardingStatus);
+								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.COMPLETED.name());
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Artifacts log pushed to nexus successfully" + fileName);
 							}
@@ -349,6 +355,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							mData = null;
 						} catch (AcumosServiceException e) {
 							mData = null;
+							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
+							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,e.getMessage());
 							logger.error(EELFLoggerDelegate.errorLogger, "RevertbackOnboarding Failed");
 							HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
 							return new ResponseEntity<ServiceResponse>(
@@ -357,6 +365,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					}
 				} else {
 					try {
+						MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
+						MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,"Either Username/Password is invalid");
 						logger.error(EELFLoggerDelegate.errorLogger, "Either Username/Password is invalid.");
 						throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_TOKEN,
 								"Either Username/Password is invalid.");
@@ -373,7 +383,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			}
 
 		} catch (AcumosServiceException e) {
+			
 			HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,e.getMessage());
 			logger.error(EELFLoggerDelegate.errorLogger, e.getErrorCode() + "  " + e.getMessage());
 			if (e.getErrorCode().equalsIgnoreCase(OnboardingConstants.INVALID_PARAMETER)) {
 				httpCode = HttpStatus.BAD_REQUEST;
@@ -381,6 +394,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			return new ResponseEntity<ServiceResponse>(ServiceResponse.errorResponse(e.getErrorCode(), e.getMessage()),
 					httpCode);
 		} catch (HttpClientErrorException e) {
+			  MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
+			  MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,e.getMessage());
 			// Handling #401
 			if (HttpStatus.UNAUTHORIZED == e.getStatusCode()) {
 				logger.debug(EELFLoggerDelegate.debugLogger,
@@ -395,6 +410,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						ServiceResponse.errorResponse("" + e.getStatusCode(), e.getMessage()), e.getStatusCode());
 			}
 		} catch (Exception e) {
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,e.getMessage());
 			logger.error(EELFLoggerDelegate.errorLogger, e.getMessage());
 			e.printStackTrace();
 			if (e instanceof AcumosServiceException) {
