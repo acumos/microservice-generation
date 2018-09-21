@@ -22,6 +22,30 @@
       "revId": "ae9957f72dc03ce89a986cae0079d4d74f0c3cf2",
       "serverId": "655300a2-7a56-4504-9153-881edd907bea",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ef53781d_471bf2b9",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-09-21T19:31:57Z",
+      "side": 1,
+      "message": "I apologize for this bogus comment.  You did exactly the right thing.",
+      "parentUuid": "f575c592_ebc7a692",
+      "range": {
+        "startLine": 37,
+        "startChar": 3,
+        "endLine": 37,
+        "endChar": 24
+      },
+      "revId": "ae9957f72dc03ce89a986cae0079d4d74f0c3cf2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
     }
   ]
 }
