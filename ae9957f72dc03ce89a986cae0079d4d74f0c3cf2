@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f575c592_ebc7a692",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2018-09-21T16:20:10Z",
+      "side": 1,
+      "message": "No, don\u0027t drop the -SNAPSHOT suffix!",
+      "range": {
+        "startLine": 37,
+        "startChar": 3,
+        "endLine": 37,
+        "endChar": 24
+      },
+      "revId": "ae9957f72dc03ce89a986cae0079d4d74f0c3cf2",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
