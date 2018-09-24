@@ -22,6 +22,10 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 1.5.1, 24 September 2018
+---------------------------------
+* Pointing to CDS-1.18.1
+
 Version 1.5.0, 21 Septmember 2018
 ---------------------------------
 * TOSCA poinitng to 0.0.33
