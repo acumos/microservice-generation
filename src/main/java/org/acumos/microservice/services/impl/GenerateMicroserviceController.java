@@ -341,9 +341,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							if (metadataParser != null && mData != null) {
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Adding of log artifacts into nexus started " + fileName);
-
+								String nexusArtifactID = "MSGen_"+ trackingID;
 								commonOnboarding.addArtifact(mData, file, "LG",
-										fileName, onboardingStatus);
+										nexusArtifactID, onboardingStatus);
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.COMPLETED.name());
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Artifacts log pushed to nexus successfully" + fileName);
