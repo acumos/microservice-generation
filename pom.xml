@@ -34,7 +34,7 @@
 		<dependency> 
 			<groupId>org.acumos.on-boarding</groupId> 
 			<artifactId>onboarding-common</artifactId>
-			<version>1.36.1</version> 
+			<version>1.36.3-SNAPSHOT</version> 
 		</dependency> 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
