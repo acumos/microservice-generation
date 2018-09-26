@@ -236,23 +236,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				// Call to validate JWT Token.....!
 				logger.debug(EELFLoggerDelegate.debugLogger, "Started JWT token validation");
-				JsonResponse<Object> valid = commonOnboarding.validate(authorization, null, provider);
+				String ownerId = commonOnboarding.validate(authorization, provider);
 
-				boolean isValidToken = valid.getStatus();
-
-				String ownerId = null;
 				String imageUri = null;
 
-				if (isValidToken) {
+				if (ownerId != null && !ownerId.isEmpty()) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "Token validation successful");
-					ownerId = valid.getResponseBody().toString();
-
-					if (ownerId == null) {
-						logger.error(EELFLoggerDelegate.errorLogger, "Either  username/password is invalid.");
-						throw new AcumosServiceException(AcumosServiceException.ErrorCode.OBJECT_NOT_FOUND,
-								"Either  username/password is invalid.");
-					}
-
+				
 					// update userId in onboardingStatus
 					if (onboardingStatus != null)
 						onboardingStatus.setUserId(ownerId);
