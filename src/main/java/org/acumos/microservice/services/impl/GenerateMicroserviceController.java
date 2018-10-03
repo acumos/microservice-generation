@@ -37,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import org.acumos.cds.CodeNameType;
 import org.acumos.cds.domain.MLPCodeNamePair;
 import org.acumos.cds.domain.MLPSolution;
+import org.acumos.cds.domain.MLPSolutionRevision;
 import org.acumos.cds.domain.MLPUser;
 import org.acumos.microservice.component.docker.DockerizeModel;
 import org.acumos.microservice.services.DockerService;
@@ -121,6 +122,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
 		MLPSolution mlpSolution = new MLPSolution();
+		MLPSolutionRevision revision;
 		
 		if (deployment_env == null){
 			deployment_env = 1;
@@ -140,7 +142,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
 		}	
 		
-		String fileName = "MSGen_"+ trackingID + ".log";
+		String fileName = "MicroserviceGenerationLog.txt";
 		// setting log filename in ThreadLocal
 		LogBean logBean = new LogBean();
 		logBean.setFileName(fileName);
@@ -150,6 +152,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		logThread.set(logBean);
 		// create log file to capture logs as artifact
 		createLogFile(logPath);
+		
+		String modelName = null;
 
 		logger.debug(EELFLoggerDelegate.debugLogger, "Fetching model from Nexus...!");
 		
@@ -208,14 +212,29 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				FileInputStream fisProto = new FileInputStream(protoFile);
 				proto = new MockMultipartFile("Proto", protoFile.getName(), "", fisProto);
 				
-				if(solutioId != null && revisionId != null){
+				if(deployment_env == 2){
+					
+					mlpSolution = commonOnboarding.createSolution(mData, onboardingStatus);
+					mData.setSolutionId(mlpSolution.getSolutionId());
+					logger.debug(EELFLoggerDelegate.debugLogger,
+							"New solution created Successfully for ONAP" + mlpSolution.getSolutionId());
+					
+					revision = commonOnboarding.createSolutionRevision(mData);
+					logger.debug(EELFLoggerDelegate.debugLogger,
+							"Revision created Successfully  for ONAP" + revision.getRevisionId());
+					mData.setRevisionId(revision.getRevisionId());
+					
+					modelName = mData.getModelName() + "_" + mData.getSolutionId();
+				}
+				
+				/*if(solutioId != null && revisionId != null){
 					mData.setSolutionId(solutioId);
 					mData.setRevisionId(revisionId);
 					mlpSolution.setSolutionId(solutioId);
 					mlpSolution.setName(mData.getSolutionName());
 					mlpSolution.setDescription(mData.getSolutionName());
 					mlpSolution.setUserId(mData.getOwnerId());
-				}
+				}*/
 				
 				String version = mData.getVersion();
 
@@ -330,9 +349,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							if (metadataParser != null && mData != null) {
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Adding of log artifacts into nexus started " + fileName);
+								
+								String nexusArtifactID = "MicroserviceGenerationLog";
 
-								commonOnboarding.addArtifact(mData, file, "LG",
-										fileName, onboardingStatus);
+								commonOnboarding.addArtifact(mData, file, "LG", nexusArtifactID, onboardingStatus);
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.COMPLETED.name());
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Artifacts log pushed to nexus successfully" + fileName);
