@@ -128,6 +128,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			deployment_env = 1;
 		}
 		
+		logger.debug(EELFLoggerDelegate.debugLogger, "deployment_env: {}", deployment_env);
+		
 		// If trackingID is provided in the header create a
 		// OnboardingNotification object that will be used to update
 		// status
@@ -141,6 +143,23 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			onboardingStatus.setTrackingId(trackingID);
 			logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: {}", trackingID);
 		}	
+		
+		// Call to validate Token.....!
+		String ownerId = commonOnboarding.validate(authorization, provider);
+		if (ownerId != null && !ownerId.isEmpty()) {
+
+			logger.debug(EELFLoggerDelegate.debugLogger, "Token validation successful");
+
+			// update userId in onboardingStatus
+			if (onboardingStatus != null)
+				onboardingStatus.setUserId(ownerId);
+		} else {
+
+			logger.error(EELFLoggerDelegate.errorLogger, "Either Username/Password is invalid.");
+			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_TOKEN,
+					"Either Username/Password is invalid.");
+		}
+		
 		
 		String fileName = "MicroserviceGenerationLog.txt";
 		// setting log filename in ThreadLocal
@@ -202,6 +221,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			if ((modelFile.exists()) && (MetaFile.exists()) && (protoFile.exists())) {
 				metadataParser = new MetadataParser(MetaFile);
 				mData = metadataParser.getMetadata();
+				mData.setOwnerId(ownerId);
 				
 				FileInputStream fisModel = new FileInputStream(modelFile);
 				model = new MockMultipartFile("Model", modelFile.getName(), "", fisModel);
@@ -212,29 +232,31 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				FileInputStream fisProto = new FileInputStream(protoFile);
 				proto = new MockMultipartFile("Proto", protoFile.getName(), "", fisProto);
 				
-				if(deployment_env == 2){
-					
+				if (deployment_env == 2) {
+
 					mlpSolution = commonOnboarding.createSolution(mData, onboardingStatus);
 					mData.setSolutionId(mlpSolution.getSolutionId());
 					logger.debug(EELFLoggerDelegate.debugLogger,
 							"New solution created Successfully for ONAP" + mlpSolution.getSolutionId());
-					
+
 					revision = commonOnboarding.createSolutionRevision(mData);
 					logger.debug(EELFLoggerDelegate.debugLogger,
 							"Revision created Successfully  for ONAP" + revision.getRevisionId());
 					mData.setRevisionId(revision.getRevisionId());
-					
+
 					modelName = mData.getModelName() + "_" + mData.getSolutionId();
-				}
-				
-				/*if(solutioId != null && revisionId != null){
+				} else if (solutioId != null && revisionId != null) {
 					mData.setSolutionId(solutioId);
 					mData.setRevisionId(revisionId);
 					mlpSolution.setSolutionId(solutioId);
 					mlpSolution.setName(mData.getSolutionName());
 					mlpSolution.setDescription(mData.getSolutionName());
 					mlpSolution.setUserId(mData.getOwnerId());
-				}*/
+				} else {
+					logger.error(EELFLoggerDelegate.errorLogger, "Invalid Request................");
+					throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
+							 "Invalid Request...............");
+				}
 				
 				String version = mData.getVersion();
 
@@ -245,25 +267,20 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				MLPUser shareUser = null;
 
-				// try {
+				/*// try {
 				// 'authorization' represents JWT token here...!
 				if (authorization == null) {
 					logger.error(EELFLoggerDelegate.errorLogger, "Token Not Available...!");
 					throw new AcumosServiceException(AcumosServiceException.ErrorCode.OBJECT_NOT_FOUND,
 							"Token Not Available...!");
 				}
-
-				// Call to validate JWT Token.....!
-				String ownerId = commonOnboarding.validate(authorization, provider);
+*/
+				
 
 				String imageUri = null;
 
 				if (ownerId != null && !ownerId.isEmpty()) {
-					logger.debug(EELFLoggerDelegate.debugLogger, "Token validation successful");
-				
-					// update userId in onboardingStatus
-					if (onboardingStatus != null)
-						onboardingStatus.setUserId(ownerId);
+
 
 					logger.debug(EELFLoggerDelegate.debugLogger,
 							"Dockerization request recieved with " + model.getOriginalFilename());
@@ -275,7 +292,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					boolean isSuccess = false;
 					
 					try {
-						mData.setOwnerId(ownerId);
 
 						// Solution id creation completed
 						// Notify Creation of solution ID is successful
