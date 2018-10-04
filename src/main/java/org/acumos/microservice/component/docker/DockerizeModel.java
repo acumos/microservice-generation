@@ -121,12 +121,12 @@ public class DockerizeModel {
 	/*
 	 * @Method Name : dockerizeFile Performs complete dockerization process.
 	 */
-	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, Integer deployment_env) throws AcumosServiceException {
-		File outputFolder = localmodelFile.getParentFile();
+	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, Integer deployment_env, File tempFolder) throws AcumosServiceException {
+		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
-		logger.debug(EELFLoggerDelegate.debugLogger,"Preparing app in: {}", outputFolder);
+		logger.debug(EELFLoggerDelegate.debugLogger,"Preparing app in: {}", tempFolder);
 		if (metadata.getRuntimeName().equals("python")) {
-			outputFolder = new File(localmodelFile.getParentFile(), "app");
+			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
 			
 			Resource[] resources = null;

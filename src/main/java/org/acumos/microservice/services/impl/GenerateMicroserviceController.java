@@ -117,6 +117,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		
 
 		String artifactName = null;
+		File files = null;
 		List<String> artifactNameList = new ArrayList<String>();
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
@@ -191,6 +192,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			String modelId = UtilityFunction.getGUID();
 			File outputFolder = new File("tmp", modelId);
 			outputFolder.mkdirs();
+			
+			files = new File("model");
 
 			MultipartFile model = null, meta = null, proto = null;
 			
@@ -199,15 +202,19 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			for (String name : artifactNameList) {
 				if (name.contains(".json")) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: {}", name);
-					MetaFile = new File(outputFolder, name);
+					MetaFile = new File(files, name);
+					UtilityFunction.copyFile(MetaFile, new File(outputFolder, name));
 				} else if (name.contains(".proto")) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ProtoFile: {}", name);
-					protoFile = new File(outputFolder, name);
+					protoFile = new File(files, name);
+					UtilityFunction.copyFile(protoFile, new File(outputFolder, name));
 				} else {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ModelFile: {}", name);
-					modelFile = new File(outputFolder, name);
+					modelFile = new File(files, name);
+					UtilityFunction.copyFile(modelFile, new File(outputFolder, name));
 				}
 			}
+			
 
 			if (modName != null) {
 				Object obj = new JSONParser().parse(new FileReader(MetaFile));
@@ -311,7 +318,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						}
 
 						try {
-							imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(), deployment_env);
+							imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(), deployment_env, outputFolder);
 						} catch (Exception e) {
 							// Notify Create docker image failed
 							if (onboardingStatus != null) {
@@ -336,8 +343,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						commonOnboarding.addArtifact(mData, imageUri, getArtifactTypeCode("Docker Image"), onboardingStatus);
 						
 						if (deployment_env == 2) {
-                                                        logger.debug(EELFLoggerDelegate.debugLogger, "OutputFolderPath: " + outputFolder);
-                                                        logger.debug(EELFLoggerDelegate.debugLogger, "AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath());
+                            logger.debug(EELFLoggerDelegate.debugLogger, "OutputFolderPath: " + outputFolder);
+                            logger.debug(EELFLoggerDelegate.debugLogger, "AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath());
 							addDCAEArrtifacts(mData, outputFolder, mlpSolution.getSolutionId(), onboardingStatus);
 						}
 
