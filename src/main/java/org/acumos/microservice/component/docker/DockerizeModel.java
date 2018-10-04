@@ -121,7 +121,7 @@ public class DockerizeModel {
 	/*
 	 * @Method Name : dockerizeFile Performs complete dockerization process.
 	 */
-	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, Integer deployment_env, File tempFolder) throws AcumosServiceException {
+	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, String deployment_env, File tempFolder) throws AcumosServiceException {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		logger.debug(EELFLoggerDelegate.debugLogger,"Preparing app in: {}", tempFolder);
@@ -131,7 +131,7 @@ public class DockerizeModel {
 			
 			Resource[] resources = null;
 			
-			if(deployment_env == 2)
+			if(deployment_env.equalsIgnoreCase("2"))
 			{
 				resources = this.resourceUtils.loadResources("classpath*:templates/dcae_python/*");
 			}

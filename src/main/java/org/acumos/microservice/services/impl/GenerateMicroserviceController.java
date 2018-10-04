@@ -109,13 +109,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request,
 			@RequestParam(required = true) String solutioId, String revisionId,
 			@RequestParam(required = false) String modName,
-			@RequestParam(required = false) Integer deployment_env,
+			@RequestHeader(value = "deployment_env", required = false) String deploy_env,
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider)
 			throws AcumosServiceException {
 		
-
+		String deployment_env = null;
 		String artifactName = null;
 		File files = null;
 		List<String> artifactNameList = new ArrayList<String>();
@@ -124,8 +124,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		MLPSolution mlpSolution = new MLPSolution();
 		MLPSolutionRevision revision;
 		
-		if (deployment_env == null){
-			deployment_env = 1;
+		if (deploy_env == null || deploy_env.isEmpty()){
+			deployment_env = "1";
+		} else {
+			deployment_env = deploy_env.trim();
 		}
 		
 		logger.debug(EELFLoggerDelegate.debugLogger, "deployment_env: {}", deployment_env);
@@ -240,7 +242,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				FileInputStream fisProto = new FileInputStream(protoFile);
 				proto = new MockMultipartFile("Proto", protoFile.getName(), "", fisProto);
 				
-				if (deployment_env == 2) {
+				if (deployment_env.equalsIgnoreCase("2")) {
 
 					mlpSolution = commonOnboarding.createSolution(mData, onboardingStatus);
 					mData.setSolutionId(mlpSolution.getSolutionId());
@@ -342,7 +344,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						artifactsDetails = getArtifactsDetails();
 						commonOnboarding.addArtifact(mData, imageUri, getArtifactTypeCode("Docker Image"), onboardingStatus);
 						
-						if (deployment_env == 2) {
+						if (deployment_env.equalsIgnoreCase("2")) {
                             logger.debug(EELFLoggerDelegate.debugLogger, "OutputFolderPath: " + outputFolder);
                             logger.debug(EELFLoggerDelegate.debugLogger, "AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath());
 							addDCAEArrtifacts(mData, outputFolder, mlpSolution.getSolutionId(), onboardingStatus);
