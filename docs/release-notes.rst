@@ -22,6 +22,14 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 1.7.0, 04 October 2018
+---------------------------------
+* Common Data Service client at version 1.18.2
+* TOSCA model generator client at version 1.33.1
+* There is a change in yml. rimage version changed from 1.0 to 1.0.0
+* `ACUMOS-1736 <https://jira.acumos.org/browse/ACUMOS-1736/>`_
+* `ACUMOS-1639 <https://jira.acumos.org/browse/ACUMOS-1639/>`_
+
 Version 1.6.0, 28 September 2018
 --------------------------------
 * `ACUMOS-1771 <https://jira.acumos.org/browse/ACUMOS-1771/>`_
