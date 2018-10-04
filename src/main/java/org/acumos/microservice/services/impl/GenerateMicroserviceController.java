@@ -109,7 +109,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request,
 			@RequestParam(required = true) String solutioId, String revisionId,
 			@RequestParam(required = false) String modName,
-			@RequestHeader(value = "deployment_env", required = false) String deploy_env,
+			@RequestParam(value = "deployment_env", required = false) String deploy_env,
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider)
@@ -243,11 +243,26 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				proto = new MockMultipartFile("Proto", protoFile.getName(), "", fisProto);
 				
 				if (deployment_env.equalsIgnoreCase("2")) {
+					
+					List<MLPSolution> solList = commonOnboarding.getExistingSolution(mData);
+
+					boolean isListEmpty = solList.isEmpty();
+
+					if (isListEmpty) {
 
 					mlpSolution = commonOnboarding.createSolution(mData, onboardingStatus);
 					mData.setSolutionId(mlpSolution.getSolutionId());
 					logger.debug(EELFLoggerDelegate.debugLogger,
 							"New solution created Successfully for ONAP" + mlpSolution.getSolutionId());
+					}else {
+						logger.debug(EELFLoggerDelegate.debugLogger,
+								"Existing solution found for ONAP model name " + solList.get(0).getName());
+						mlpSolution = solList.get(0);
+						mData.setSolutionId(mlpSolution.getSolutionId());
+						mlpSolution.setName(mData.getSolutionName());
+						mlpSolution.setDescription(mData.getSolutionName());
+						mlpSolution.setUserId(mData.getOwnerId());
+					}
 
 					revision = commonOnboarding.createSolutionRevision(mData);
 					logger.debug(EELFLoggerDelegate.debugLogger,
