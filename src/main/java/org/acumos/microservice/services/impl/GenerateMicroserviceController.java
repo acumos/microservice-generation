@@ -118,7 +118,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 		String artifactName = null;
 		List<String> artifactNameList = new ArrayList<String>();
-		File files = null;
 		Metadata mData = null;
 		OnboardingNotification onboardingStatus = null;
 		MLPSolution mlpSolution = new MLPSolution();
@@ -189,7 +188,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			
 			logger.debug(EELFLoggerDelegate.debugLogger,"Starting Microservice Generation");
 
-			files = new File("model");
+			String modelId = UtilityFunction.getGUID();
+			File outputFolder = new File("tmp", modelId);
+			outputFolder.mkdirs();
 
 			MultipartFile model = null, meta = null, proto = null;
 			
@@ -198,13 +199,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			for (String name : artifactNameList) {
 				if (name.contains(".json")) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: {}", name);
-					MetaFile = new File(files, name);
+					MetaFile = new File(outputFolder, name);
 				} else if (name.contains(".proto")) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ProtoFile: {}", name);
-					protoFile = new File(files, name);
+					protoFile = new File(outputFolder, name);
 				} else {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ModelFile: {}", name);
-					modelFile = new File(files, name);
+					modelFile = new File(outputFolder, name);
 				}
 			}
 
@@ -286,9 +287,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							"Dockerization request recieved with " + model.getOriginalFilename());
 
 					modelOriginalName = model.getOriginalFilename();
-					String modelId = UtilityFunction.getGUID();
-					File outputFolder = new File("tmp", modelId);
-					outputFolder.mkdirs();
 					boolean isSuccess = false;
 					
 					try {
