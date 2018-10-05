@@ -506,9 +506,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			
 			//call microservice
 			logger.debug(EELFLoggerDelegate.debugLogger,"DCAE ADD Artifact Started ");
-			commonOnboarding.addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
-			commonOnboarding.addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
-			commonOnboarding.addArtifact(mData, compo, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
+			commonOnboarding.addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), "anomaly-in", onboardingStatus);
+			commonOnboarding.addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), "anomaly-out", onboardingStatus);
+			commonOnboarding.addArtifact(mData, compo, getArtifactTypeCode("Metadata"), "component", onboardingStatus);
 			commonOnboarding.addArtifact(mData, ons, getArtifactTypeCode("Metadata"), solutionID, onboardingStatus);
 			logger.debug(EELFLoggerDelegate.debugLogger,"DCAE ADD Artifact End ");
 		}
