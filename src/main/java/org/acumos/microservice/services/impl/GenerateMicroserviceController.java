@@ -167,12 +167,12 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		// setting log filename in ThreadLocal
 		LogBean logBean = new LogBean();
 		logBean.setFileName(fileName);
-		logBean.setLogPath(logPath);
+		logBean.setLogPath(logPath+File.separator+trackingID);
 
 		LogThreadLocal logThread = new LogThreadLocal();
 		logThread.set(logBean);
 		// create log file to capture logs as artifact
-		createLogFile(logPath);
+		createLogFile(logBean.getLogPath());
 		
 		String modelName = null;
 
@@ -382,7 +382,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							}
 
 							// push docker build log into nexus
-							File file = new java.io.File(logPath + File.separator + fileName);
+							File file = new java.io.File(logPath + File.separator + trackingID + File.separator + fileName);
 							logger.debug(EELFLoggerDelegate.debugLogger, "Log file length " + file.length());
 							logger.debug(EELFLoggerDelegate.debugLogger, "Log file Path " + file.getPath() +" Absolute Path : "+file.getAbsolutePath() + " Canonical Path: "+ file.getCanonicalFile());
 
