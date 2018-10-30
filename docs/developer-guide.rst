@@ -60,6 +60,7 @@ Artifacts include - Model binary, Protobuf definition for model input/output and
 with Tosca generator files.
 
 **1.4 Microservice generation Design Architecture**
+
 |image0|
 
 Microservice generation exposes API that accepts solution ID for onboarded model, downloads model artifacts and builds
