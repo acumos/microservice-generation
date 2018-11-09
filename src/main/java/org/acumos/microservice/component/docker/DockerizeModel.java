@@ -97,7 +97,7 @@ public class DockerizeModel {
 	protected String modelOriginalName = null;
 	
 	@Autowired
-	protected ResourceLoader resourceLoader;
+	ResourceLoader resourceLoader;
 
 	@Autowired
 	protected DockerConfiguration dockerConfiguration;
@@ -108,7 +108,7 @@ public class DockerizeModel {
 
 	protected PortalRestClientImpl portalClient;
 
-	protected ResourceUtils resourceUtils;
+	ResourceUtils resourceUtils;
 	
 	@PostConstruct
 	public void init() {
@@ -133,7 +133,7 @@ public class DockerizeModel {
 			
 			if(deployment_env.equalsIgnoreCase("2"))
 			{
-				resources = this.resourceUtils.loadResources("classpath*:templates/dcae_python/*");
+				resources = resourceUtils.loadResources("classpath*:templates/dcae_python/*");
 			}
 			else
 			{
