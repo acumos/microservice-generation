@@ -8,7 +8,10 @@ import org.acumos.microservice.component.docker.DockerizeModel;
 import org.acumos.microservice.component.docker.cmd.CreateImageCommand;
 import org.acumos.microservice.component.docker.cmd.PushImageCommand;
 import org.acumos.microservice.component.docker.cmd.TagImageCommand;
+import org.acumos.microservice.component.docker.preparation.H2ODockerPreparator;
+import org.acumos.microservice.component.docker.preparation.JavaGenericDockerPreparator;
 import org.acumos.microservice.component.docker.preparation.PythonDockerPreprator;
+import org.acumos.microservice.component.docker.preparation.RDockerPreparator;
 import org.acumos.microservice.services.impl.DownloadModelArtifacts;
 import org.acumos.nexus.client.NexusArtifactClient;
 import org.acumos.nexus.client.RepositoryLocation;
@@ -57,7 +60,7 @@ import org.acumos.onboarding.common.utils.UtilityFunction;
 public class DockerizeModelTest  implements ResourceLoaderAware {
 	
 	@InjectMocks
-	@Spy
+	@Spy  //Spy is added to support static mock 
 	DockerizeModel dockerizeModel = new DockerizeModel();
 	
 	ResourceLoader resourceLoader;
@@ -79,6 +82,15 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 	
 	@Mock
 	PythonDockerPreprator pythonDockerPreprator;
+	
+	@Mock
+	RDockerPreparator rDockerPreparator;
+	
+	@Mock
+	JavaGenericDockerPreparator javaGenericDockerPreparator;
+	
+	@Mock
+	H2ODockerPreparator h2oDockerPreparator;
 	
 	@Mock
 	DockerConfiguration dockerConfiguration;
@@ -164,6 +176,8 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		
 		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 		assertNotNull(imageURI);	
+		
+		
 	
 	
 		} catch (AcumosServiceException e) {
@@ -174,6 +188,122 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		}
 		
 	}
+	
+	
+	@Test
+	public void dockerizeJavagenericFileTest() {
+		
+	try {
+
+		File files = new File("model");
+		File MetaFile = new File(files, "metadata.json");
+		String ownerId = "testuser";
+		
+		String filePath = FilePathTest.filePath();
+		File validJsonFile = new File(filePath + "metadata.json");
+		
+		ResourceUtils resourceUtilsMock = mock(ResourceUtils.class);
+		mockStatic(UtilityFunction.class);
+		mockStatic(DockerClientFactory.class);
+		Resource rc = mock(Resource.class);
+		File file = mock(File.class);
+		JavaGenericDockerPreparator javaGenericDockerPreparator = mock(JavaGenericDockerPreparator.class);
+		
+		RDockerPreparator rDockerPreparator = mock(RDockerPreparator.class);
+		//CreateImageCommand createImageCommand = mock(CreateImageCommand.class);
+		H2ODockerPreparator h2ODockerPreparator = mock(H2ODockerPreparator.class);
+		
+		
+		DockerizeModel dockerizeModelMock = mock(DockerizeModel.class);
+		DockerClient dockerClient = mock(DockerClient.class);
+		
+		MetadataParser metadataParser = new MetadataParser(validJsonFile);
+		
+		Metadata mData = null;
+		
+		mData = metadataParser.getMetadata();
+		mData.setModelName("acumosmodel");
+		mData.setVersion("1.0");
+		
+		
+		String modelId = "12345";
+		File outputFolder = new File(filePath,modelId);
+		
+		File modelFile = new File("model.zip");
+		
+		ResourceUtils resourceUtils1 = new ResourceUtils(resourceLoader);
+		Resource[] resources = resourceUtils1.loadResources("classpath*:templates/java_argus/*");
+		
+		PowerMockito.when(resourceUtils.loadResources(Mockito.anyString())).thenReturn(resources);
+		
+		PowerMockito.doNothing().when(UtilityFunction.class);
+		UtilityFunction.copyFile(rc, file);
+		
+		PowerMockito.doReturn(dockerClient).when(DockerClientFactory.class);
+		DockerClientFactory.getDockerClient(Mockito.anyObject());
+		
+		PowerMockito.whenNew(JavaGenericDockerPreparator.class)
+			.withArguments(Mockito.anyObject()).thenReturn(javaGenericDockerPreparator);
+	
+		PowerMockito.whenNew(RDockerPreparator.class)
+		.withArguments(Mockito.anyObject() , Mockito.anyString()).thenReturn(rDockerPreparator);
+		
+		PowerMockito.whenNew(H2ODockerPreparator.class)
+		.withArguments(Mockito.anyObject()).thenReturn(h2ODockerPreparator);
+
+		
+		doNothing().when(javaGenericDockerPreparator).prepareDockerApp(Mockito.anyObject());
+		doNothing().when(rDockerPreparator).prepareDockerApp(Mockito.anyObject());
+		doNothing().when(h2ODockerPreparator).prepareDockerApp(Mockito.anyObject());
+		
+		
+		doNothing().when(dockerizeModel).listFilesAndFilesSubDirectories(Mockito.anyObject());
+		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
+		doNothing().when(createImageCommand).execute();
+		
+		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
+		doNothing().when(createImageCommand).execute();
+		
+
+		PowerMockito.whenNew(TagImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(tagImageCommand);
+
+		PowerMockito.whenNew(PushImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pushImageCmd);
+	
+		
+		//String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		//assertNotNull(imageURI);	
+		
+		//metadataParser.s
+		//javageneric
+		
+		mData.setRuntimeName("javageneric");
+		mData.setRuntimeVersion("0");
+		dockerizeModel.setModelOriginalName("acumosavageneric");
+		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		assertNotNull(imageURI);	
+		
+		mData.setRuntimeName("r");
+		dockerizeModel.setModelOriginalName("acumosr");
+		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		assertNotNull(imageURI);	
+		
+		mData.setRuntimeName("h2o");
+		dockerizeModel.setModelOriginalName("h2o");
+		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		assertNotNull(imageURI);	
+		
+		
+	
+	
+		} catch (AcumosServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 
 
 	@Override

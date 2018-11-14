@@ -96,6 +96,8 @@ public class DockerizeModel {
 	
 	protected String modelOriginalName = null;
 	
+	
+
 	@Autowired
 	ResourceLoader resourceLoader;
 
@@ -413,5 +415,13 @@ public class DockerizeModel {
 			logger.info("Failed while creating log file " + e.getMessage());
 		}
 
+	}
+	
+	public String getModelOriginalName() {
+		return modelOriginalName;
+	}
+
+	public void setModelOriginalName(String modelOriginalName) {
+		this.modelOriginalName = modelOriginalName;
 	}
 }
