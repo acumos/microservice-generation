@@ -6,6 +6,7 @@ import org.acumos.microservice.component.docker.DockerClientFactory;
 import org.acumos.microservice.component.docker.DockerConfiguration;
 import org.acumos.microservice.component.docker.DockerizeModel;
 import org.acumos.microservice.component.docker.cmd.CreateImageCommand;
+import org.acumos.microservice.component.docker.cmd.DeleteImageCommand;
 import org.acumos.microservice.component.docker.cmd.PushImageCommand;
 import org.acumos.microservice.component.docker.cmd.TagImageCommand;
 import org.acumos.microservice.component.docker.preparation.H2ODockerPreparator;
@@ -18,6 +19,8 @@ import org.acumos.nexus.client.RepositoryLocation;
 //import org.acumos.onboarding.FilePathTest;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.models.OnboardingNotification;
+import org.acumos.onboarding.common.utils.LogBean;
+import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.common.utils.ResourceUtils;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.onboarding.component.docker.preparation.Metadata;
@@ -107,9 +110,13 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 	@Mock
 	PushImageCommand pushImageCmd;
 	
+	@Mock
+	DeleteImageCommand deleteImageCommand;
+	
+
 
 	@Test
-	public void dockerizeFileTest() {
+	public void dockerizePythonFileTest() {
 		
 	try {
 
@@ -191,7 +198,7 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 	
 	
 	@Test
-	public void dockerizeJavagenericFileTest() {
+	public void dockerizeJavagenericArgusH2ORFileTest() {
 		
 	try {
 
@@ -268,13 +275,11 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		PowerMockito.whenNew(TagImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(tagImageCommand);
 
 		PowerMockito.whenNew(PushImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pushImageCmd);
-	
 		
-		//String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
-		//assertNotNull(imageURI);	
 		
-		//metadataParser.s
-		//javageneric
+		PowerMockito.when(UtilityFunction.getFileName(Mockito.anyObject(),Mockito.anyString())).thenReturn("testfile");
+		UtilityFunction.deCompressGZipFile(Mockito.anyObject(),Mockito.anyObject());
+		UtilityFunction.unTarFile(Mockito.anyObject(),Mockito.anyObject());
 		
 		mData.setRuntimeName("javageneric");
 		mData.setRuntimeVersion("0");
@@ -292,6 +297,12 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 		assertNotNull(imageURI);	
 		
+		mData.setRuntimeName("javaargus");
+		dockerizeModel.setModelOriginalName("javaargus");
+		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		assertNotNull(imageURI);
+		
+		
 		
 	
 	
@@ -301,7 +312,87 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	
+	}
+	
+	
+	@Test
+	public void revertbackOnboardingTest() {
 		
+	try {
+
+		
+		File files = new File("model");
+		File MetaFile = new File(files, "metadata.json");
+		String ownerId = "testuser";
+		
+		String filePath = FilePathTest.filePath();
+		String modelId = "12345";
+		File outputFolder = new File(filePath,modelId);
+		
+		File validJsonFile = new File(filePath + "metadata.json");
+		
+		mockStatic(DockerClientFactory.class);
+		CommonDataServiceRestClientImpl cmdDataSvc = mock(CommonDataServiceRestClientImpl.class);
+		NexusArtifactClient artifactClient = mock(NexusArtifactClient.class);
+		
+		DockerClient dockerClient = mock(DockerClient.class);
+		
+		MetadataParser metadataParser = new MetadataParser(validJsonFile);
+		
+		Metadata mData = null;
+		
+		mData = metadataParser.getMetadata();
+		mData.setModelName("acumosmodel");
+		mData.setVersion("1.0");
+		
+		PowerMockito.doReturn(dockerClient).when(DockerClientFactory.class);
+		DockerClientFactory.getDockerClient(Mockito.anyObject());
+		
+		PowerMockito.whenNew(NexusArtifactClient.class).withArguments(Mockito.anyObject()).thenReturn(artifactClient);
+		
+		MLPArtifact mLPArtifact  = new MLPArtifact();
+		mLPArtifact.setArtifactTypeCode("MI");
+		mLPArtifact.setUri("org/acumos/hello-world/2/hello-world-2.json");
+		
+		List<MLPArtifact> mlpArtifactList = new ArrayList();
+		mlpArtifactList.add(mLPArtifact);		
+		
+		// Remember-  to mock method on mock object it should on mock() method not on object created by @Mock  . e.g.  below won't work 
+		// on cmnDataService created @Mock where it should work on cmdDataSvc created by mock(....)
+		PowerMockito.when(cmdDataSvc.getSolutionRevisionArtifacts(Mockito.anyString(), Mockito.anyString())).thenReturn(mlpArtifactList);
+		
+		//DeleteImageCommand deleteImageCommand = new DeleteImageCommand(imageTagName, metadata.getVersion(), "");
+		PowerMockito.whenNew(DeleteImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(deleteImageCommand);
+		
+		mData.setRuntimeName("javageneric");
+		mData.setRuntimeVersion("0");
+		mData.setSolutionId("12dgcb63f45sd");
+		dockerizeModel.setModelOriginalName("acumosavageneric");
+		
+	/*	LogBean logBean = new LogBean();
+		logBean.setFileName("fileName");
+		//logBean.setLogPath(logPath+File.separator+trackingID);
+
+		LogThreadLocal logThread = new LogThreadLocal();
+		logThread.set(logBean);*/
+		
+		//dockerizeModel.createLogFile("test");
+//		dockerizeModel.listFilesAndFilesSubDirectories(outputFolder);
+		dockerizeModel.revertbackOnboarding(mData, "solutionid", "imagclassifier");
+		
+		
+		
+		assert(true);	
+		
+		} catch (AcumosServiceException e) {
+			assert(false);
+			e.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	
+	
 	}
 
 
