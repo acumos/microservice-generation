@@ -55,6 +55,8 @@ public class H2ODockerPreparatorTest {
 	
 	@Mock
 	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser);
+	
+
 
 	@Test
 	public void compareVersionTest() {
