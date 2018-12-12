@@ -156,6 +156,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		onboardingStatus.setRequestId(request_id);
 		MDC.put(OnboardingLogConstants.MDCs.REQUEST_ID, request_id);
 		
+	  try {
+		
 		// Call to validate Token.....!
 		String ownerId = commonOnboarding.validate(authorization, provider);
 		if (ownerId != null && !ownerId.isEmpty()) {
@@ -168,8 +170,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		} else {
 
 			logger.error(EELFLoggerDelegate.errorLogger, "Either Username/Password is invalid.");
-			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_TOKEN,
-					"Either Username/Password is invalid.");
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, "Either Username/Password is invalid.");
+			//throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_TOKEN,
+				//	"Either Username/Password is invalid.");
+			return new ResponseEntity<ServiceResponse>(
+                    ServiceResponse.errorResponse("" + HttpStatus.UNAUTHORIZED, "Unauthorized User"),
+                    HttpStatus.UNAUTHORIZED);
 		}
 		
 		
@@ -188,7 +195,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 		logger.debug(EELFLoggerDelegate.debugLogger, "Fetching model from Nexus...!");
 		
-		try {
+		
 
 			// Nexus Integration....!
 
@@ -456,11 +463,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			  MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
 			  MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,e.getMessage());
 			// Handling #401
-			if (HttpStatus.UNAUTHORIZED == e.getStatusCode()) {
+			if (HttpStatus.UNAUTHORIZED == e.getStatusCode() || HttpStatus.BAD_REQUEST == e.getStatusCode()) {
 				logger.debug(EELFLoggerDelegate.debugLogger,
 						"Unauthorized User - Either Username/Password is invalid.");
 				return new ResponseEntity<ServiceResponse>(
-						ServiceResponse.errorResponse("" + e.getStatusCode(), "Unauthorized User"),
+						ServiceResponse.errorResponse("" + HttpStatus.UNAUTHORIZED, "Unauthorized User"),
 						HttpStatus.UNAUTHORIZED);
 			} else {
 				logger.error(EELFLoggerDelegate.errorLogger, e.getMessage());
