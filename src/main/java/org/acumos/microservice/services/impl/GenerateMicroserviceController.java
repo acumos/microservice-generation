@@ -104,7 +104,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	@ApiOperation(value = "Dockerize the model artifact by solution and revision ID", response = ServiceResponse.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 500, message = "Something bad happened", response = ServiceResponse.class),
-			@ApiResponse(code = 400, message = "Invalid request", response = ServiceResponse.class) })
+			@ApiResponse(code = 400, message = "Invalid request", response = ServiceResponse.class) ,
+			@ApiResponse(code = 401, message = "Unauthorized User", response = ServiceResponse.class) })
 	@RequestMapping(value = "/generateMicroservice", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request,
 			@RequestParam(required = true) String solutioId, String revisionId,
