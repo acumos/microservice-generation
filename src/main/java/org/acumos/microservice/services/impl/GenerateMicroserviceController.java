@@ -192,6 +192,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		// create log file to capture logs as artifact
 		createLogFile(logBean.getLogPath());
 		
+		String buildVersion = UtilityFunction.getProjectVersion();	
+		logger.debug("Microservice-Generation version {}", buildVersion);
+		
 		String modelName = null;
 
 		logger.debug(EELFLoggerDelegate.debugLogger, "Fetching model from Nexus...!");

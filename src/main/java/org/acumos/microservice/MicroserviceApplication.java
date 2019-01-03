@@ -21,6 +21,7 @@
 package org.acumos.microservice;
 
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -61,5 +62,15 @@ public class MicroserviceApplication implements ApplicationContextAware {
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
 		((ConfigurableEnvironment) context.getEnvironment()).setActiveProfiles("src");
 	}
+	
+	public  void logVersion() {
+        String className = this.getClass().getSimpleName() + ".class";
+        String classPath = this.getClass().getResource(className).toString();
+        String version = classPath.startsWith("jar")
+                                        ? MicroserviceApplication.class.getPackage().getImplementationVersion()
+                                        : "no version, classpath is not jar";
+        logger.info("Microservice-Generation version {}", version);
+        UtilityFunction.setProjectVersion(version);
+    }
 
 }
