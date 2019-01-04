@@ -193,7 +193,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		createLogFile(logBean.getLogPath());
 		
 		String buildVersion = UtilityFunction.getProjectVersion();	
-		logger.debug("Microservice-Generation version {}", buildVersion);
+		logger.debug(EELFLoggerDelegate.debugLogger,"Microservice-Generation version {}", buildVersion);
 		
 		String modelName = null;
 

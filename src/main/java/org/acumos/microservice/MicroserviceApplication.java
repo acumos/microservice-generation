@@ -72,7 +72,7 @@ public class MicroserviceApplication implements ApplicationContextAware {
         String version = classPath.startsWith("jar")
                                         ? MicroserviceApplication.class.getPackage().getImplementationVersion()
                                         : "no version, classpath is not jar";
-        logger.info("Microservice-Generation version {}", version);
+        logger.debug(EELFLoggerDelegate.debugLogger,"Microservice-Generation version {}", version);
         UtilityFunction.setProjectVersion(version);
     }
 
