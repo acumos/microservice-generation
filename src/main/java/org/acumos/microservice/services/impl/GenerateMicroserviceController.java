@@ -192,7 +192,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		// create log file to capture logs as artifact
 		createLogFile(logBean.getLogPath());
 		
-		String buildVersion = UtilityFunction.getProjectVersion();	
+		String buildVersion = this.logVersion();
 		logger.debug(EELFLoggerDelegate.debugLogger,"Microservice-Generation version {}", buildVersion);
 		
 		String modelName = null;
@@ -496,6 +496,16 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		}
 
 	}
+	
+	public String logVersion() {
+        String className = this.getClass().getSimpleName() + ".class";
+        String classPath = this.getClass().getResource(className).toString();
+        String version = classPath.startsWith("jar")
+                                        ? GenerateMicroserviceController.class.getPackage().getImplementationVersion()
+                                        : "no version, classpath is not jar";
+        logger.debug(EELFLoggerDelegate.debugLogger,"Microservice-Generation version {}", version);
+        return version;
+    }
 
 	private Map<String, String> getArtifactsDetails() {
 		List<MLPCodeNamePair> typeCodeList = cdmsClient.getCodeNamePairs(CodeNameType.ARTIFACT_TYPE);
