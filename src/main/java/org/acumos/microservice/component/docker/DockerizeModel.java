@@ -94,9 +94,10 @@ public class DockerizeModel {
 	@Value("${mktPlace.mktPlaceEndPointURL}")
 	protected String portalURL;
 	
+	@Value("${app.version}")
+	protected String appVersion;
+	
 	protected String modelOriginalName = null;
-	
-	
 
 	@Autowired
 	ResourceLoader resourceLoader;

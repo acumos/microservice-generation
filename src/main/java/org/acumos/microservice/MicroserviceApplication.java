@@ -21,7 +21,6 @@
 package org.acumos.microservice;
 
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
-import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,8 +38,6 @@ public class MicroserviceApplication implements ApplicationContextAware {
 
 	public static final String CONFIG_ENV_VAR_NAME = "SPRING_APPLICATION_JSON";
 
-	
-	
 	public static void main(String[] args) throws Exception {
 		final String springApplicationJson = System.getenv(CONFIG_ENV_VAR_NAME);
 		
@@ -56,7 +53,6 @@ public class MicroserviceApplication implements ApplicationContextAware {
 		
 		SpringApplication.run(MicroserviceApplication.class, args);
 	}
-
 
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
