@@ -45,7 +45,6 @@ import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.models.OnboardingNotification;
 import org.acumos.onboarding.common.models.ServiceResponse;
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
-import org.acumos.onboarding.common.utils.JsonResponse;
 import org.acumos.onboarding.common.utils.LogBean;
 import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
@@ -192,8 +191,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		// create log file to capture logs as artifact
 		createLogFile(logBean.getLogPath());
 		
-		String buildVersion = appVersion;
-		logger.debug(EELFLoggerDelegate.debugLogger,"Microservice-Generation version {}", buildVersion);
+		String buildVersion = UtilityFunction.getProjectVersion();
+		logger.debug(EELFLoggerDelegate.debugLogger,"Microservice-Generation version : " + buildVersion);
 		
 		String modelName = null;
 
