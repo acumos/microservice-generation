@@ -40,6 +40,7 @@ import org.acumos.cds.domain.MLPSolution;
 import org.acumos.cds.domain.MLPSolutionRevision;
 import org.acumos.cds.domain.MLPUser;
 import org.acumos.microservice.component.docker.DockerizeModel;
+import org.acumos.microservice.component.docker.cmd.DeleteImageCommand;
 import org.acumos.microservice.services.DockerService;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.models.OnboardingNotification;
@@ -417,6 +418,12 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Artifacts log pushed to nexus successfully" + fileName);
 							}
+							
+							//delete the Docker image
+							logger.debug(EELFLoggerDelegate.debugLogger,"Docker image Deletion started -> image = "+imageUri+", tag = "+mData.getVersion());
+							DeleteImageCommand deleteCMD = new DeleteImageCommand(imageUri, mData.getVersion(), null);
+							deleteCMD.execute();
+							logger.debug(EELFLoggerDelegate.debugLogger,"Docker image Deletion Done");
 
 							// delete log file
 							UtilityFunction.deleteDirectory(file);
