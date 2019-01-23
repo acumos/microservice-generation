@@ -281,7 +281,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						mlpSolution = solList.get(0);
 						mData.setSolutionId(mlpSolution.getSolutionId());
 						mlpSolution.setName(mData.getSolutionName());
-						mlpSolution.setDescription(mData.getSolutionName());
+						//mlpSolution.setDescription(mData.getSolutionName());
 						mlpSolution.setUserId(mData.getOwnerId());
 					}
 
@@ -296,7 +296,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					mData.setRevisionId(revisionId);
 					mlpSolution.setSolutionId(solutioId);
 					mlpSolution.setName(mData.getSolutionName());
-					mlpSolution.setDescription(mData.getSolutionName());
+					//mlpSolution.setDescription(mData.getSolutionName());
 					mlpSolution.setUserId(mData.getOwnerId());
 				} else {
 					logger.error(EELFLoggerDelegate.errorLogger, "Invalid Request................");
