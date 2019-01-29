@@ -420,10 +420,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							}
 							
 							//delete the Docker image
-							logger.debug(EELFLoggerDelegate.debugLogger,"Docker image Deletion started -> image = "+imageUri+", tag = "+mData.getVersion());
+							/*logger.debug(EELFLoggerDelegate.debugLogger,"Docker image Deletion started -> image = "+imageUri+", tag = "+mData.getVersion());
 							DeleteImageCommand deleteCMD = new DeleteImageCommand(imageUri, mData.getVersion(), null);
 							deleteCMD.execute();
-							logger.debug(EELFLoggerDelegate.debugLogger,"Docker image Deletion Done");
+							logger.debug(EELFLoggerDelegate.debugLogger,"Docker image Deletion Done");*/
 
 							// delete log file
 							UtilityFunction.deleteDirectory(file);
