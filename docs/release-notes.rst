@@ -22,6 +22,10 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 2.2.0, 31 January 2019
+---------------------------------
+* `ACUMOS-2379 <https://jira.acumos.org/browse/ACUMOS-2379/>`_
+
 Version 2.1.0, 11 January 2019
 ---------------------------------
 * `ACUMOS-1935 <https://jira.acumos.org/browse/ACUMOS-1935/>`_
