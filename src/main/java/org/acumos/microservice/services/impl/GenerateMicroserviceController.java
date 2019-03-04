@@ -200,14 +200,14 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			// Nexus Integration....!
 
-			DownloadModelArtifacts download = new DownloadModelArtifacts();
+			/*DownloadModelArtifacts download = new DownloadModelArtifacts();
 			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId);
 			artifactNameList = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 					nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
 
 			logger.debug(EELFLoggerDelegate.debugLogger, "Number of artifacts: ", artifactNameList.size());
 
-			logger.debug(EELFLoggerDelegate.debugLogger, "Starting Microservice Generation");
+			logger.debug(EELFLoggerDelegate.debugLogger, "Starting Microservice Generation");*/
 
 			String modelId = UtilityFunction.getGUID();
 			File outputFolder = new File("tmp", modelId);
@@ -344,18 +344,23 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 						// Notify Create docker image has started
 						if (onboardingStatus != null) {
+							
+							logger.debug(EELFLoggerDelegate.debugLogger, "Setting values in Task object");
 
 							MLPTask task = new MLPTask();
-							task.setTaskCode("MS");
+							task.setTaskCode("OB");
 							task.setStatusCode("ST");
-							task.setName("Microservice Gen");
+							task.setName("OnBoarding");
 							task.setUserId(ownerId);
 							task.setCreated(Instant.now());
 							task.setModified(Instant.now());
-
+							task.setTrackingId(trackingID);
+							
 							onboardingStatus.setTrackingId(trackingID);
 							onboardingStatus.setUserId(ownerId);
-
+							
+							logger.debug(EELFLoggerDelegate.debugLogger, "Task Details: " + task.toString());
+							
 							task = cdmsClient.createTask(task);
 
 							logger.debug(EELFLoggerDelegate.debugLogger, "TaskID: " + task.getTaskId());
