@@ -200,14 +200,14 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			// Nexus Integration....!
 
-			/*DownloadModelArtifacts download = new DownloadModelArtifacts();
+			DownloadModelArtifacts download = new DownloadModelArtifacts();
 			logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: {}", solutioId, "revisionId: {}", revisionId);
 			artifactNameList = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 					nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
 
 			logger.debug(EELFLoggerDelegate.debugLogger, "Number of artifacts: ", artifactNameList.size());
 
-			logger.debug(EELFLoggerDelegate.debugLogger, "Starting Microservice Generation");*/
+			logger.debug(EELFLoggerDelegate.debugLogger, "Starting Microservice Generation");
 
 			String modelId = UtilityFunction.getGUID();
 			File outputFolder = new File("tmp", modelId);
