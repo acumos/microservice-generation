@@ -348,13 +348,15 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							logger.debug(EELFLoggerDelegate.debugLogger, "Setting values in Task object");
 
 							MLPTask task = new MLPTask();
-							task.setTaskCode("OB");
+							task.setTaskCode("MS");
 							task.setStatusCode("ST");
-							task.setName("OnBoarding");
+							task.setName("MicroserviceGen");
 							task.setUserId(ownerId);
 							task.setCreated(Instant.now());
 							task.setModified(Instant.now());
 							task.setTrackingId(trackingID);
+							task.setSolutionId(mlpSolution.getSolutionId());
+							task.setRevisionId(mData.getRevisionId());
 							
 							onboardingStatus.setTrackingId(trackingID);
 							onboardingStatus.setUserId(ownerId);
