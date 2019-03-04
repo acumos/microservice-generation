@@ -22,6 +22,13 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 2.4.0, 4 March 2019
+---------------------------------
+* Common Data Service client at version 2.1.1
+* `ACUMOS-2588 <https://jira.acumos.org/browse/ACUMOS-2588/>`_
+* `ACUMOS-2402 <https://jira.acumos.org/browse/ACUMOS-2402/>`_
+* `ACUMOS-2566 <https://jira.acumos.org/browse/ACUMOS-2566/>`_
+
 Version 2.3.0, 14 February 2019
 ---------------------------------
 * Pointing to CDS-2.0.7
