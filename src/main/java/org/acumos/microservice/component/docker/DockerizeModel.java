@@ -339,7 +339,7 @@ public class DockerizeModel {
 	}
 	
 	public void dockerizeFileAsync(OnboardingNotification onboardingStatus, MetadataParser metadataParser,
-			File localmodelFile, String solutionID, String deployment_env, File tempFolder, String trackingID, String fileName, LogThreadLocal logThread)
+			File localmodelFile, String solutionID, String deployment_env, File tempFolder, String trackingID, String fileName,LogThreadLocal logThread, LogBean logBean)
 			throws AcumosServiceException {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
@@ -482,7 +482,7 @@ public class DockerizeModel {
 		try {			
 			logger.debug("Docker image creation started");
 			String actualModelName = getActualModelName(metadata, solutionID);  
-			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,metadata.getVersion(), null, false, true);
+			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,metadata.getVersion(), null, false, true, logBean);
 			createCMD.setClient(dockerClient);
 			createCMD.execute();
 			logger.debug(EELFLoggerDelegate.debugLogger,"Docker image creation done");
@@ -908,7 +908,7 @@ public class DockerizeModel {
 							CompletableFuture.supplyAsync(() -> {
 								try {
 									 dockerizeFileAsync(onboardingStatus, metadataParser, modFile, mlpSoln.getSolutionId(),
-											deployment_env, outputFolder, trackingID, fileName, logThread);
+											deployment_env, outputFolder, trackingID, fileName, logThread, logBean);
 								} catch (AcumosServiceException e) {
 									logger.error(EELFLoggerDelegate.errorLogger,
 											"Exception while creating docker image : " + e);

@@ -32,7 +32,6 @@ import java.util.Map;
 
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 import org.acumos.onboarding.common.utils.LogBean;
-import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
 
 import com.github.dockerjava.api.DockerClient;
@@ -67,7 +66,9 @@ public class CreateImageCommand extends DockerCommand {
 	private String buildArgs;
 
 	private String imageId;
-
+	
+	private LogBean logBean;
+	
 	public CreateImageCommand(File dockerFolder, String imageName, String imageTag, String dockerFile, boolean noCache,
 			boolean rm) {
 		this.dockerFolder = dockerFolder;
@@ -76,6 +77,17 @@ public class CreateImageCommand extends DockerCommand {
 		this.dockerFile = dockerFile;
 		this.noCache = noCache;
 		this.rm = rm;
+	}
+
+	public CreateImageCommand(File dockerFolder, String imageName, String imageTag, String dockerFile, boolean noCache,
+			boolean rm, LogBean logBean) {
+		this.dockerFolder = dockerFolder;
+		this.imageName = imageName;
+		this.imageTag = imageTag;
+		this.dockerFile = dockerFile;
+		this.noCache = noCache;
+		this.rm = rm;
+		this.logBean = logBean;
 	}
 
 	public String getBuildArgs() {
@@ -129,7 +141,6 @@ public class CreateImageCommand extends DockerCommand {
 		}
 		DockerClient client = getClient();
 		try {
-			LogBean logBean = LogThreadLocal.get();
 			String fileName = logBean.getFileName();
 			String logPath = logBean.getLogPath();
 			logger.debug(EELFLoggerDelegate.debugLogger,"Log FileName in createImgCmd : "+fileName);
