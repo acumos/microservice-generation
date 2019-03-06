@@ -482,7 +482,7 @@ public class DockerizeModel {
 		try {			
 			logger.debug("Docker image creation started");
 			String actualModelName = getActualModelName(metadata, solutionID);  
-			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,metadata.getVersion(), null, false, true);
+			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,metadata.getVersion(), null, false, true, logThread);
 			createCMD.setClient(dockerClient);
 			createCMD.execute();
 			logger.debug(EELFLoggerDelegate.debugLogger,"Docker image creation done");

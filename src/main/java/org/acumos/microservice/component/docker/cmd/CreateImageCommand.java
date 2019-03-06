@@ -67,7 +67,9 @@ public class CreateImageCommand extends DockerCommand {
 	private String buildArgs;
 
 	private String imageId;
-
+	
+	private LogThreadLocal logThread;
+	
 	public CreateImageCommand(File dockerFolder, String imageName, String imageTag, String dockerFile, boolean noCache,
 			boolean rm) {
 		this.dockerFolder = dockerFolder;
@@ -76,6 +78,17 @@ public class CreateImageCommand extends DockerCommand {
 		this.dockerFile = dockerFile;
 		this.noCache = noCache;
 		this.rm = rm;
+	}
+
+	public CreateImageCommand(File dockerFolder, String imageName, String imageTag, String dockerFile, boolean noCache,
+			boolean rm, LogThreadLocal logThread) {
+		this.dockerFolder = dockerFolder;
+		this.imageName = imageName;
+		this.imageTag = imageTag;
+		this.dockerFile = dockerFile;
+		this.noCache = noCache;
+		this.rm = rm;
+		this.logThread = logThread;
 	}
 
 	public String getBuildArgs() {
@@ -129,7 +142,7 @@ public class CreateImageCommand extends DockerCommand {
 		}
 		DockerClient client = getClient();
 		try {
-			LogBean logBean = LogThreadLocal.get();
+			LogBean logBean = logThread.get();
 			String fileName = logBean.getFileName();
 			String logPath = logBean.getLogPath();
 			logger.debug(EELFLoggerDelegate.debugLogger,"Log FileName in createImgCmd : "+fileName);
