@@ -228,11 +228,12 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					logger.debug(EELFLoggerDelegate.debugLogger, "ProtoFile: "+ name);
 					protoFile = new File(files, name);
 					UtilityFunction.copyFile(protoFile, new File(outputFolder, name));
-				} else if (name.equalsIgnoreCase("licence.txt")) {
-					logger.debug(EELFLoggerDelegate.debugLogger, "Licence: "+ name);
-					licenceFile = new File(files, name);
-					UtilityFunction.copyFile(licenceFile, new File(outputFolder, name));
-				} else {
+				}else if (name.contains("licence-") && name.contains(".txt")) {
+                    logger.debug(EELFLoggerDelegate.debugLogger, "Licence: "+ name);
+                    licenceFile = new File(files, name);
+                    UtilityFunction.copyFile(licenceFile, new File(outputFolder, name));
+				}    
+				else {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ModelFile: "+ name);
 					modelFile = new File(files, name);
 					UtilityFunction.copyFile(modelFile, new File(outputFolder, name));
