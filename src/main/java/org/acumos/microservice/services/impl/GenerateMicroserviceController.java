@@ -215,9 +215,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			files = new File("model");
 
-			MultipartFile model = null, meta = null, proto = null;
+			MultipartFile model = null, meta = null, proto = null, licence = null;
 
-			File modelFile = null, MetaFile = null, protoFile = null;
+			File modelFile = null, MetaFile = null, protoFile = null, licenceFile = null;
 
 			for (String name : artifactNameList) {
 				if (name.contains(".json")) {
@@ -228,6 +228,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					logger.debug(EELFLoggerDelegate.debugLogger, "ProtoFile: "+ name);
 					protoFile = new File(files, name);
 					UtilityFunction.copyFile(protoFile, new File(outputFolder, name));
+				} else if (name.equalsIgnoreCase("licence.txt")) {
+					logger.debug(EELFLoggerDelegate.debugLogger, "Licence: "+ name);
+					licenceFile = new File(files, name);
+					UtilityFunction.copyFile(licenceFile, new File(outputFolder, name));
 				} else {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ModelFile: "+ name);
 					modelFile = new File(files, name);
@@ -341,7 +345,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								onboardingStatus.setRevisionId(mData.getRevisionId());
 							}
 						}
-
 						// Notify Create docker image has started
 						if (onboardingStatus != null) {
 							
@@ -357,10 +360,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							task.setTrackingId(trackingID);
 							task.setSolutionId(mlpSolution.getSolutionId());
 							task.setRevisionId(mData.getRevisionId());
-							
+
 							onboardingStatus.setTrackingId(trackingID);
 							onboardingStatus.setUserId(ownerId);
-							
 							logger.debug(EELFLoggerDelegate.debugLogger, "Task Details: " + task.toString());
 							
 							task = cdmsClient.createTask(task);

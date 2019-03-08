@@ -65,7 +65,7 @@ public class DownloadModelArtifacts {
 				for (int i = 0; i < mlpArtifactList.size(); i++) {
 
 					if (mlpArtifactList.get(i).getArtifactTypeCode().equals("MI")
-							|| mlpArtifactList.get(i).getArtifactTypeCode().equals("MD")) {
+							|| mlpArtifactList.get(i).getArtifactTypeCode().equals("MD") || mlpArtifactList.get(i).getArtifactTypeCode().equals("LG")) {
 
 						nexusURI = mlpArtifactList.get(i).getUri();
 

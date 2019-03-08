@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.acumos.microservice</groupId>
 	<artifactId>microservice-generation</artifactId>
-	<version>2.5.3-SNAPSHOT</version>
+	<version>2.5.4-SNAPSHOT</version>
 	<name>Microservice generation jar</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -36,11 +36,11 @@
 		https://nexus.acumos.org/content/repositories/releases/ -->
 	<dependencies>
 		<!-- Common jar for on-boarding -->
-		<dependency> 
-			<groupId>org.acumos.on-boarding</groupId> 
-			<artifactId>onboarding-common</artifactId>
-			<version>2.6.2-SNAPSHOT</version> 
-		</dependency> 
+		<dependency>
+			<groupId>org.acumos.on-boarding</groupId>
+                  <artifactId>onboarding-common</artifactId>
+			<version>2.6.2-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -137,13 +137,13 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.8</version>
 		</dependency> -->
-		
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>1.10.19</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-core</artifactId>
