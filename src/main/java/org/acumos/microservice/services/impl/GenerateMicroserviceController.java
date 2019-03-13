@@ -215,23 +215,23 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			files = new File("model");
 
-			MultipartFile model = null, meta = null, proto = null, licence = null;
+			MultipartFile model = null, meta = null, proto = null, license = null;
 
-			File modelFile = null, MetaFile = null, protoFile = null, licenceFile = null;
+			File modelFile = null, MetaFile = null, protoFile = null, licenseFile = null;
 
 			for (String name : artifactNameList) {
-				if (name.contains(".json")) {
+				if (!name.toLowerCase().contains("license") && name.toLowerCase().contains(".json")) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: "+ name);
 					MetaFile = new File(files, name);
 					UtilityFunction.copyFile(MetaFile, new File(outputFolder, name));
-				} else if (name.contains(".proto")) {
+				} else if (name.toLowerCase().contains(".proto")) {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ProtoFile: "+ name);
 					protoFile = new File(files, name);
 					UtilityFunction.copyFile(protoFile, new File(outputFolder, name));
-				}else if (name.contains("licence-") && name.contains(".txt")) {
-                    logger.debug(EELFLoggerDelegate.debugLogger, "Licence: "+ name);
-                    licenceFile = new File(files, name);
-                    UtilityFunction.copyFile(licenceFile, new File(outputFolder, name));
+				}else if (name.toLowerCase().contains("license") && name.toLowerCase().contains(".json")) {
+                    logger.debug(EELFLoggerDelegate.debugLogger, "license: "+ name);
+                    licenseFile = new File(files, name);
+                    UtilityFunction.copyFile(licenseFile, new File(outputFolder, name));
 				}    
 				else {
 					logger.debug(EELFLoggerDelegate.debugLogger, "ModelFile: "+ name);
