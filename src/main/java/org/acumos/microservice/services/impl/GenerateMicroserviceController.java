@@ -127,6 +127,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		OnboardingNotification onboardingStatus = null;
 		MLPSolution mlpSolution = new MLPSolution();
 		MLPSolutionRevision revision;
+		MLPTask task;
 		
 		if (deploy_env == null || deploy_env.isEmpty()){
 			deployment_env = "1";
@@ -351,7 +352,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							
 							logger.debug(EELFLoggerDelegate.debugLogger, "Setting values in Task object");
 
-							MLPTask task = new MLPTask();
+							task = new MLPTask();
 							task.setTaskCode("MS");
 							task.setStatusCode("ST");
 							task.setName("MicroserviceGeneration");
@@ -419,13 +420,26 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 						try {
 							UtilityFunction.deleteDirectory(outputFolder);
+							task.setModified(Instant.now());
+							
 							if (isSuccess == false) {
+								
 								logger.debug(EELFLoggerDelegate.debugLogger,
 										"Onboarding Failed, Reverting failed solutions and artifacts.");
+								
+								task.setStatusCode("FA");
+								logger.debug(EELFLoggerDelegate.debugLogger,"MLP task updating with the values ="+task.toString());
+								cdmsClient.updateTask(task);
 								if (metadataParser != null && mData != null) {
 									revertbackOnboarding(metadataParser.getMetadata(), mlpSolution.getSolutionId(),
 											imageUri);
 								}
+							}
+							
+							if(isSuccess == true) {
+								task.setStatusCode("SU");
+	                            logger.debug(EELFLoggerDelegate.debugLogger,"MLP task updating with the values ="+task.toString());
+								cdmsClient.updateTask(task);
 							}
 
 							// push docker build log into nexus
