@@ -29,6 +29,6 @@ import org.springframework.http.ResponseEntity;
 public interface DockerService {
 
 	public ResponseEntity<ServiceResponse> generateMicroservice(HttpServletRequest request, String solutioId, String revisionId, String modName, String deployment_env, String authorization,String trackingID,
-			String provider, String request_id)
+			String provider, String request_id, boolean microServiceAsyncFlag)
 			throws AcumosServiceException;
 }
