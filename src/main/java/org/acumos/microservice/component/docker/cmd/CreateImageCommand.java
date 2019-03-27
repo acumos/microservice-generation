@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 import org.acumos.onboarding.common.utils.LogBean;
+import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
 
 import com.github.dockerjava.api.DockerClient;
@@ -141,6 +142,9 @@ public class CreateImageCommand extends DockerCommand {
 		}
 		DockerClient client = getClient();
 		try {
+			if(logBean == null) {
+				logBean = LogThreadLocal.get();
+			}
 			String fileName = logBean.getFileName();
 			String logPath = logBean.getLogPath();
 			logger.debug(EELFLoggerDelegate.debugLogger,"Log FileName in createImgCmd : "+fileName);
