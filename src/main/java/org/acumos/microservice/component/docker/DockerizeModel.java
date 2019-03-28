@@ -120,6 +120,9 @@ public class DockerizeModel {
 	@Value("${mktPlace.mktPlaceEndPointURL}")
 	protected String portalURL;
 	
+	@Value("${microService.microServiceAsyncFlag}")
+	protected boolean microServiceAsyncFlag;
+	
 	protected String modelOriginalName = null;
 
 	@Autowired

@@ -116,8 +116,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider,
-			@RequestHeader(value = "Request-ID", required = false) String request_id,
-			@RequestHeader(value = "microServiceAsyncFlag", required = false) boolean microServiceAsyncFlag)
+			@RequestHeader(value = "Request-ID", required = false) String request_id
+			)
 			throws AcumosServiceException {
 		
 		String deployment_env = null;
@@ -423,7 +423,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 							isSuccess = true;
 
-							return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution),
+							return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution,task.getTaskId(),trackingID),
 									HttpStatus.CREATED);
 						} finally {
 
