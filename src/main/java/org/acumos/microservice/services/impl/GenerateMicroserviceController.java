@@ -117,7 +117,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider,
 			@RequestHeader(value = "Request-ID", required = false) String request_id,
-			@RequestHeader(value = "microServiceAsyncFlag", required = false) boolean microServiceAsyncFlag)
+			@RequestHeader(value = "microServiceAsyncFlag", required = false) boolean ismicroServiceAsyncFlag)
 			throws AcumosServiceException {
 		
 		String deployment_env = null;
@@ -152,9 +152,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd, request_id);
 		onboardingStatus.setRequestId(request_id);
 		MDC.put(OnboardingLogConstants.MDCs.REQUEST_ID, request_id);
-		logger.debug(EELFLoggerDelegate.debugLogger, "MicroService Async Flag: "+ microServiceAsyncFlag);
+		logger.debug(EELFLoggerDelegate.debugLogger, "MicroService Async Flag: "+ commonOnboarding.microServiceAsyncFlag);
 		
-		if (microServiceAsyncFlag) {
+		if (commonOnboarding.microServiceAsyncFlag) {
 
 			return generateMicroserviceAsyncDef(onboardingStatus, solutioId, revisionId, modName, deployment_env,
 					authorization, trackingID, provider);
