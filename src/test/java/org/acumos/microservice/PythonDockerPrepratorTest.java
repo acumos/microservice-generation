@@ -83,4 +83,15 @@ public class PythonDockerPrepratorTest {
 		
 	}
 	
+	@Test
+	public void checkVersionTest() throws Exception {
+		
+		String value = null;
+		value = PythonDockerPreprator.checkVersion("3.6.5");
+		assertNotNull(value);
+		
+		value = PythonDockerPreprator.checkVersion("3.6");
+		assertNotNull(value);
+	}
+	
 }

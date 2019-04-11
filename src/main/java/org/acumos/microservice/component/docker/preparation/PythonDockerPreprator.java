@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
+import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.onboarding.component.docker.preparation.Metadata;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
@@ -41,6 +42,8 @@ import org.acumos.onboarding.component.docker.preparation.Requirement;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class PythonDockerPreprator {
+	
+	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(PythonDockerPreprator.class);
 
 	private Metadata metadata;
 
@@ -60,7 +63,7 @@ public class PythonDockerPreprator {
 
 		this.metadata = metadataParser.getMetadata();
 		this.metadataJson = metadataParser.getMetadataJson();
-		this.pythonVersion=metadata.getRuntimeVersion()+"-slim";
+		this.pythonVersion=metadata.getRuntimeVersion();
 		
 	}
 
@@ -76,8 +79,11 @@ public class PythonDockerPreprator {
 	public void createDockerFile(File inDockerFile, File outDockerFile) throws AcumosServiceException {
 		try {
 			String dockerFileAsString = new String(UtilityFunction.toBytes(inDockerFile));
+			String newVersion = checkVersion(this.pythonVersion);
+			String pythonVer = newVersion+"-slim"; 
+			
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { this.pythonVersion, extraIndexURL, trustedHost,this.pythonhttpProxy});
+					new Object[] { pythonVer, extraIndexURL, trustedHost,this.pythonhttpProxy});
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {
 				writer.write(dockerFileAsString.trim());
@@ -208,6 +214,21 @@ public class PythonDockerPreprator {
 			versionIntArr[i] = Integer.parseInt(versionArr[i]);
 		}
 		return versionIntArr;
+	}
+	
+	public static String checkVersion(String metaVersion) {
+
+		String trimVersion = null;
+		String[] versionValue = metaVersion.split("\\.");
+
+		if (versionValue.length == 3) {
+			trimVersion = metaVersion.substring(0, metaVersion.length() - 2);
+			logger.debug(EELFLoggerDelegate.debugLogger, "Trimmed version: " + trimVersion);
+			return trimVersion;
+		} else {
+			return metaVersion;
+		}
+
 	}
 
 }
