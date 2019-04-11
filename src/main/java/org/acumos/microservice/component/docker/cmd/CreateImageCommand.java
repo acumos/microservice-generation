@@ -30,10 +30,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 import org.acumos.onboarding.common.utils.LogBean;
 import org.acumos.onboarding.common.utils.LogThreadLocal;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageCmd;
@@ -50,8 +52,9 @@ import com.github.dockerjava.core.command.BuildImageResultCallback;
  */
 public class CreateImageCommand extends DockerCommand {
 
-	private static final EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(CreateImageCommand.class);
-
+	private static final Logger log = LoggerFactory.getLogger(CreateImageCommand.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
+	
 	private final File dockerFolder;
 
 	private final String imageName;
@@ -106,38 +109,38 @@ public class CreateImageCommand extends DockerCommand {
 	@Override
 	public void execute() throws DockerException {
 		if (dockerFolder == null) {
-			logger.error(EELFLoggerDelegate.errorLogger, "dockerFolder is not configured");
+			logger.error("dockerFolder is not configured");
 			throw new IllegalArgumentException("dockerFolder is not configured");
 		}
 		if (imageName == null) {
-			logger.error(EELFLoggerDelegate.errorLogger, "imageName is not configured");
+			logger.error("imageName is not configured");
 			throw new IllegalArgumentException("imageName is not configured");
 		}
 		if (imageTag == null) {
-			logger.error(EELFLoggerDelegate.errorLogger, "imageName is not configured");
+			logger.error("imageName is not configured");
 			throw new IllegalArgumentException("imageTag is not configured");
 		}
 		if (!dockerFolder.exists()) {
-			logger.error(EELFLoggerDelegate.errorLogger, "configured dockerFolder '" + dockerFolder + "' does not exist.");
+			logger.error("configured dockerFolder '" + dockerFolder + "' does not exist.");
 			throw new IllegalArgumentException("configured dockerFolder '" + dockerFolder + "' does not exist.");
 		}
 		final Map<String, String> buildArgsMap = new HashMap<String, String>();
 		if ((buildArgs != null) && (!buildArgs.trim().isEmpty())) {
-			logger.debug(EELFLoggerDelegate.debugLogger,"Parsing buildArgs: " + buildArgs);
+			logger.debug("Parsing buildArgs: " + buildArgs);
 			String[] split = buildArgs.split(",|;");
 			for (String arg : split) {
 				String[] pair = arg.split("=");
 				if (pair.length == 2) {
 					buildArgsMap.put(pair[0].trim(), pair[1].trim());
 				} else {
-					logger.error(EELFLoggerDelegate.debugLogger,"Invalid format for " + arg + ". Buildargs should be formatted as key=value");
+					logger.error("Invalid format for " + arg + ". Buildargs should be formatted as key=value");
 				}
 			}
 		}
 		String dockerFile = this.dockerFile == null ? "Dockerfile" : this.dockerFile;
 		File docker = new File(dockerFolder, dockerFile);
 		if (!docker.exists()) {
-			logger.error(EELFLoggerDelegate.errorLogger, "Configured Docker file '%s' does not exist. " + dockerFile);
+			logger.error("Configured Docker file '%s' does not exist. " + dockerFile);
 			throw new IllegalArgumentException(String.format("Configured Docker file '%s' does not exist.", dockerFile));
 		}
 		DockerClient client = getClient();
@@ -147,14 +150,14 @@ public class CreateImageCommand extends DockerCommand {
 			}
 			String fileName = logBean.getFileName();
 			String logPath = logBean.getLogPath();
-			logger.debug(EELFLoggerDelegate.debugLogger,"Log FileName in createImgCmd : "+fileName);
+			logger.debug("Log FileName in createImgCmd : "+fileName);
 			BuildImageResultCallback callback = new BuildImageResultCallback() {
 				@Override
 				public void onNext(BuildResponseItem item) {
 					if (item.getStream() != null) {
 						String strStep = new String(item.getStream());
 						logger.info("\t" + strStep);
-						logger.debug(EELFLoggerDelegate.debugLogger,strStep);
+						logger.debug(strStep);
 						addLogs(strStep);
 					} else {
 						logger.info("\t" + item);
@@ -189,7 +192,7 @@ public class CreateImageCommand extends DockerCommand {
 				@Override
 				public void onError(Throwable throwable) {
 					//logger.error(EELFLoggerDelegate.errorLogger,"Failed to creating docker image", throwable);
-					logger.error("Failed to creating docker image", throwable);
+					logger.error("Failed to creating docker image "+ throwable);
 					super.onError(throwable);
 				}
 			};
@@ -206,7 +209,7 @@ public class CreateImageCommand extends DockerCommand {
 			this.imageId = result.awaitImageId();
 
 		} catch (Exception e) {
-			logger.error(EELFLoggerDelegate.errorLogger, "Error " + e);
+			logger.error("Error " + e);
 			throw new RuntimeException(e);
 		}
 	}

@@ -25,8 +25,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.exception.DockerException;
@@ -37,8 +39,9 @@ import com.github.dockerjava.api.exception.NotFoundException;
  */
 public class SaveImageCommand extends DockerCommand {
 
-	private static final EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(SaveImageCommand.class);
-
+	private static final Logger log = LoggerFactory.getLogger(SaveImageCommand.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
+	
 	private final String imageName;
 
 	private final String imageTag;
@@ -97,22 +100,22 @@ public class SaveImageCommand extends DockerCommand {
 		}
 		final DockerClient client = getClient();
 		try {
-			logger.debug(EELFLoggerDelegate.debugLogger,String.format("Started save image '%s' ... ", imageName + " " + imageTag));
+			logger.debug(String.format("Started save image '%s' ... ", imageName + " " + imageTag));
 			final OutputStream output = new FileOutputStream(new File(destination, filename));
 			IOUtils.copy(client.saveImageCmd(imageName + ":" + imageTag).exec(), output);
 			IOUtils.closeQuietly(output);
-			logger.debug(EELFLoggerDelegate.debugLogger,"Finished save image " + imageName + " " + imageTag);
+			logger.debug("Finished save image " + imageName + " " + imageTag);
 		} catch (NotFoundException e) {
 			if (!ignoreIfNotFound) {
-				logger.error(EELFLoggerDelegate.errorLogger,String.format("image '%s' not found ", imageName + " " + imageTag));
+				logger.error(String.format("image '%s' not found ", imageName + " " + imageTag));
 				throw e;
 			} else {
-				logger.error(EELFLoggerDelegate.errorLogger,
+				logger.error(
 						String.format("image '%s' not found, but skipping this error is turned on, let's continue ... ",
 								imageName + " " + imageTag));
 			}
 		} catch (IOException e) {
-			logger.error(EELFLoggerDelegate.errorLogger,
+			logger.error(
 					String.format("Error to save '%s' ", imageName + " " + imageTag) + " " + e.getLocalizedMessage());
 			throw new DockerException(
 					String.format("Error to save '%s' ", imageName + " " + imageTag) + " " + e.getLocalizedMessage(),

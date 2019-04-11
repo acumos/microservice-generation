@@ -30,11 +30,14 @@ import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPArtifact;
 import org.acumos.nexus.client.NexusArtifactClient;
 import org.acumos.nexus.client.RepositoryLocation;
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DownloadModelArtifacts {
 
-	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(DownloadModelArtifacts.class);
+	private static Logger log = LoggerFactory.getLogger(DownloadModelArtifacts.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
 
 	String artifactFileName;
 	
@@ -42,9 +45,9 @@ public class DownloadModelArtifacts {
 	
 	public List<String> getModelArtifacts(String solutionId, String revisionId, String userName, String password,
 			String nexusUrl, String nexusUserName, String nexusPassword, String dataSource) throws Exception {
-		logger.debug(EELFLoggerDelegate.debugLogger, "------ Start getBluePrintNexus-----------------");
-		logger.debug(EELFLoggerDelegate.debugLogger, "-------solutionId-----------" + solutionId);
-		logger.debug(EELFLoggerDelegate.debugLogger, "-------revisionId-----------" + revisionId);
+		logger.debug("------ Start getBluePrintNexus-----------------");
+		logger.debug("-------solutionId-----------" + solutionId);
+		logger.debug("-------revisionId-----------" + revisionId);
 		
 		List<MLPArtifact> mlpArtifactList;
 		String nexusURI = "";
@@ -69,7 +72,7 @@ public class DownloadModelArtifacts {
 
 						nexusURI = mlpArtifactList.get(i).getUri();
 
-						logger.debug(EELFLoggerDelegate.debugLogger, "------ Nexus URI : " + nexusURI + " -------");
+						logger.debug("------ Nexus URI : " + nexusURI + " -------");
 						if (nexusURI != null) {
 							RepositoryLocation repositoryLocation = new RepositoryLocation();
 							repositoryLocation.setId("1");

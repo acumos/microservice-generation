@@ -30,18 +30,21 @@ import java.util.List;
 import java.util.Properties;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.onboarding.component.docker.preparation.Metadata;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.component.docker.preparation.Requirement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class H2ODockerPreparator { 
 	private Metadata metadata;
 
 	private String rVersion;
 	private String serverPort;
-	private static final EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(H2ODockerPreparator.class);
+	private static final Logger log = LoggerFactory.getLogger(H2ODockerPreparator.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
 
 	public H2ODockerPreparator(MetadataParser metadataParser) throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
@@ -74,7 +77,7 @@ public class H2ODockerPreparator {
 				serverPort = "3330";
 			}			
 		} catch (IOException e) {
-			logger.error(EELFLoggerDelegate.errorLogger,e.getMessage());
+			logger.error(e.getMessage());
 		}
 		this.createDockerFile(new File(outputFolder, "Dockerfile"), new File(outputFolder, "Dockerfile"));
 		this.createRequirements(new File(outputFolder, "requirements.txt"), new File(outputFolder, "requirements.txt"));
