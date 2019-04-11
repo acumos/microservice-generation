@@ -20,18 +20,21 @@
 
 package org.acumos.microservice;
 
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 import org.acumos.microservice.component.docker.cmd.TagImageCommand;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TagImageCommandTest {
 
-	public static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(TagImageCommandTest.class);
-
+	public static Logger log = LoggerFactory.getLogger(TagImageCommandTest.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
+	
 	TagImageCommand tagImageCommand = new TagImageCommand("H2O", "Nexus", "H2O", true, true);
 
 	@Test

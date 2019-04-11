@@ -23,7 +23,7 @@ package org.acumos.microservice;
 import java.io.File;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.microservice.component.docker.preparation.JavaGenericDockerPreparator;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.junit.Assert;
@@ -31,13 +31,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JavaGenericDockerPreparatorTest {
 
 	 String filePath = FilePathTest.filePath();
 
-	public static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(JavaGenericDockerPreparatorTest.class);
+	public static Logger log = LoggerFactory.getLogger(JavaGenericDockerPreparatorTest.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
+	
 	File jsonFile = new File(filePath+"java_genric.json");
 	File srcFile = new File(filePath+"Dockerfile");
 	File outFile = new File(filePath+"Dockerfile");

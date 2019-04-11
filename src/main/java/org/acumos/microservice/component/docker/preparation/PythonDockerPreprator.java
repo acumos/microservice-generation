@@ -33,17 +33,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.onboarding.component.docker.preparation.Metadata;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.component.docker.preparation.Requirement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class PythonDockerPreprator {
 	
-	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(PythonDockerPreprator.class);
+	private static Logger log = LoggerFactory.getLogger(PythonDockerPreprator.class);
+	static LoggerDelegate logger = new LoggerDelegate(log);
 
 	private Metadata metadata;
 
@@ -223,7 +226,7 @@ public class PythonDockerPreprator {
 
 		if (versionValue.length == 3) {
 			trimVersion = metaVersion.substring(0, metaVersion.length() - 2);
-			logger.debug(EELFLoggerDelegate.debugLogger, "Trimmed version: " + trimVersion);
+			logger.debug("Trimmed version: " + trimVersion);
 			return trimVersion;
 		} else {
 			return metaVersion;

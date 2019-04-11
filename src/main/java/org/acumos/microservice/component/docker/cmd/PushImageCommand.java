@@ -20,8 +20,10 @@
 
 package org.acumos.microservice.component.docker.cmd;
 
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.PushImageCmd;
@@ -36,7 +38,8 @@ import com.github.dockerjava.core.command.PushImageResultCallback;
  */
 public class PushImageCommand extends DockerCommand {
 	
-	private static final EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(PushImageCommand.class);
+	private static final Logger log = LoggerFactory.getLogger(PushImageCommand.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
 
 	private final String image;
 
@@ -81,7 +84,7 @@ public class PushImageCommand extends DockerCommand {
 
 			@Override
 			public void onError(Throwable throwable) {
-				logger.error(EELFLoggerDelegate.errorLogger,"Failed to push image:" + throwable.getMessage());
+				logger.error("Failed to push image:" + throwable.getMessage());
 				super.onError(throwable);
 			}
 		};

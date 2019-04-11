@@ -19,8 +19,10 @@
  */
 package org.acumos.microservice.component.docker.cmd;
 
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.UtilityFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -34,8 +36,8 @@ import com.github.dockerjava.core.command.PullImageResultCallback;
 public class ApplicationStartupPullImage 
 		implements ApplicationListener<ApplicationReadyEvent> {
 
-	private static final EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(ApplicationStartupPullImage.class);
-
+	private static final Logger log = LoggerFactory.getLogger(ApplicationStartupPullImage.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
 	@Value("${docker.host}")
 	protected String host;
 
@@ -60,17 +62,17 @@ public class ApplicationStartupPullImage
 		try {
 			//Download the rbase image at the start of the container. if there is an issue it will go ahead with starting springboot container.
 			String hostname = host + ":" + port;
-			logger.debug(EELFLoggerDelegate.debugLogger, rimageName + " Pull Started hostname: " + hostname);
+			logger.debug( rimageName + " Pull Started hostname: " + hostname);
 			DockerClient dockerClient = UtilityFunction.createDockerClient("tcp://" + hostname);
-			logger.debug(EELFLoggerDelegate.debugLogger, "ApplicationStartupPullImage -> Docker client created");
+			logger.debug( "ApplicationStartupPullImage -> Docker client created");
 			AuthConfig authConfig = new AuthConfig().withUsername(dockerusername).withPassword(dockerpassword);
 			dockerClient.pullImageCmd(rimageName).withAuthConfig(authConfig).exec(new PullImageResultCallback())
 					.awaitSuccess();
-			logger.debug(EELFLoggerDelegate.debugLogger, rimageName + " Image pulled Successfully");
+			logger.debug( rimageName + " Image pulled Successfully");
 
 		} catch (Exception e) {
-			logger.debug(EELFLoggerDelegate.debugLogger, "Failed to pull image " + e.getMessage());
-			logger.error(EELFLoggerDelegate.errorLogger, "Failed to pull image " + e.getMessage());
+			logger.debug( "Failed to pull image " + e.getMessage());
+			logger.error("Failed to pull image " + e.getMessage());
 		}
 	}
 

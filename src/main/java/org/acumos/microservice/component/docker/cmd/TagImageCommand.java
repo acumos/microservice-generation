@@ -20,7 +20,10 @@
 
 package org.acumos.microservice.component.docker.cmd;
 
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
+
+import org.acumos.onboarding.common.utils.LoggerDelegate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.exception.DockerException;
@@ -33,7 +36,8 @@ import com.github.dockerjava.api.exception.NotFoundException;
  */
 public class TagImageCommand extends DockerCommand {
 	
-	private static final EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(TagImageCommand.class);
+	private static final Logger log = LoggerFactory.getLogger(TagImageCommand.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
 
 	private final String image;
 
@@ -85,15 +89,15 @@ public class TagImageCommand extends DockerCommand {
 		}
 		DockerClient client = getClient();
 		try {
-			logger.debug(EELFLoggerDelegate.debugLogger,"start tagging image " + image + " in " + repository + " as " + tag);
+			logger.debug("start tagging image " + image + " in " + repository + " as " + tag);
 			client.tagImageCmd(image, repository, tag).withForce(withForce).exec();
-			logger.debug(EELFLoggerDelegate.debugLogger,"Tagged image " + image + " in " + repository + " as " + tag);
+			logger.debug("Tagged image " + image + " in " + repository + " as " + tag);
 		} catch (NotFoundException e) {
 			if (!ignoreIfNotFound) {
-				logger.error(EELFLoggerDelegate.errorLogger,String.format("image '%s' not found ", image));
+				logger.error(String.format("image '%s' not found ", image));
 				throw e;
 			} else {
-				logger.error(EELFLoggerDelegate.errorLogger,String.format(
+				logger.error(String.format(
 						"image '%s' not found, but skipping this error is turned on, let's continue ... ", image));
 			}
 		}

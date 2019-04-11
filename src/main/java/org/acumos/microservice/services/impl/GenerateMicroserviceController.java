@@ -47,9 +47,9 @@ import org.acumos.microservice.services.DockerService;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.models.OnboardingNotification;
 import org.acumos.onboarding.common.models.ServiceResponse;
-import org.acumos.onboarding.common.utils.EELFLoggerDelegate;
 import org.acumos.onboarding.common.utils.LogBean;
 import org.acumos.onboarding.common.utils.LogThreadLocal;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.onboarding.component.docker.preparation.Metadata;
@@ -58,6 +58,8 @@ import org.acumos.onboarding.logging.OnboardingLogConstants;
 import org.acumos.onboarding.services.impl.CommonOnboarding;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -86,7 +88,8 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 public class GenerateMicroserviceController extends DockerizeModel implements DockerService {
-	private static EELFLoggerDelegate logger = EELFLoggerDelegate.getLogger(GenerateMicroserviceController.class);
+	private static Logger log = LoggerFactory.getLogger(GenerateMicroserviceController.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
 	Map<String, String> artifactsDetails = new HashMap<>();
 
 	@Autowired
@@ -129,13 +132,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			deployment_env = deploy_env.trim();
 		}
 		
-		logger.debug(EELFLoggerDelegate.debugLogger, "deployment_env: "+ deployment_env);
+		logger.debug("deployment_env: "+ deployment_env);
 		
 		if (request_id != null) {
-			logger.debug(EELFLoggerDelegate.debugLogger, "Request ID: "+ request_id);
+			logger.debug("Request ID: "+ request_id);
 		} else {
 			request_id = UUID.randomUUID().toString();
-			logger.debug(EELFLoggerDelegate.debugLogger, "Request ID Created: "+ request_id);
+			logger.debug("Request ID Created: "+ request_id);
 		}
 		
 		// If trackingID is provided in the header create a
@@ -143,16 +146,16 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		// status
 		// against that trackingID
 		if (trackingID != null) {
-			logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: "+ trackingID);
+			logger.debug("Tracking ID: "+ trackingID);
 		} else {
 			trackingID = UUID.randomUUID().toString();
-			logger.debug(EELFLoggerDelegate.debugLogger, "Tracking ID: "+ trackingID);
+			logger.debug("Tracking ID: "+ trackingID);
 		}	
 		
 		onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd, request_id);
 		onboardingStatus.setRequestId(request_id);
 		MDC.put(OnboardingLogConstants.MDCs.REQUEST_ID, request_id);
-		logger.debug(EELFLoggerDelegate.debugLogger, "MicroService Async Flag: "+ microServiceAsyncFlag);
+		logger.debug("MicroService Async Flag: "+ microServiceAsyncFlag);
 		
 		if (microServiceAsyncFlag) {
 
@@ -175,11 +178,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				String ownerId = commonOnboarding.validate(authorization, provider);
 				if (ownerId != null && !ownerId.isEmpty()) {
 
-					logger.debug(EELFLoggerDelegate.debugLogger, "Token validation successful");
+					logger.debug("Token validation successful");
 
 				} else {
 
-					logger.error(EELFLoggerDelegate.errorLogger, "Either Username/Password is invalid.");
+					logger.error( "Either Username/Password is invalid.");
 					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 							OnboardingLogConstants.ResponseStatus.ERROR.name());
 					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, "Either Username/Password is invalid.");
@@ -203,22 +206,22 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				createLogFile(logBean.getLogPath());
 
 				String buildVersion = UtilityFunction.getProjectVersion();
-				logger.debug(EELFLoggerDelegate.debugLogger, "Microservice-Generation version : " + buildVersion);
+				logger.debug("Microservice-Generation version : " + buildVersion);
 
 				String modelName = null;
 
-				logger.debug(EELFLoggerDelegate.debugLogger, "Fetching model from Nexus...!");
+				logger.debug("Fetching model from Nexus...!");
 
 				// Nexus Integration....!
 
 				DownloadModelArtifacts download = new DownloadModelArtifacts();
-				logger.debug(EELFLoggerDelegate.debugLogger, "solutioId: " + solutioId, "revisionId: " + revisionId);
+				logger.debug("solutioId: " + solutioId, "revisionId: " + revisionId);
 				artifactNameList = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 						nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
 
-				logger.debug(EELFLoggerDelegate.debugLogger, "Number of artifacts: ", artifactNameList.size());
+				logger.debug("Number of artifacts: "+ artifactNameList.size());
 
-				logger.debug(EELFLoggerDelegate.debugLogger, "Starting Microservice Generation");
+				logger.debug("Starting Microservice Generation");
 
 				String modelId = UtilityFunction.getGUID();
 				File outputFolder = new File("tmp", modelId);
@@ -232,19 +235,19 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				for (String name : artifactNameList) {
 					if (!name.toLowerCase().contains("license") && name.toLowerCase().contains(".json")) {
-						logger.debug(EELFLoggerDelegate.debugLogger, "MetaFile: " + name);
+						logger.debug("MetaFile: " + name);
 						MetaFile = new File(files, name);
 						UtilityFunction.copyFile(MetaFile, new File(outputFolder, name));
 					} else if (name.toLowerCase().contains(".proto")) {
-						logger.debug(EELFLoggerDelegate.debugLogger, "ProtoFile: " + name);
+						logger.debug("ProtoFile: " + name);
 						protoFile = new File(files, name);
 						UtilityFunction.copyFile(protoFile, new File(outputFolder, name));
 					} else if (name.toLowerCase().contains("license") && name.toLowerCase().contains(".json")) {
-						logger.debug(EELFLoggerDelegate.debugLogger, "license: " + name);
+						logger.debug("license: " + name);
 						licenseFile = new File(files, name);
 						UtilityFunction.copyFile(licenseFile, new File(outputFolder, name));
 					} else {
-						logger.debug(EELFLoggerDelegate.debugLogger, "ModelFile: " + name);
+						logger.debug("ModelFile: " + name);
 						modelFile = new File(files, name);
 						UtilityFunction.copyFile(modelFile, new File(outputFolder, name));
 					}
@@ -284,10 +287,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 							mlpSolution = commonOnboarding.createSolution(mData, onboardingStatus);
 							mData.setSolutionId(mlpSolution.getSolutionId());
-							logger.debug(EELFLoggerDelegate.debugLogger,
+							logger.debug(
 									"New solution created Successfully for ONAP" + mlpSolution.getSolutionId());
 						} else {
-							logger.debug(EELFLoggerDelegate.debugLogger,
+							logger.debug(
 									"Existing solution found for ONAP model name " + solList.get(0).getName());
 							mlpSolution = solList.get(0);
 							mData.setSolutionId(mlpSolution.getSolutionId());
@@ -297,7 +300,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						}
 
 						revision = commonOnboarding.createSolutionRevision(mData);
-						logger.debug(EELFLoggerDelegate.debugLogger,
+						logger.debug(
 								"Revision created Successfully  for ONAP" + revision.getRevisionId());
 						mData.setRevisionId(revision.getRevisionId());
 
@@ -310,7 +313,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						// mlpSolution.setDescription(mData.getSolutionName());
 						mlpSolution.setUserId(mData.getOwnerId());
 					} else {
-						logger.error(EELFLoggerDelegate.errorLogger, "Invalid Request................");
+						logger.error( "Invalid Request................");
 						throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 								"Invalid Request...............");
 					}
@@ -326,7 +329,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 					/*
 					 * // try { // 'authorization' represents JWT token here...! if (authorization
-					 * == null) { logger.error(EELFLoggerDelegate.errorLogger,
+					 * == null) { logger.error(
 					 * "Token Not Available...!"); throw new
 					 * AcumosServiceException(AcumosServiceException.ErrorCode.OBJECT_NOT_FOUND,
 					 * "Token Not Available...!"); }
@@ -336,7 +339,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 					if (ownerId != null && !ownerId.isEmpty()) {
 
-						logger.debug(EELFLoggerDelegate.debugLogger,
+						logger.debug(
 								"Dockerization request recieved with " + model.getOriginalFilename());
 
 						modelOriginalName = model.getOriginalFilename();
@@ -359,7 +362,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							// Notify Create docker image has started
 							if (onboardingStatus != null) {
 
-								logger.debug(EELFLoggerDelegate.debugLogger, "Setting values in Task object");
+								logger.debug("Setting values in Task object");
 
 								task = new MLPTask();
 								task.setTaskCode("MS");
@@ -374,11 +377,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 								onboardingStatus.setTrackingId(trackingID);
 								onboardingStatus.setUserId(ownerId);
-								logger.debug(EELFLoggerDelegate.debugLogger, "Task Details: " + task.toString());
+								logger.debug("Task Details: " + task.toString());
 
 								task = cdmsClient.createTask(task);
 
-								logger.debug(EELFLoggerDelegate.debugLogger, "TaskID: " + task.getTaskId());
+								logger.debug("TaskID: " + task.getTaskId());
 
 								onboardingStatus.setTaskId(task.getTaskId());
 
@@ -398,7 +401,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 										OnboardingLogConstants.ResponseStatus.ERROR.name());
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-								logger.error(EELFLoggerDelegate.errorLogger, "Error " + e);
+								logger.error( "Error " + e);
 								throw e;
 							}
 
@@ -415,8 +418,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									onboardingStatus);
 
 							if (deployment_env.equalsIgnoreCase("2")) {
-								logger.debug(EELFLoggerDelegate.debugLogger, "OutputFolderPath: " + outputFolder);
-								logger.debug(EELFLoggerDelegate.debugLogger,
+								logger.debug("OutputFolderPath: " + outputFolder);
+								logger.debug(
 										"AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath());
 								addDCAEArrtifacts(mData, outputFolder, mlpSolution.getSolutionId(), onboardingStatus);
 							}
@@ -431,10 +434,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								UtilityFunction.deleteDirectory(outputFolder);
 								task.setModified(Instant.now());
 								if (isSuccess == false) {
-									logger.debug(EELFLoggerDelegate.debugLogger,
+									logger.debug(
 											"Onboarding Failed, Reverting failed solutions and artifacts.");
 									task.setStatusCode("FA");
-									logger.debug(EELFLoggerDelegate.debugLogger,
+									logger.debug(
 											"MLP task updating with the values =" + task.toString());
 									cdmsClient.updateTask(task);
 									if (metadataParser != null && mData != null) {
@@ -445,7 +448,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 								if (isSuccess == true) {
 									task.setStatusCode("SU");
-									logger.debug(EELFLoggerDelegate.debugLogger,
+									logger.debug(
 											"MLP task updating with the values =" + task.toString());
 									cdmsClient.updateTask(task);
 								}
@@ -453,13 +456,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								// push docker build log into nexus
 								File file = new java.io.File(
 										logPath + File.separator + trackingID + File.separator + fileName);
-								logger.debug(EELFLoggerDelegate.debugLogger, "Log file length " + file.length());
-								logger.debug(EELFLoggerDelegate.debugLogger,
+								logger.debug("Log file length " + file.length());
+								logger.debug(
 										"Log file Path " + file.getPath() + " Absolute Path : " + file.getAbsolutePath()
 												+ " Canonical Path: " + file.getCanonicalFile());
 
 								if (metadataParser != null && mData != null) {
-									logger.debug(EELFLoggerDelegate.debugLogger,
+									logger.debug(
 											"Adding of log artifacts into nexus started " + fileName);
 
 									String nexusArtifactID = "MicroserviceGenerationLog";
@@ -467,7 +470,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									commonOnboarding.addArtifact(mData, file, "LG", nexusArtifactID, onboardingStatus);
 									MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 											OnboardingLogConstants.ResponseStatus.COMPLETED.name());
-									logger.debug(EELFLoggerDelegate.debugLogger,
+									logger.debug(
 											"Artifacts log pushed to nexus successfully" + fileName);
 								}
 
@@ -477,7 +480,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								 * debugLogger,"Docker image Deletion started -> image = "+imageUri+", tag = "
 								 * +mData.getVersion()); DeleteImageCommand deleteCMD = new
 								 * DeleteImageCommand(imageUri, mData.getVersion(), null); deleteCMD.execute();
-								 * logger.debug(EELFLoggerDelegate.debugLogger,"Docker image Deletion Done");
+								 * logger.debug("Docker image Deletion Done");
 								 */
 
 								// delete log file
@@ -489,7 +492,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 										OnboardingLogConstants.ResponseStatus.ERROR.name());
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-								logger.error(EELFLoggerDelegate.errorLogger, "RevertbackOnboarding Failed");
+								logger.error( "RevertbackOnboarding Failed");
 								HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
 								return new ResponseEntity<ServiceResponse>(
 										ServiceResponse.errorResponse(e.getErrorCode(), e.getMessage()), httpCode);
@@ -501,7 +504,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									OnboardingLogConstants.ResponseStatus.ERROR.name());
 							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,
 									"Either Username/Password is invalid");
-							logger.error(EELFLoggerDelegate.errorLogger, "Either Username/Password is invalid.");
+							logger.error( "Either Username/Password is invalid.");
 							throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_TOKEN,
 									"Either Username/Password is invalid.");
 						} catch (AcumosServiceException e) {
@@ -512,7 +515,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					}
 					// }
 				} else {
-					logger.error(EELFLoggerDelegate.errorLogger, "Model artifacts not available..!");
+					logger.error( "Model artifacts not available..!");
 					throw new AcumosServiceException("Model artifacts not available..!");
 				}
 
@@ -522,7 +525,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 						OnboardingLogConstants.ResponseStatus.ERROR.name());
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-				logger.error(EELFLoggerDelegate.errorLogger, e.getErrorCode() + "  " + e.getMessage());
+				logger.error( e.getErrorCode() + "  " + e.getMessage());
 				if (e.getErrorCode().equalsIgnoreCase(OnboardingConstants.INVALID_PARAMETER)) {
 					httpCode = HttpStatus.BAD_REQUEST;
 				}
@@ -534,13 +537,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
 				// Handling #401
 				if (HttpStatus.UNAUTHORIZED == e.getStatusCode() || HttpStatus.BAD_REQUEST == e.getStatusCode()) {
-					logger.debug(EELFLoggerDelegate.debugLogger,
+					logger.debug(
 							"Unauthorized User - Either Username/Password is invalid.");
 					return new ResponseEntity<ServiceResponse>(
 							ServiceResponse.errorResponse("" + HttpStatus.UNAUTHORIZED, "Unauthorized User"),
 							HttpStatus.UNAUTHORIZED);
 				} else {
-					logger.error(EELFLoggerDelegate.errorLogger, e.getMessage());
+					logger.error( e.getMessage());
 					e.printStackTrace();
 					return new ResponseEntity<ServiceResponse>(
 							ServiceResponse.errorResponse("" + e.getStatusCode(), e.getMessage()), e.getStatusCode());
@@ -549,7 +552,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 						OnboardingLogConstants.ResponseStatus.ERROR.name());
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-				logger.error(EELFLoggerDelegate.errorLogger, e.getMessage());
+				logger.error( e.getMessage());
 				e.printStackTrace();
 				if (e instanceof AcumosServiceException) {
 					return new ResponseEntity<ServiceResponse>(
@@ -593,19 +596,19 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		try {
 			
 			//call microservice
-			logger.debug(EELFLoggerDelegate.debugLogger,"DCAE ADD Artifact Started ");
+			logger.debug("DCAE ADD Artifact Started ");
 			commonOnboarding.addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), "anomaly-in", onboardingStatus);
 			commonOnboarding.addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), "anomaly-out", onboardingStatus);
 			commonOnboarding.addArtifact(mData, compo, getArtifactTypeCode("Metadata"), "component", onboardingStatus);
 			commonOnboarding.addArtifact(mData, ons, getArtifactTypeCode("Metadata"), "onsdemo1", onboardingStatus);
-			logger.debug(EELFLoggerDelegate.debugLogger,"DCAE ADD Artifact End ");
+			logger.debug("DCAE ADD Artifact End ");
 		}
 
 		catch (AcumosServiceException e) {
-			logger.error(EELFLoggerDelegate.errorLogger,"Exception occured while adding DCAE Artifacts " +e);
+			logger.error("Exception occured while adding DCAE Artifacts " +e);
 			throw e;
 		} catch(Exception e){
-			logger.error(EELFLoggerDelegate.errorLogger,"Exception occured while adding DCAE Artifacts " +e);
+			logger.error("Exception occured while adding DCAE Artifacts " +e);
 			throw e;
 		}
 	}
