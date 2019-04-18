@@ -17,6 +17,7 @@ RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 RUN apt-get clean && apt-get update && apt-get -y install libgtk2.0-dev
 
 RUN pip install -r requirements.txt
+RUN pip install acumos-model-runner
 
 ENV http_proxy=""
 RUN echo $http_proxy
@@ -27,5 +28,5 @@ RUN echo $https_proxy
 EXPOSE 3330
 
 # Run runner.py when the container launches
-ENTRYPOINT ["python", "-u", "runner.py"]
+ENTRYPOINT ["acumos_model_runner", "."]
 CMD []

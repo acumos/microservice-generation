@@ -187,12 +187,14 @@ public class DockerizeModel {
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
 			}
-			try {
-				File modelFolder = new File(outputFolder, "model");
-				UtilityFunction.unzip(localmodelFile, modelFolder.getAbsolutePath());
-			} catch (IOException e) {
-				logger.error("Python templatization failed: " + e);
+			
+		     //move .zip, .proto, .json files from temp folder to temp\app folder with name change
+			File[] listOfFiles = tempFolder.listFiles();
+
+			for (File file : listOfFiles) {
+				UtilityFunction.moveFile(file, outputFolder);
 			}
+			
 			dockerPreprator.prepareDockerAppV2(outputFolder);
 		} else if (metadata.getRuntimeName().equals("r")) {			
 			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy);
