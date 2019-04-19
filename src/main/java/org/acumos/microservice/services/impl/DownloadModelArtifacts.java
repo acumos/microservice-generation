@@ -85,6 +85,7 @@ public class DownloadModelArtifacts {
 							if (!nexusURI.isEmpty()) {
 								artifactFileName = nexusURI.substring(nexusURI.lastIndexOf("/") + 1, nexusURI.length());
 								artifactNameArray.add(artifactFileName);
+								logger.debug("------ Downloaded Artifact : " + artifactFileName);
 
 							}
 						}
