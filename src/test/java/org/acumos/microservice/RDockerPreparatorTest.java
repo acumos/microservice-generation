@@ -28,6 +28,7 @@ import org.acumos.microservice.component.docker.preparation.RDockerPreparator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.doNothing;
@@ -45,7 +46,7 @@ public class RDockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	private String httpProxy= "http://10.1.0.6:3128";
 
-	@Mock
+	@InjectMocks
 	RDockerPreparator rDockerPreparator = new RDockerPreparator(metadataParser, httpProxy);
 
 	@Test
@@ -69,7 +70,7 @@ public class RDockerPreparatorTest {
 
 		try {
 			File f1 = new File(FilePathTest.filePath());
-			doNothing().when(rDockerPreparator).prepareDockerApp(f1);
+			rDockerPreparator.prepareDockerApp(f1);
 		} catch (AcumosServiceException e) {
 			Assert.fail("prepareDockerAppTest failed : " + e.getMessage());
 		}

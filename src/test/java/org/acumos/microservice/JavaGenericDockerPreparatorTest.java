@@ -46,6 +46,8 @@ public class JavaGenericDockerPreparatorTest {
 	File srcFile = new File(filePath+"Dockerfile");
 	File outFile = new File(filePath+"Dockerfile");
 	File outFolder = new File(filePath+"inFile.csv");
+	File outFolder1 = new File(filePath);
+	
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
 	@InjectMocks
@@ -77,4 +79,20 @@ public class JavaGenericDockerPreparatorTest {
 			Assert.fail("createDockerFile failed : " + e.getMessage());
 		}
 	}
+	
+	
+	@Test
+	public void prepareDockerApp() {
+		try {
+			javaGenericDockerPreparator.prepareDockerApp(outFolder1);
+		} catch (AcumosServiceException e) {
+			Assert.fail("prepareDockerApp failed : " + e.getMessage());
+		}
+	}
+
+
+
+
 }
+
+
