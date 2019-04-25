@@ -30,25 +30,30 @@ import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.microservice.component.docker.preparation.PythonDockerPreprator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PythonDockerPrepratorTest {
-	
+
 	String filePath = FilePathTest.filePath();
-	 
+ 
 	File jsonFile = new File(filePath+"metadata.json");
 	File srcFile = new File(filePath+"Dockerfile");
 	File outFile = new File(filePath+"Dockerfile");
 	File outFolder = new File(filePath);
 	File reqtxt = new File(filePath+"requirements.txt");
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
-	
-	@Mock
-	PythonDockerPreprator pythonDockerPreprator;
-	
+
+	//@Mock
+	//PythonDockerPreprator pythonDockerPreprator;
+
+	@InjectMocks
+	PythonDockerPreprator pythonDockerPreprator = new PythonDockerPreprator(metadataParser,"extraIndexURL", "trustedHost", "httpProxy");
+
+
 	public PythonDockerPrepratorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
 	} 
@@ -70,18 +75,18 @@ public class PythonDockerPrepratorTest {
 		
 	}
 
-	@Test
+	/*@Test
 	public void prepareDockerAppTest() throws AcumosServiceException {
 		
 		doNothing().when(pythonDockerPreprator).prepareDockerAppV2(outFolder);
-	}
+	}*/
 		
-	@Test
+	/*@Test
 	public void createRequirementTxtTest() throws Exception {
 		
 		doNothing().when(pythonDockerPreprator).createRequirementTxt(reqtxt, reqtxt);
 		
-	}
+	}*/
 	
 	@Test
 	public void checkVersionTest() throws Exception {
@@ -93,5 +98,33 @@ public class PythonDockerPrepratorTest {
 		value = PythonDockerPreprator.checkVersion("3.6");
 		assertNotNull(value);
 	}
+
+
+	@Test
+	public void createDockerFileTest1() {
+		try {
+			pythonDockerPreprator.createDockerFile(srcFile,outFile);
+			assert(true);
+
+		} catch (AcumosServiceException e) {
+			e.printStackTrace();
+			assert(false);
+		}
+
+	}
 	
+	
+	@Test
+	public void createRequirementTxtTest() {
+		try {
+			pythonDockerPreprator.createRequirementTxt(reqtxt, reqtxt);
+			assert(true);
+
+		} catch (AcumosServiceException e) {
+			e.printStackTrace();
+			assert(false);
+		}
+
+	}
+
 }
