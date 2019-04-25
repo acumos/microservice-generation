@@ -20,20 +20,17 @@
 
 package org.acumos.microservice;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 
-import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.microservice.component.docker.preparation.H2ODockerPreparator;
+import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.util.Assert;
 
@@ -53,12 +50,11 @@ public class H2ODockerPreparatorTest {
 	
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
-	@Mock
+	@InjectMocks
 	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser);
 
 	@Test
 	public void compareVersionTest() {
-
 		int[] baseVersion = { 1, 2, 3 };
 		int[] currentVersion = { 4, 5, 6 };
 		int result = H2ODockerPreparator.compareVersion(baseVersion, currentVersion);
@@ -67,28 +63,32 @@ public class H2ODockerPreparatorTest {
 
 	@Test
 	public void versionAsArrayTest() {
-
 		int[] baseVersion = H2ODockerPreparator.versionAsArray("1234");
 		assertNotNull(baseVersion);
 	}
 	
 	@Test
 	public void prepareDockerAppTest() throws AcumosServiceException {
-		
-		doNothing().when(h2ODockerPreparator).prepareDockerApp(outFolder);
+
+	try {
+	    h2ODockerPreparator.prepareDockerApp(outFolder);
+	} catch(Exception e) {
+	   org.junit.Assert.fail("prepareDockerApp failed : " + e.getMessage());
+	}
 
 	}
 	
-	@Test
+	/*@Test
 	public void createDockerFileTest() throws AcumosServiceException {
-		
+
 		doNothing().when(h2ODockerPreparator).createDockerFile(srcFile, srcFile);
 
 	}
-	
+
 	@Test
 	public void createRequirementsTest() throws AcumosServiceException {
 		doNothing().when(h2ODockerPreparator).createRequirements(reqtxt, reqtxt);
-		
-	}
+
+      }*/
+
 }
