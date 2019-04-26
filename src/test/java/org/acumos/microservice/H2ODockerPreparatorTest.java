@@ -55,6 +55,7 @@ public class H2ODockerPreparatorTest {
 
 	@Test
 	public void compareVersionTest() {
+
 		int[] baseVersion = { 1, 2, 3 };
 		int[] currentVersion = { 4, 5, 6 };
 		int result = H2ODockerPreparator.compareVersion(baseVersion, currentVersion);
@@ -63,32 +64,34 @@ public class H2ODockerPreparatorTest {
 
 	@Test
 	public void versionAsArrayTest() {
+
 		int[] baseVersion = H2ODockerPreparator.versionAsArray("1234");
 		assertNotNull(baseVersion);
 	}
 	
 	@Test
 	public void prepareDockerAppTest() throws AcumosServiceException {
-
-	try {
-	    h2ODockerPreparator.prepareDockerApp(outFolder);
+		
+	try {	
+		h2ODockerPreparator.prepareDockerApp(outFolder);
 	} catch(Exception e) {
-	   org.junit.Assert.fail("prepareDockerApp failed : " + e.getMessage());
+		org.junit.Assert.fail("prepareDockerApp failed : " + e.getMessage());
 	}
 
 	}
 	
 	/*@Test
 	public void createDockerFileTest() throws AcumosServiceException {
-
+		
 		doNothing().when(h2ODockerPreparator).createDockerFile(srcFile, srcFile);
 
 	}
-
+	
 	@Test
 	public void createRequirementsTest() throws AcumosServiceException {
 		doNothing().when(h2ODockerPreparator).createRequirements(reqtxt, reqtxt);
-
-      }*/
-
+		
+	}*/
+	
+		
 }

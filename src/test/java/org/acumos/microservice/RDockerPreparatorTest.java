@@ -42,7 +42,7 @@ public class RDockerPreparatorTest {
 	public RDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
 	}
-  
+
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	private String httpProxy= "http://10.1.0.6:3128";
 

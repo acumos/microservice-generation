@@ -45,6 +45,8 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.github.dockerjava.api.DockerClient;
 
+import junit.framework.Assert;
+
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -140,6 +142,18 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		
 	}
 	*/
+	
+	@Test
+	public void listFilesAndFilesSubDirectoriesTest() {
+		try {
+		File files = new File("model");
+		dockerizeModel.listFilesAndFilesSubDirectories(files);
+		} catch(Exception e) {
+			e.printStackTrace();
+			assert(false);
+		}
+	}
+	
 	@Test
 	public void dockerizePythonFileTest() {
 		
@@ -210,10 +224,7 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		assertNotNull(imageURI);	
 		
 		
-	
-	
 		} catch (AcumosServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
