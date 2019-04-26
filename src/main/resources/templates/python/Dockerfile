@@ -1,6 +1,10 @@
 # Use an official Python runtime as a base image
 FROM python:{0}
 
+# Set label for knowing which REST api version this model runner is following
+# this is to help configure the nginx proxy
+LABEL micro-service-rest-api-version="2.0"
+
 # Set the working directory to /app
 WORKDIR /app
 
