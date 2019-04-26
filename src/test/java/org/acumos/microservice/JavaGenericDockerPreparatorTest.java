@@ -71,14 +71,14 @@ public class JavaGenericDockerPreparatorTest {
 		int[] baseVersion = JavaGenericDockerPreparator.versionAsArray("1234");
 	}
 
-	@Test
+	/*@Test
 	public void createDockerFile() {
 		try {
 			javaGenericDockerPreparator.createDockerFile(srcFile, outFile);
 		} catch (AcumosServiceException e) {
 			Assert.fail("createDockerFile failed : " + e.getMessage());
 		}
-	}
+	}*/
 	
 	
 	@Test

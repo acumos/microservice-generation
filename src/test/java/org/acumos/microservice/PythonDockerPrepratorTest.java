@@ -75,11 +75,11 @@ public class PythonDockerPrepratorTest {
 		
 	}
 
-	/*@Test
+	@Test
 	public void prepareDockerAppTest() throws AcumosServiceException {
 		
-		doNothing().when(pythonDockerPreprator).prepareDockerAppV2(outFolder);
-	}*/
+		pythonDockerPreprator.prepareDockerAppV2(outFolder);
+	}
 		
 	/*@Test
 	public void createRequirementTxtTest() throws Exception {
@@ -101,7 +101,7 @@ public class PythonDockerPrepratorTest {
 	
 	
 	
-	@Test
+/*	@Test
 	public void createDockerFileTest1() {
 		try {
 			pythonDockerPreprator.createDockerFile(srcFile,outFile);
@@ -126,6 +126,6 @@ public class PythonDockerPrepratorTest {
 			assert(false);
 		}
 		
-	}
+	}*/
 	
 }

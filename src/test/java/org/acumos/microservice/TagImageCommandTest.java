@@ -59,4 +59,18 @@ public class TagImageCommandTest {
 		tagImageCommand.getWithForce();
 		Assert.assertNotNull(tagImageCommand);
 	}
+	
+	
+/*	@Test
+	public void executeTest() {
+		try {
+			tagImageCommand.execute();	
+		} catch(Exception e) {
+			e.printStackTrace();
+			assert(false);
+			//org.junit.Assert.fail("listFilesAndFilesSubDirectoriesTest failed : " + e.getMessage());
+		}*/
+		
+		
+	
 }
