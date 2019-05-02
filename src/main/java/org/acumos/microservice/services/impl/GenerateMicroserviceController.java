@@ -123,6 +123,31 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			)
 			throws AcumosServiceException {
 		
+		// If trackingID is provided in the header create a
+		// OnboardingNotification object that will be used to update
+		// status
+		// against that trackingID
+		if (trackingID != null) {
+			logger.debug("Tracking ID: "+ trackingID);
+		} else {
+			trackingID = UUID.randomUUID().toString();
+			logger.debug("Tracking ID: "+ trackingID);
+		}
+		
+		String fileName = "MicroserviceGenerationLog.txt";
+		// setting log filename in ThreadLocal
+		LogBean logBean = new LogBean();
+		logBean.setFileName(fileName);
+		logBean.setLogPath(logPath + File.separator + trackingID);
+
+		LogThreadLocal logThread = new LogThreadLocal();
+		logThread.set(logBean);
+		// create log file to capture logs as artifact
+		createLogFile(logBean.getLogPath());
+
+		String buildVersion = UtilityFunction.getProjectVersion();
+		logger.debug("Microservice-Generation version : " + buildVersion);
+		
 		String deployment_env = null;
 		OnboardingNotification onboardingStatus = null;
 		
@@ -140,18 +165,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			request_id = UUID.randomUUID().toString();
 			logger.debug("Request ID Created: "+ request_id);
 		}
-		
-		// If trackingID is provided in the header create a
-		// OnboardingNotification object that will be used to update
-		// status
-		// against that trackingID
-		if (trackingID != null) {
-			logger.debug("Tracking ID: "+ trackingID);
-		} else {
-			trackingID = UUID.randomUUID().toString();
-			logger.debug("Tracking ID: "+ trackingID);
-		}	
-		
+				
 		onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd, request_id);
 		onboardingStatus.setRequestId(request_id);
 		MDC.put(OnboardingLogConstants.MDCs.REQUEST_ID, request_id);
@@ -194,20 +208,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							ServiceResponse.errorResponse("" + HttpStatus.UNAUTHORIZED, "Unauthorized User"),
 							HttpStatus.UNAUTHORIZED);
 				}
-
-				String fileName = "MicroserviceGenerationLog.txt";
-				// setting log filename in ThreadLocal
-				LogBean logBean = new LogBean();
-				logBean.setFileName(fileName);
-				logBean.setLogPath(logPath + File.separator + trackingID);
-
-				LogThreadLocal logThread = new LogThreadLocal();
-				logThread.set(logBean);
-				// create log file to capture logs as artifact
-				createLogFile(logBean.getLogPath());
-
-				String buildVersion = UtilityFunction.getProjectVersion();
-				logger.debug("Microservice-Generation version : " + buildVersion);
 
 				String modelName = null;
 
