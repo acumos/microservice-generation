@@ -22,6 +22,12 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 2.11.0, 14 May 2019
+-----------------------------
+* Common Data Service client at version 2.2.2
+* Logs are not displayed as per the standardization : `ACUMOS-2779 <https://jira.acumos.org/browse/ACUMOS-2779/>`_
+* Add non configurable parameters to application.properties file : `ACUMOS-2872 <https://jira.acumos.org/browse/ACUMOS-2872/>`_
+
 Version 2.10.0, 19 April 2019
 ---------------------------------
 * Common Data Service client at version 2.2.1
