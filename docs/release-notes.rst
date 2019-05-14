@@ -28,6 +28,8 @@ Version 2.11.0, 14 May 2019
 * Logs are not displayed as per the standardization : `ACUMOS-2779 <https://jira.acumos.org/browse/ACUMOS-2779/>`_
 * Add non configurable parameters to application.properties file : `ACUMOS-2872 <https://jira.acumos.org/browse/ACUMOS-2872/>`_
 
+NOTE: microServiceAsyncFlag is available in application.properties with 'false' default value. Async microsrvices will also work if flag key-value is removed from yml file.
+
 Version 2.10.0, 19 April 2019
 ---------------------------------
 * Common Data Service client at version 2.2.1
