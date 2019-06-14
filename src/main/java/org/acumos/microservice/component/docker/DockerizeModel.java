@@ -352,7 +352,7 @@ public class DockerizeModel {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		boolean isSuccess = false;
-		logger.debug("Preparing app in: " + tempFolder);
+		logger.debug("Preparing app in: " + tempFolder, logBean);
 		if (metadata.getRuntimeName().equals("python")) {
 			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
@@ -477,23 +477,23 @@ public class DockerizeModel {
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 					"Unspported runtime " + metadata.getRuntimeName());
 		}
-		logger.debug("Resource List");
+		logger.debug("Resource List", logBean);
 		listFilesAndFilesSubDirectories(outputFolder);
-		logger.debug("End of Resource List");
-		logger.debug("Started docker client");
+		logger.debug("End of Resource List", logBean);
+		logger.debug("Started docker client", logBean);
 		DockerClient dockerClient = DockerClientFactory.getDockerClient(dockerConfiguration);
-		logger.debug("Docker client created successfully");
+		logger.debug("Docker client created successfully", logBean);
 		
 		Metadata mData = metadataParser.getMetadata();
 		String imageUri = null;
 		
 		try {			
-			logger.debug("Docker image creation started");
+			logger.debug("Docker image creation started", logBean);
 			String actualModelName = getActualModelName(metadata, solutionID);  
 			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,metadata.getVersion(), null, false, true, logBean);
 			createCMD.setClient(dockerClient);
 			createCMD.execute();
-			logger.debug("Docker image creation done");
+			logger.debug("Docker image creation done", logBean);
 			// put catch here
 			// /Microservice/Docker image nexus creation -success
 
@@ -501,7 +501,7 @@ public class DockerizeModel {
 
 			// TODO: remove local image
 
-			logger.debug("Starting docker image tagging");
+			logger.debug("Starting docker image tagging", logBean);
 			String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
 			
 			String dockerImageURI = imageTagName + ":" + metadata.getVersion();
@@ -510,18 +510,18 @@ public class DockerizeModel {
 					imageTagName, metadata.getVersion(), true, false);
 			tagImageCommand.setClient(dockerClient);
 			tagImageCommand.execute();
-			logger.debug("Docker image tagging completed successfully");
+			logger.debug("Docker image tagging completed successfully", logBean);
 
 			logger.debug("Starting pushing with Imagename:" + imageTagName + " and version : " + metadata.getVersion()
-					+ " in nexus");
+					+ " in nexus", logBean);
 			PushImageCommand pushImageCmd = new PushImageCommand(imageTagName, metadata.getVersion(), "");
 			pushImageCmd.setClient(dockerClient);
 			pushImageCmd.execute();
 
-			logger.debug("Docker image URI : " + dockerImageURI);
+			logger.debug("Docker image URI : " + dockerImageURI, logBean);
 
 			// Microservice/Docker image pushed to nexus -success
-			logger.debug("Docker image pushed in nexus successfully");
+			logger.debug("Docker image pushed in nexus successfully", logBean);
 
 			
 			
@@ -538,9 +538,9 @@ public class DockerizeModel {
 					onboardingStatus);
 			
 			if (deployment_env.equalsIgnoreCase("2")) {
-				logger.debug( "OutputFolderPath: " + outputFolder);
+				logger.debug( "OutputFolderPath: " + outputFolder, logBean);
 				logger.debug(
-						"AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath());
+						"AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath(), logBean);
 				addDCAEArrtifacts(mData, outputFolder, solutionID, onboardingStatus);
 			}
 			
@@ -550,12 +550,12 @@ public class DockerizeModel {
 			
 			try {
 				
-				logger.debug("Thread in finally block of dockerizeFileAsync --> "+Thread.currentThread().getName());
+				logger.debug("Thread in finally block of dockerizeFileAsync --> "+Thread.currentThread().getName(), logBean);
 				UtilityFunction.deleteDirectory(outputFolder);
 
 				if (isSuccess == false) {
 					logger.debug(
-							"Onboarding Failed, Reverting failed solutions and artifacts.");
+							"Onboarding Failed, Reverting failed solutions and artifacts.", logBean);
 					if (metadataParser != null && mData != null) {
 						revertbackOnboarding(mData, solutionID, imageUri);
 					}
@@ -563,13 +563,13 @@ public class DockerizeModel {
 
 				// push docker build log into nexus
 				File file = new java.io.File(logPath + File.separator + trackingID + File.separator + fileName);
-				logger.debug( "Log file length " + file.length());
+				logger.debug( "Log file length " + file.length(), logBean);
 				logger.debug( "Log file Path " + file.getPath() + " Absolute Path : "
-						+ file.getAbsolutePath() + " Canonical Path: " + file.getCanonicalFile());
+						+ file.getAbsolutePath() + " Canonical Path: " + file.getCanonicalFile(), logBean);
 
 				if (metadataParser != null && mData != null) {
 					logger.debug(
-							"Adding of log artifacts into nexus started " + fileName);
+							"Adding of log artifacts into nexus started " + fileName, logBean);
 
 					String nexusArtifactID = "MicroserviceGenerationLog";
 
@@ -577,7 +577,7 @@ public class DockerizeModel {
 					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 							OnboardingLogConstants.ResponseStatus.COMPLETED.name());
 					logger.debug(
-							"Artifacts log pushed to nexus successfully" + fileName);
+							"Artifacts log pushed to nexus successfully" + fileName, logBean);
 				}
 				// delete log file
 				UtilityFunction.deleteDirectory(file);
