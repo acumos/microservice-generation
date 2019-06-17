@@ -527,8 +527,13 @@ public class DockerizeModel {
 			
 			// Notify Create docker image is successful
 			if (onboardingStatus != null) {
-				onboardingStatus.notifyOnboardingStatus("Dockerize", "SU",
-						"Created Docker Image Successfully for solution " + mData.getSolutionId());
+				try {
+					onboardingStatus.notifyOnboardingStatus("Dockerize", "SU",
+							"Created Docker Image Successfully for solution " + mData.getSolutionId());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			// Add artifacts started. Notification will be handed by
@@ -573,7 +578,7 @@ public class DockerizeModel {
 
 					String nexusArtifactID = "MicroserviceGenerationLog";
 
-					commonOnboarding.addArtifact(mData, file, "LG", nexusArtifactID, onboardingStatus);
+					commonOnboarding.addArtifact(mData, file, "LG", nexusArtifactID, onboardingStatus, logBean);
 					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 							OnboardingLogConstants.ResponseStatus.COMPLETED.name());
 					logger.debug(
