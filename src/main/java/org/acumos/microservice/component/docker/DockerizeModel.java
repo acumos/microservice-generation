@@ -529,7 +529,7 @@ public class DockerizeModel {
 			if (onboardingStatus != null) {
 				try {
 					onboardingStatus.notifyOnboardingStatus("Dockerize", "SU",
-							"Created Docker Image Successfully for solution " + mData.getSolutionId());
+							"Created Docker Image Successfully for solution " + mData.getSolutionId(), logBean);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -540,7 +540,7 @@ public class DockerizeModel {
 			// addArtifact method itself for started/success/failure
 			artifactsDetails = getArtifactsDetails();
 			commonOnboarding.addArtifact(mData, dockerImageURI, getArtifactTypeCode("Docker Image"),
-					onboardingStatus);
+					onboardingStatus, logBean);
 			
 			if (deployment_env.equalsIgnoreCase("2")) {
 				logger.debug( "OutputFolderPath: " + outputFolder, logBean);
