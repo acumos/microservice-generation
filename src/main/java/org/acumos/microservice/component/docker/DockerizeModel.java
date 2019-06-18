@@ -347,8 +347,8 @@ public class DockerizeModel {
 	}
 	
 	public void dockerizeFileAsync(OnboardingNotification onboardingStatus, MetadataParser metadataParser,
-			File localmodelFile, String solutionID, String deployment_env, File tempFolder, String trackingID, String fileName,LogThreadLocal logThread, LogBean logBean)
-			throws AcumosServiceException {
+			File localmodelFile, String solutionID, String deployment_env, File tempFolder, String trackingID,
+			String fileName, LogThreadLocal logThread, LogBean logBean, MLPTask task) throws AcumosServiceException {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		boolean isSuccess = false;
@@ -554,35 +554,41 @@ public class DockerizeModel {
 		} finally {
 			
 			try {
-				
-				logger.debug("Thread in finally block of dockerizeFileAsync --> "+Thread.currentThread().getName(), logBean);
-				UtilityFunction.deleteDirectory(outputFolder);
 
+				logger.debug("Thread in finally block of dockerizeFileAsync --> " + Thread.currentThread().getName(),
+						logBean);
+				UtilityFunction.deleteDirectory(outputFolder);
+				task.setModified(Instant.now());
 				if (isSuccess == false) {
-					logger.debug(
-							"Onboarding Failed, Reverting failed solutions and artifacts.", logBean);
+					logger.debug("Onboarding Failed, Reverting failed solutions and artifacts.", logBean);
+					task.setStatusCode("FA");
+					logger.debug("MLP task updating with the values =" + task.toString(), logBean);
+					cdmsClient.updateTask(task);
 					if (metadataParser != null && mData != null) {
 						revertbackOnboarding(mData, solutionID, imageUri);
 					}
 				}
 
+				if (isSuccess == true) {
+					task.setStatusCode("SU");
+					logger.debug("MLP task updating with the values =" + task.toString(), logBean);
+					cdmsClient.updateTask(task);
+				}
 				// push docker build log into nexus
 				File file = new java.io.File(logPath + File.separator + trackingID + File.separator + fileName);
-				logger.debug( "Log file length " + file.length(), logBean);
-				logger.debug( "Log file Path " + file.getPath() + " Absolute Path : "
-						+ file.getAbsolutePath() + " Canonical Path: " + file.getCanonicalFile(), logBean);
+				logger.debug("Log file length " + file.length(), logBean);
+				logger.debug("Log file Path " + file.getPath() + " Absolute Path : " + file.getAbsolutePath()
+						+ " Canonical Path: " + file.getCanonicalFile(), logBean);
 
 				if (metadataParser != null && mData != null) {
-					logger.debug(
-							"Adding of log artifacts into nexus started " + fileName, logBean);
+					logger.debug("Adding of log artifacts into nexus started " + fileName, logBean);
 
 					String nexusArtifactID = "MicroserviceGenerationLog";
 
 					commonOnboarding.addArtifact(mData, file, "LG", nexusArtifactID, onboardingStatus, logBean);
 					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 							OnboardingLogConstants.ResponseStatus.COMPLETED.name());
-					logger.debug(
-							"Artifacts log pushed to nexus successfully" + fileName, logBean);
+					logger.debug("Artifacts log pushed to nexus successfully" + fileName, logBean);
 				}
 				// delete log file
 				UtilityFunction.deleteDirectory(file);
@@ -922,12 +928,13 @@ public class DockerizeModel {
 						try {
 							File modFile = modelFile;
 							MLPSolution mlpSoln = mlpSolution;
+							MLPTask mlpTask = task;
 							
 							logger.debug("Thread before calling dockerizeFileAsync --> "+Thread.currentThread().getName());
 								CompletableFuture.supplyAsync(() -> {
 									try {
 										 dockerizeFileAsync(onboardingStatus, metadataParser, modFile, mlpSoln.getSolutionId(),
-												deployment_env, outputFolder, trackingID, fileName, logThread, logBean);
+												deployment_env, outputFolder, trackingID, fileName, logThread, logBean, mlpTask);
 									} catch (AcumosServiceException e) {
 										logger.error(
 												"Exception while creating docker image : " + e);
