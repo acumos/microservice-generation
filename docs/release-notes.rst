@@ -22,6 +22,13 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+
+Version 2.13.0, 24 June 2019
+-----------------------------
+* Common Data Service client at version 2.2.4
+* Microservice entry is remaining InProgress after completing onboarding process : `ACUMOS-3012 <https://jira.acumos.org/browse/ACUMOS-3012/>`_
+* Async MSGen Notification logs not getting generated : `ACUMOS-3088 <https://jira.acumos.org/browse/ACUMOS-3088/>`_
+
 Version 2.12.0, 31 May 2019
 -----------------------------
 * Common Data Service client at version 2.2.4
