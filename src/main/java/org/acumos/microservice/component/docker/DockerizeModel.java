@@ -598,11 +598,12 @@ public class DockerizeModel {
 				dockerClient.close();
 			} catch (AcumosServiceException e) {
 				mData = null;
+				HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 						OnboardingLogConstants.ResponseStatus.ERROR.name());
-				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
+				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, httpCode.toString());
 				logger.error( "RevertbackOnboarding Failed");
-				HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
+				
 				
 			} catch (IOException e) {
 				logger.error("Fail to close docker client gracefully", e);
@@ -991,11 +992,11 @@ public class DockerizeModel {
 
 			HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
 			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,OnboardingLogConstants.ResponseStatus.ERROR.name());
-			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
 			logger.error( e.getErrorCode() + "  " + e.getMessage());
 			if (e.getErrorCode().equalsIgnoreCase(OnboardingConstants.INVALID_PARAMETER)) {
 				httpCode = HttpStatus.BAD_REQUEST;
 			}
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, httpCode.toString());
 			return new ResponseEntity<ServiceResponse>(ServiceResponse.errorResponse(e.getErrorCode(), e.getMessage()),
 					httpCode);
 		} catch (HttpClientErrorException e) {
