@@ -380,6 +380,12 @@ public class DockerizeModel {
 			} catch (IOException e) {
 				logger.error("Python templatization failed: " + e);
 			}
+			//move .zip, .proto, .json files from temp folder to temp\app folder with name change
+			File[] listOfFiles = tempFolder.listFiles();
+
+			for (File file : listOfFiles) {
+				UtilityFunction.moveFile(file, outputFolder);
+			}
 			dockerPreprator.prepareDockerAppV2(outputFolder);
 		} else if (metadata.getRuntimeName().equals("r")) {			
 			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy);
