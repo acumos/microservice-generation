@@ -2,6 +2,7 @@ package org.acumos.microservice;
 
 import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPArtifact;
+import org.acumos.cds.domain.MLPTask;
 import org.acumos.microservice.component.docker.DockerClientFactory;
 import org.acumos.microservice.component.docker.DockerConfiguration;
 import org.acumos.microservice.component.docker.DockerizeModel;
@@ -253,6 +254,7 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		PythonDockerPreprator pythonDockerPreprator = mock(PythonDockerPreprator.class);
 		
 		MLPArtifact mLPArtifact = mock(MLPArtifact.class);
+		MLPTask task = mock(MLPTask.class);
 		//CreateImageCommand createImageCommand = mock(CreateImageCommand.class);
 		
 		DockerizeModel dockerizeModelMock = mock(DockerizeModel.class);
@@ -313,7 +315,7 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		File outputFolder1 = new File("tmp", modelId);
 		outputFolder.mkdirs();
 		
-		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder1, "trackingID", "fileName", logThread, logBean);
+		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder1, "trackingID", "fileName", logThread, logBean, task);
 
 		assertNotNull(true);	
 		
@@ -465,6 +467,7 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		mockStatic(DockerClientFactory.class);
 		Resource rc = mock(Resource.class);
 		File file = mock(File.class);
+		MLPTask task = mock(MLPTask.class);
 		JavaGenericDockerPreparator javaGenericDockerPreparator = mock(JavaGenericDockerPreparator.class);
 		
 		RDockerPreparator rDockerPreparator = mock(RDockerPreparator.class);
@@ -545,12 +548,12 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		mData.setRuntimeVersion("0");
 		dockerizeModel.setModelOriginalName("acumosavageneric");
 //		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
-		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean);
+		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 		assertNotNull(true);	
 		
 		mData.setRuntimeName("r");
 		dockerizeModel.setModelOriginalName("acumosr");
-		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean);
+		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 		assertNotNull(true);
 		
 		
@@ -561,14 +564,14 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		mData.setRuntimeName("h2o");
 		dockerizeModel.setModelOriginalName("h2o");
 		//imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
-		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean);
+		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 
 		assertNotNull(true);	
 		
 		mData.setRuntimeName("javaargus");
 		dockerizeModel.setModelOriginalName("javaargus");
 		//imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
-		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean);
+		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 		assertNotNull(true);
 		
 		
@@ -676,6 +679,3 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 	
  		
 	}
-	
-
-
