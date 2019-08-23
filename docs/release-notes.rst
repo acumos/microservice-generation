@@ -23,7 +23,7 @@ Microservice Generation Release Notes
 These release notes cover the microservice generation project.
 
 
-Version 3.0.0, 23 Aug 2019
+Version 3.0.0, 23  Aug 2019
 -----------------------------
 * Common Data Service client at version 2.2.6
 * attach a license profile as JSON during on-boarding with Artifact Type LI : `ACUMOS-3171 <https://jira.acumos.org/browse/ACUMOS-3171/>`_
