@@ -20,12 +20,12 @@
 
 package org.acumos.microservice.component.docker;
 
-import java.time.Instant;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,20 +33,22 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.PostConstruct;
+
 import org.acumos.cds.CodeNameType;
 import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPArtifact;
 import org.acumos.cds.domain.MLPCodeNamePair;
 import org.acumos.cds.domain.MLPSolution;
 import org.acumos.cds.domain.MLPSolutionRevision;
-import org.acumos.cds.domain.MLPUser;
 import org.acumos.cds.domain.MLPTask;
+import org.acumos.cds.domain.MLPUser;
 import org.acumos.microservice.component.docker.cmd.CreateImageCommand;
 import org.acumos.microservice.component.docker.cmd.DeleteImageCommand;
 import org.acumos.microservice.component.docker.cmd.PushImageCommand;
 import org.acumos.microservice.component.docker.cmd.TagImageCommand;
 import org.acumos.microservice.component.docker.preparation.H2ODockerPreparator;
 import org.acumos.microservice.component.docker.preparation.JavaGenericDockerPreparator;
+import org.acumos.microservice.component.docker.preparation.JavaSparkDockerPreparator;
 import org.acumos.microservice.component.docker.preparation.PythonDockerPreprator;
 import org.acumos.microservice.component.docker.preparation.RDockerPreparator;
 import org.acumos.microservice.services.impl.DownloadModelArtifacts;
@@ -287,6 +289,43 @@ public class DockerizeModel {
 
 			dockerPreprator.prepareDockerApp(outputFolder);
 
+		} else if (metadata.getRuntimeName().equals("javaspark")) {
+			File plugin_root = new File(outputFolder, "plugin_root");
+			plugin_root.mkdirs(); 
+			File plugin_src = new File(plugin_root, "src");
+			plugin_src.mkdirs();
+			File plugin_classes = new File(plugin_root, "classes");
+			plugin_classes.mkdirs();
+
+			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser);
+
+			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
+			for (Resource resource : resources) {
+				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
+			}
+			try {
+				UtilityFunction.unzip(localmodelFile, outputFolder.getAbsolutePath());
+
+				String mm[] = modelOriginalName.split("\\.");
+
+				File fd = new File(outputFolder.getAbsolutePath() + "/" + mm[0]);
+
+				File ff[] = fd.listFiles();
+
+				if (ff != null) {
+					for (File f : ff) {
+						FileUtils.copyFileToDirectory(f, outputFolder);
+					}
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + modelOriginalName));
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + mm[0]));
+				}
+
+				// Creat solution id - success
+			} catch (IOException e) {
+				logger.error("Javaspark templatization failed", e);
+			}
+			dockerPreprator.prepareDockerApp(outputFolder);
+
 		} else {
 			logger.error("Unspported runtime " + metadata.getRuntimeName());
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
@@ -476,6 +515,43 @@ public class DockerizeModel {
 				logger.error("Java-Generic templatization failed", e);
 			}
 
+			dockerPreprator.prepareDockerApp(outputFolder);
+
+		} else if (metadata.getRuntimeName().equals("javaspark")) {
+			File plugin_root = new File(outputFolder, "plugin_root");
+			plugin_root.mkdirs(); 
+			File plugin_src = new File(plugin_root, "src");
+			plugin_src.mkdirs();
+			File plugin_classes = new File(plugin_root, "classes");
+			plugin_classes.mkdirs();
+
+			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser);
+
+			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
+			for (Resource resource : resources) {
+				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
+			}
+			try {
+				UtilityFunction.unzip(localmodelFile, outputFolder.getAbsolutePath());
+
+				String mm[] = modelOriginalName.split("\\.");
+
+				File fd = new File(outputFolder.getAbsolutePath() + "/" + mm[0]);
+
+				File ff[] = fd.listFiles();
+
+				if (ff != null) {
+					for (File f : ff) {
+						FileUtils.copyFileToDirectory(f, outputFolder);
+					}
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + modelOriginalName));
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + mm[0]));
+				}
+
+				// Creat solution id - success
+			} catch (IOException e) {
+				logger.error("Javaspark templatization failed", e);
+			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else {
