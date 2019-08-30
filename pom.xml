@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.acumos.microservice</groupId>
 	<artifactId>microservice-generation</artifactId>
-	<version>3.0.3-SNAPSHOT</version>
+	<version>3.0.4-SNAPSHOT</version>
 	<name>Microservice generation jar</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.acumos.on-boarding</groupId>
                   <artifactId>onboarding-common</artifactId>
-			<version>3.0.1-SNAPSHOT</version>
+			<version>3.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -160,9 +160,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<!--  <source>1.8</source>
-					<target>1.8</target> -->
-					<release>11</release>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -327,7 +326,7 @@
 							<!--Specify a tag to avoid default tag "latest"-->
 							<name>microservice-generation:${project.version}</name>
 							<build>
-								<from>openjdk:11-jdk</from>
+								<from>openjdk:8-jdk</from>
 								<tags>
 									<!--Add tag with build number-->
 									<tag>${project.version}-b${build.number}</tag>
@@ -360,8 +359,8 @@
 						</image>
 					</images>
 				</configuration>
-				 <!-- build Docker image in install phase, push in deploy phase -->
-				 <executions>
+				<!-- build Docker image in install phase, push in deploy phase -->
+				<executions>
 					<execution>
 						<goals>
 							<goal>build</goal>
