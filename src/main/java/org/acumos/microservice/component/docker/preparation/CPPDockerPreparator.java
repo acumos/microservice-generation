@@ -21,80 +21,61 @@
 package org.acumos.microservice.component.docker.preparation;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
+import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.UtilityFunction;
 import org.acumos.onboarding.component.docker.preparation.Metadata;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.component.docker.preparation.Requirement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class RDockerPreparator {
+public class CPPDockerPreparator { 
 	private Metadata metadata;
 
-	private String rVersion;
+	private String runtimeVersion;
+	private String executable;
+	private static final Logger log = LoggerFactory.getLogger(CPPDockerPreparator.class);
+	LoggerDelegate logger = new LoggerDelegate(log);
 
-	private String rhttpProxy;
-
-	public RDockerPreparator(MetadataParser metadataParser, String httpProxy) throws AcumosServiceException {
-		this.rhttpProxy = httpProxy;
+	public CPPDockerPreparator(MetadataParser metadataParser) throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
-		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
 
-		/*
-		 * if (runtimeVersion[0] == 3) { int[] baseVersion = new int[] { 3, 3, 2 }; if
-		 * (compareVersion(baseVersion, runtimeVersion) >= 0) { this.rVersion = "3.3.2";
-		 */
-
-		if (runtimeVersion.length > 0) {
-			String version = Arrays.toString(runtimeVersion);
-			System.out.println("version: " + version);
-
-			version = version.replaceAll(", ", ".").replace("[", "").replace("]", "");
-			this.rVersion = version;
-			System.out.println("rVersion: " + rVersion);
-		} else {
+		this.runtimeVersion = metadata.getRuntimeVersion();
+		this.executable = metadata.getExecutable(); 
+		
+		if(executable == null || executable.isEmpty()) {
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
-					"Unspported r version " + metadata.getRuntimeVersion());
+					"Unsupported executable value.");
 		}
-
-		/*
-		 * } else { throw new AcumosServiceException(AcumosServiceException.ErrorCode.
-		 * INVALID_PARAMETER, "Unspported r version " + metadata.getRuntimeVersion()); }
-		 */
-
+		
 	}
 
 	public void prepareDockerApp(File outputFolder) throws AcumosServiceException {
+	
 		this.createDockerFile(new File(outputFolder, "Dockerfile"), new File(outputFolder, "Dockerfile"));
-		this.createPackageR(new File(outputFolder, "packages.R"), new File(outputFolder, "packages.R"));
+		this.createRequirements(new File(outputFolder, "requirements.txt"), new File(outputFolder, "requirements.txt"));
 	}
 
-	private void createPackageR(File inPackageRFile, File outPackageRFile) throws AcumosServiceException {
+	public void createRequirements(File inPackageRFile, File outPackageRFile) throws AcumosServiceException {
 		try {
 			List<Requirement> requirements = this.metadata.getRequirements();
-			List<String> reqAsLists = new ArrayList();
-			
+			StringBuilder reqBuilder = new StringBuilder();
 			for (Requirement requirement : requirements) {
-				reqAsLists.add(requirement.name);
+				reqBuilder.append("\"" + requirement.name + "\",");
 			}
-						
-			String packageRFileAsString= new String(UtilityFunction.toBytes(inPackageRFile));
-			
-			if(reqAsLists != null && !reqAsLists.isEmpty()) {
-				String packageAsString = "";
-				for(String reqAsList : reqAsLists) {
-					packageAsString = "install.packages(\""+reqAsList+"\",repos=\"http://cloud.r-project.org\",dependencies=T)";
-				if(!packageRFileAsString.contains(packageAsString))
-					packageRFileAsString += "\n"+packageAsString;
-				}
-			}
-						
+			String reqAsString = reqBuilder.toString();
+			reqAsString = reqAsString.substring(0, reqAsString.length() - 1);
+			String packageRFileAsString = new String(UtilityFunction.toBytes(inPackageRFile));
+			packageRFileAsString = MessageFormat.format(packageRFileAsString, new Object[] { reqAsString });
 			FileWriter writer = new FileWriter(outPackageRFile);
 			try {
 				writer.write(packageRFileAsString.trim());
@@ -107,11 +88,13 @@ public class RDockerPreparator {
 		}
 	}
 
-	private void createDockerFile(File inDockerFile, File outDockerFile) throws AcumosServiceException {
+	public void createDockerFile(File inDockerFile, File outDockerFile) throws AcumosServiceException {
 		try {
+
 			String dockerFileAsString = new String(UtilityFunction.toBytes(inDockerFile));
-			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { this.rhttpProxy, this.rVersion });
+
+			dockerFileAsString = MessageFormat.format(dockerFileAsString, new Object[] { runtimeVersion, executable});
+
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {
 				writer.write(dockerFileAsString.trim());
