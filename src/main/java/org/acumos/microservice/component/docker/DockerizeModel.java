@@ -1,41 +1,3 @@
-/*-
- * ===============LICENSE_START=======================================================
- * Acumos
- * ===================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
- * ===================================================================================
- * This Acumos software file is distributed by AT&T and Tech Mahindra
- * under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *      http://www.apache.org/licenses/LICENSE-2.0
- *  
- * This file is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ===============LICENSE_END=========================================================
- */
-
-package org.acumos.microservice.component.docker;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-
-import javax.annotation.PostConstruct;
-
-import org.acumos.cds.CodeNameType;
-import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPArtifact;
 import org.acumos.cds.domain.MLPCodeNamePair;
 import org.acumos.cds.domain.MLPSolution;
@@ -46,6 +8,7 @@ import org.acumos.microservice.component.docker.cmd.CreateImageCommand;
 import org.acumos.microservice.component.docker.cmd.DeleteImageCommand;
 import org.acumos.microservice.component.docker.cmd.PushImageCommand;
 import org.acumos.microservice.component.docker.cmd.TagImageCommand;
+import org.acumos.microservice.component.docker.preparation.CPPDockerPreparator;
 import org.acumos.microservice.component.docker.preparation.H2ODockerPreparator;
 import org.acumos.microservice.component.docker.preparation.JavaGenericDockerPreparator;
 import org.acumos.microservice.component.docker.preparation.JavaSparkDockerPreparator;
@@ -290,6 +253,7 @@ public class DockerizeModel {
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else if (metadata.getRuntimeName().equals("javaspark")) {
+			logger.info("Inside Javaspark metadata Runtime ");
 			File plugin_root = new File(outputFolder, "plugin_root");
 			plugin_root.mkdirs(); 
 			File plugin_src = new File(plugin_root, "src");
@@ -326,7 +290,40 @@ public class DockerizeModel {
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 
-		} else {
+		} else if((metadata.getRuntimeName().equals("c++"))) {
+			logger.info("Inside c++ metadata Runtime ");
+			outputFolder = new File(tempFolder, "app");
+			outputFolder.mkdir();
+			
+			CPPDockerPreparator dockerPreprator = new CPPDockerPreparator(metadataParser);
+
+			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/cpp/*");
+			for (Resource resource : resources) {
+				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
+			}
+			try {
+				UtilityFunction.unzip(localmodelFile, outputFolder.getAbsolutePath());
+
+				String mm[] = modelOriginalName.split("\\.");
+
+				File fd = new File(outputFolder.getAbsolutePath() + "/" + mm[0]);
+
+				File ff[] = fd.listFiles();
+
+				if (ff != null) {
+					for (File f : ff) {
+						FileUtils.copyFileToDirectory(f, outputFolder);
+					}
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + modelOriginalName));
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + mm[0]));
+				}
+				
+			} catch (IOException e) {
+				logger.error("c++ templatization failed", e );
+			}
+			dockerPreprator.prepareDockerApp(outputFolder);
+			
+		}else {
 			logger.error("Unspported runtime " + metadata.getRuntimeName());
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 					"Unspported runtime " + metadata.getRuntimeName());
@@ -417,7 +414,7 @@ public class DockerizeModel {
 				File modelFolder = new File(outputFolder, "model");
 				UtilityFunction.unzip(localmodelFile, modelFolder.getAbsolutePath());
 			} catch (IOException e) {
-				logger.error("Python templatization failed: " + e);
+				logger.error("Python templatization failed: " + e, logBean);
 			}
 			//move .zip, .proto, .json files from temp folder to temp\app folder with name change
 			File[] listOfFiles = tempFolder.listFiles();
@@ -440,7 +437,7 @@ public class DockerizeModel {
 				tarFile = UtilityFunction.deCompressGZipFile(localmodelFile, tarFile);
 				UtilityFunction.unTarFile(tarFile, outputFolder);
 			} catch (IOException e) {
-				logger.error("Java Argus templatization failed: " + e);
+				logger.error("Java Argus templatization failed: " + e,logBean);
 			}
 		} else if (metadata.getRuntimeName().equals("h2o")) {
 			File plugin_root = new File(outputFolder, "plugin_root");
@@ -475,7 +472,7 @@ public class DockerizeModel {
 
 				// Creat solution id - success
 			} catch (IOException e) {
-				logger.error("H2O templatization failed", e);
+				logger.error("H2O templatization failed", e, logBean);
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 
@@ -512,7 +509,7 @@ public class DockerizeModel {
 				}
 
 			} catch (IOException e) {
-				logger.error("Java-Generic templatization failed", e);
+				logger.error("Java-Generic templatization failed", e , logBean);
 			}
 
 			dockerPreprator.prepareDockerApp(outputFolder);
@@ -550,12 +547,45 @@ public class DockerizeModel {
 
 				// Creat solution id - success
 			} catch (IOException e) {
-				logger.error("Javaspark templatization failed", e);
+				logger.error("Javaspark templatization failed", e , logBean);
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 
+		} else if(metadata.getRuntimeName().equals("c++")) {
+			
+			outputFolder = new File(tempFolder, "app");
+			outputFolder.mkdir();
+			
+			CPPDockerPreparator dockerPreprator = new CPPDockerPreparator(metadataParser);
+
+			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/cpp/*");
+			for (Resource resource : resources) {
+				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
+			}
+			try {
+				UtilityFunction.unzip(localmodelFile, outputFolder.getAbsolutePath());
+
+				String mm[] = modelOriginalName.split("\\.");
+
+				File fd = new File(outputFolder.getAbsolutePath() + "/" + mm[0]);
+
+				File ff[] = fd.listFiles();
+
+				if (ff != null) {
+					for (File f : ff) {
+						FileUtils.copyFileToDirectory(f, outputFolder);
+					}
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + modelOriginalName));
+					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + mm[0]));
+				}
+				
+			} catch (IOException e) {
+				logger.error("c++ templatization failed", e , logBean);
+			}
+			dockerPreprator.prepareDockerApp(outputFolder);
+			
 		} else {
-			logger.error("Unspported runtime " + metadata.getRuntimeName());
+			logger.error("Unspported runtime " + metadata.getRuntimeName() , logBean);
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 					"Unspported runtime " + metadata.getRuntimeName());
 		}
@@ -684,11 +714,11 @@ public class DockerizeModel {
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 						OnboardingLogConstants.ResponseStatus.ERROR.name());
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, httpCode.toString());
-				logger.error( "RevertbackOnboarding Failed");
+				logger.error( "RevertbackOnboarding Failed" ,logBean);
 				
 				
 			} catch (IOException e) {
-				logger.error("Fail to close docker client gracefully", e);
+				logger.error("Fail to close docker client gracefully", e,logBean);
 			}
 		}
 	}
@@ -1008,35 +1038,35 @@ public class DockerizeModel {
 									"Create Docker Image Started for solution " + mData.getSolutionId());
 						}
 
-						try {
-							File modFile = modelFile;
-							MLPSolution mlpSoln = mlpSolution;
-							MLPTask mlpTask = task;
-							
-							logger.debug("Thread before calling dockerizeFileAsync --> "+Thread.currentThread().getName());
-								CompletableFuture.supplyAsync(() -> {
-									try {
-										 dockerizeFileAsync(onboardingStatus, metadataParser, modFile, mlpSoln.getSolutionId(),
-												deployment_env, outputFolder, trackingID, fileName, logThread, logBean, mlpTask);
-									} catch (AcumosServiceException e) {
-										logger.error(
-												"Exception while creating docker image : " + e);
-									}
-									return null;
-								});
-							
-						} catch (Exception e) {
-							// Notify Create docker image failed
-							if (onboardingStatus != null) {
-								onboardingStatus.notifyOnboardingStatus("Dockerize", "FA", e.getMessage());
-							}
+						File modFile = modelFile;
+						MLPSolution mlpSoln = mlpSolution;
+						MLPTask mlpTask = task;
 
-							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
-									OnboardingLogConstants.ResponseStatus.ERROR.name());
-							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-							logger.error( "Error " + e);
-							throw e;
-						}
+						logger.debug("Thread before calling dockerizeFileAsync --> " + Thread.currentThread().getName());
+						CompletableFuture.supplyAsync(() -> {
+							try {
+								dockerizeFileAsync(onboardingStatus, metadataParser, modFile, mlpSoln.getSolutionId(),
+										deployment_env, outputFolder, trackingID, fileName, logThread, logBean, mlpTask);
+							
+							}catch (Exception e) {
+
+								try {
+									// Notify Create docker image failed
+									if (onboardingStatus != null) {
+										onboardingStatus.notifyOnboardingStatus("Dockerize", "FA", e.getMessage(), logBean);
+									}
+
+									MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
+											OnboardingLogConstants.ResponseStatus.ERROR.name());
+									MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
+									logger.error("Error while creating docker image : " + e, logBean);
+									throw e;
+								} catch (Exception e1) {
+									e1.getMessage();
+								}
+							}
+							return null;
+						});
 
 						return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution),
 								HttpStatus.CREATED);
