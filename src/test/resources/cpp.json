@@ -1,0 +1,32 @@
+{
+  "runtime": {
+    "version": "7.4",
+    "encoding": "protobuf",
+    "name": "c++",
+    "executable": "iris-kmeans",
+    "dependencies": {
+	  "pip": {
+        "indexes": [],
+        "requirements": [
+        {
+            "name": "",
+            "version": ""
+          }
+        ]
+      },
+      "conda": {
+        "channels": [],
+        "requirements": []
+      }
+    }
+  },
+  "methods": {
+    "classify": {
+      "input": "IrisDataFrame",
+      "description": "Returns an array of iris classifications",
+      "output": "ClassifyOut"
+    }
+  },
+  "name": "my-iris",
+  "schema": "acumos.schema.model:0.4.0"
+}
