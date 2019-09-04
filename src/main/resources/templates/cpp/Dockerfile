@@ -13,6 +13,6 @@ RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 EXPOSE 3330
 #Deploy Model service
 #Deploy Model service
-RUN chmod 777 /app/model
+#RUN chmod 777 /app/model
 #ADD *.proto /app/model/
 #ENTRYPOINT ["./model/{1}"]
