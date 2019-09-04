@@ -39,7 +39,7 @@ import ch.qos.logback.classic.Level;
  * 
  *
  */
-@Configuration
+//@Configuration
 public class DockerClientConfiguration
 {
 	
