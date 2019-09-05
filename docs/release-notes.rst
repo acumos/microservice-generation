@@ -28,7 +28,6 @@ Version 3.1.0, 04 Sept 2019
 * create micro service for c/c+ model : ACUMOS-3108 <https://jira.acumos.org/browse/ACUMOS-3108/>_
 * Additional R packages needed by the model are not added : ACUMOS-3367 <https://jira.acumos.org/browse/ACUMOS-3367/>_
 * Errored model is getting onboarded successfully : ACUMOS-3022 <https://jira.acumos.org/browse/ACUMOS-3022/>_
-* On-board & create micro service from Spark models : ACUMOS-3102 <https://jira.acumos.org/browse/ACUMOS-3102/>_
 
 Version 3.0.0, 23  Aug 2019
 -----------------------------
