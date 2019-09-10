@@ -65,28 +65,31 @@ public class CPPDockerPreparator {
 		this.createRequirements(new File(outputFolder, "requirements.txt"), new File(outputFolder, "requirements.txt"));
 	}
 
-	public void createRequirements(File inPackageRFile, File outPackageRFile) throws AcumosServiceException {
-		try {
-			List<Requirement> requirements = this.metadata.getRequirements();
-			StringBuilder reqBuilder = new StringBuilder();
-			for (Requirement requirement : requirements) {
-				reqBuilder.append("\"" + requirement.name + "\",");
-			}
-			String reqAsString = reqBuilder.toString();
-			reqAsString = reqAsString.substring(0, reqAsString.length() - 1);
-			String packageRFileAsString = new String(UtilityFunction.toBytes(inPackageRFile));
-			packageRFileAsString = MessageFormat.format(packageRFileAsString, new Object[] { reqAsString });
-			FileWriter writer = new FileWriter(outPackageRFile);
-			try {
-				writer.write(packageRFileAsString.trim());
-			} finally {
-				writer.close();
-			}
-		} catch (IOException e) {
-			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INTERNAL_SERVER_ERROR,
-					"Fail to create dockerFile for input model", e);
-		}
-	}
+	public void createRequirements(File inPackageFile, File outPackageFile) throws AcumosServiceException {
+        try {
+            List<Requirement> requirements = this.metadata.getRequirements();
+            StringBuilder reqBuilder = new StringBuilder();
+            for (Requirement requirement : requirements) {
+                reqBuilder.append("\"" + requirement.name + "\",");
+            }
+            String reqAsString = (reqBuilder != null && !reqBuilder.equals("")) ? reqBuilder.toString() : null;
+            
+            if(reqAsString != null && !reqAsString.isEmpty()) {
+                reqAsString = reqAsString.substring(0, reqAsString.length() - 1);
+            }
+            String packageRFileAsString = new String(UtilityFunction.toBytes(inPackageFile));
+            packageRFileAsString = MessageFormat.format(packageRFileAsString, new Object[] { reqAsString });
+            FileWriter writer = new FileWriter(outPackageFile);
+            try {
+                writer.write(packageRFileAsString.trim());
+            } finally {
+                writer.close();
+            }
+        } catch (IOException e) {
+            throw new AcumosServiceException(AcumosServiceException.ErrorCode.INTERNAL_SERVER_ERROR,
+                    "Fail to create dockerFile for input model", e);
+        }
+    }
 
 	public void createDockerFile(File inDockerFile, File outDockerFile) throws AcumosServiceException {
 		try {
