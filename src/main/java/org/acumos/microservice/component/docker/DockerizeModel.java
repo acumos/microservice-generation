@@ -161,11 +161,12 @@ public class DockerizeModel {
 	/*
 	 * @Method Name : dockerizeFile Performs complete dockerization process.
 	 */
-	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, String deployment_env, File tempFolder) throws AcumosServiceException {
+	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID, String deployment_env, File tempFolder, LogBean logBean) throws AcumosServiceException {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
-		logger.debug("Preparing app in: " + tempFolder);
+		logger.debug("Preparing app in: " + tempFolder,logBean);
 		if (metadata.getRuntimeName().equals("python")) {
+			logger.info("Inside Python metadata Runtime ",logBean);
 			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
 			
@@ -195,23 +196,26 @@ public class DockerizeModel {
 			}
 			
 			dockerPreprator.prepareDockerAppV2(outputFolder);
-		} else if (metadata.getRuntimeName().equals("r")) {			
-			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy);
+		} else if (metadata.getRuntimeName().equals("r")) {	
+			logger.info("Inside R metadata Runtime ",logBean);
+			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy,logBean);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/r/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 		} else if (metadata.getRuntimeName().equals("javaargus")) {
+			logger.info("Inside Javaargus metadata Runtime ",logBean);
 			try {
 				String outputFile = UtilityFunction.getFileName(localmodelFile, outputFolder.toString());
 				File tarFile = new File(outputFile);
 				tarFile = UtilityFunction.deCompressGZipFile(localmodelFile, tarFile);
 				UtilityFunction.unTarFile(tarFile, outputFolder);
 			} catch (IOException e) {
-				logger.error("Java Argus templatization failed: " + e);
+				logger.error("Java Argus templatization failed: " + e,logBean);
 			}
 		} else if (metadata.getRuntimeName().equals("h2o")) {
+			logger.info("Inside h2o metadata Runtime ",logBean);
 			File plugin_root = new File(outputFolder, "plugin_root");
 			plugin_root.mkdirs(); 
 			File plugin_src = new File(plugin_root, "src");
@@ -244,11 +248,12 @@ public class DockerizeModel {
 
 				// Creat solution id - success
 			} catch (IOException e) {
-				logger.error("H2O templatization failed", e);
+				logger.error("H2O templatization failed", e,logBean);
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else if (metadata.getRuntimeName().equals("javageneric")) {
+			logger.info("Inside Javageneric metadata Runtime ",logBean);
 			File plugin_root = new File(outputFolder, "plugin_root");
 			plugin_root.mkdirs();
 			File plugin_src = new File(plugin_root, "src");
@@ -281,13 +286,13 @@ public class DockerizeModel {
 				}
 
 			} catch (IOException e) {
-				logger.error("Java-Generic templatization failed", e);
+				logger.error("Java-Generic templatization failed", e,logBean);
 			}
 
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else if (metadata.getRuntimeName().equals("javaspark")) {
-			logger.info("Inside Javaspark metadata Runtime ");
+			logger.info("Inside Javaspark metadata Runtime ",logBean);
 			File plugin_root = new File(outputFolder, "plugin_root");
 			plugin_root.mkdirs(); 
 			File plugin_src = new File(plugin_root, "src");
@@ -320,12 +325,12 @@ public class DockerizeModel {
 
 				// Creat solution id - success
 			} catch (IOException e) {
-				logger.error("Javaspark templatization failed", e);
+				logger.error("Javaspark templatization failed", e, logBean);
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else if((metadata.getRuntimeName().equals("c++"))) {
-			logger.info("Inside c++ metadata Runtime ");
+			logger.info("Inside c++ metadata Runtime ",logBean);
 			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
 			
@@ -353,7 +358,7 @@ public class DockerizeModel {
 				}
 				
 			} catch (IOException e) {
-				logger.error("c++ templatization failed", e );
+				logger.error("c++ templatization failed", e ,logBean);
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 			
@@ -362,19 +367,19 @@ public class DockerizeModel {
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 					"Unspported runtime " + metadata.getRuntimeName());
 		}
-		logger.debug("Resource List");
+		logger.debug("Resource List",logBean);
 		listFilesAndFilesSubDirectories(outputFolder);
-		logger.debug("End of Resource List");
-		logger.debug("Started docker client");
+		logger.debug("End of Resource List",logBean);
+		logger.debug("Started docker client",logBean);
 		DockerClient dockerClient = DockerClientFactory.getDockerClient(dockerConfiguration);
-		logger.debug("Docker client created successfully");
+		logger.debug("Docker client created successfully",logBean);
 		try {			
-			logger.debug("Docker image creation started");
+			logger.debug("Docker image creation started",logBean);
 			String actualModelName = getActualModelName(metadata, solutionID);  
 			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,metadata.getVersion(), null, false, true);
 			createCMD.setClient(dockerClient);
 			createCMD.execute();
-			logger.debug("Docker image creation done");
+			logger.debug("Docker image creation done",logBean);
 			// put catch here
 			// /Microservice/Docker image nexus creation -success
 
@@ -382,7 +387,7 @@ public class DockerizeModel {
 
 			// TODO: remove local image
 
-			logger.debug("Starting docker image tagging");
+			logger.debug("Starting docker image tagging",logBean);
 			String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
 			
 			String dockerImageURI = imageTagName + ":" + metadata.getVersion();
@@ -391,17 +396,17 @@ public class DockerizeModel {
 					imageTagName, metadata.getVersion(), true, false);
 			tagImageCommand.setClient(dockerClient);
 			tagImageCommand.execute();
-			logger.debug("Docker image tagging completed successfully");
+			logger.debug("Docker image tagging completed successfully",logBean);
 
 			logger.debug("Starting pushing with Imagename:" + imageTagName + " and version : " + metadata.getVersion()
-					+ " in nexus");
+					+ " in nexus",logBean);
 			PushImageCommand pushImageCmd = new PushImageCommand(imageTagName, metadata.getVersion(), "");
 			pushImageCmd.setClient(dockerClient);
 			pushImageCmd.execute();
 
-			logger.debug("Docker image URI : " + dockerImageURI);
+			logger.debug("Docker image URI : " + dockerImageURI,logBean);
 
-			logger.debug("Docker image pushed in nexus successfully");
+			logger.debug("Docker image pushed in nexus successfully",logBean);
 
 			// Microservice/Docker image pushed to nexus -success
 
@@ -411,7 +416,7 @@ public class DockerizeModel {
 			try {
 				dockerClient.close();
 			} catch (IOException e) {
-				logger.error("Fail to close docker client gracefully", e);
+				logger.error("Fail to close docker client gracefully", e,logBean);
 			}
 		}
 	}
@@ -424,6 +429,7 @@ public class DockerizeModel {
 		boolean isSuccess = false;
 		logger.debug("Preparing app in: " + tempFolder, logBean);
 		if (metadata.getRuntimeName().equals("python")) {
+			logger.info("Inside Python metadata Runtime ",logBean);
 			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
 			
@@ -457,14 +463,16 @@ public class DockerizeModel {
 				UtilityFunction.moveFile(file, outputFolder);
 			}
 			dockerPreprator.prepareDockerAppV2(outputFolder);
-		} else if (metadata.getRuntimeName().equals("r")) {			
-			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy);
+		} else if (metadata.getRuntimeName().equals("r")) {	
+			logger.info("Inside R metadata Runtime ",logBean);
+			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy,logBean);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/r/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
 			}
 			dockerPreprator.prepareDockerApp(outputFolder);
 		} else if (metadata.getRuntimeName().equals("javaargus")) {
+			logger.info("Inside Javaargus metadata Runtime ",logBean);
 			try {
 				String outputFile = UtilityFunction.getFileName(localmodelFile, outputFolder.toString());
 				File tarFile = new File(outputFile);
@@ -474,6 +482,7 @@ public class DockerizeModel {
 				logger.error("Java Argus templatization failed: " + e,logBean);
 			}
 		} else if (metadata.getRuntimeName().equals("h2o")) {
+			logger.info("Inside H2O metadata Runtime ",logBean);
 			File plugin_root = new File(outputFolder, "plugin_root");
 			plugin_root.mkdirs(); 
 			File plugin_src = new File(plugin_root, "src");
@@ -511,6 +520,7 @@ public class DockerizeModel {
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else if (metadata.getRuntimeName().equals("javageneric")) {
+			logger.info("Inside Javageneric metadata Runtime ",logBean);
 			File plugin_root = new File(outputFolder, "plugin_root");
 			plugin_root.mkdirs();
 			File plugin_src = new File(plugin_root, "src");
@@ -549,6 +559,7 @@ public class DockerizeModel {
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else if (metadata.getRuntimeName().equals("javaspark")) {
+			logger.info("Inside Javaspark metadata Runtime ",logBean);
 			File plugin_root = new File(outputFolder, "plugin_root");
 			plugin_root.mkdirs(); 
 			File plugin_src = new File(plugin_root, "src");
@@ -586,7 +597,7 @@ public class DockerizeModel {
 			dockerPreprator.prepareDockerApp(outputFolder);
 
 		} else if(metadata.getRuntimeName().equals("c++")) {
-			
+			logger.info("Inside c++ metadata Runtime ",logBean);
 			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
 			

@@ -12,7 +12,18 @@ RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 #expose port for service
 EXPOSE 3330
 #Deploy Model service
-#Deploy Model service
+
+# Even after adding model to /app/model folder it unzip on /app as its WORKDIR
+#ADD model.zip /app/model/model.zip
+#RUN unzip /app/model/model.zip
+
 #RUN chmod 777 /app/model
-#ADD *.proto /app/model/
-#ENTRYPOINT ["./model/{1}"]
+#RUN cp -r /app/model/*.* /app/
+#RUN cp -r /app/model/lib /app/
+#RUN cp /app/model/{1} /app/
+
+RUN unzip model.zip
+ADD *.proto /app/model/
+# Acces for executable run access
+RUN chmod 777 /app/*
+ENTRYPOINT ["./{1}"]

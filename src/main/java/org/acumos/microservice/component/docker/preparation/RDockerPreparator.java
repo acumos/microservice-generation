@@ -35,6 +35,7 @@ import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.component.docker.preparation.Requirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.acumos.onboarding.common.utils.LogBean;
 import org.acumos.onboarding.common.utils.LoggerDelegate;
 
 public class RDockerPreparator {
@@ -48,16 +49,16 @@ public class RDockerPreparator {
 	private String rVersion;
 
 	private String rhttpProxy;
+	
+	private LogBean logBean;
 
-	public RDockerPreparator(MetadataParser metadataParser, String httpProxy) throws AcumosServiceException {
+	
+	
+	public RDockerPreparator(MetadataParser metadataParser, String httpProxy, LogBean logBean) throws AcumosServiceException {
 		this.rhttpProxy = httpProxy;
 		this.metadata = metadataParser.getMetadata();
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
-
-		/*
-		 * if (runtimeVersion[0] == 3) { int[] baseVersion = new int[] { 3, 3, 2 }; if
-		 * (compareVersion(baseVersion, runtimeVersion) >= 0) { this.rVersion = "3.3.2";
-		 */
+		this.logBean = logBean;
 
 		if (runtimeVersion.length > 0) {
 			String version = Arrays.toString(runtimeVersion);
@@ -70,11 +71,6 @@ public class RDockerPreparator {
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 					"Unspported r version " + metadata.getRuntimeVersion());
 		}
-
-		/*
-		 * } else { throw new AcumosServiceException(AcumosServiceException.ErrorCode.
-		 * INVALID_PARAMETER, "Unspported r version " + metadata.getRuntimeVersion()); }
-		 */
 
 	}
 
@@ -92,11 +88,11 @@ public class RDockerPreparator {
 				reqAsLists.add(requirement.name);
 			}
 			
-			logger.debug("metadatajson R package: " + reqAsLists);
+			logger.debug("metadatajson R package: " + reqAsLists,logBean);
 						
 			String packageRFileAsString= new String(UtilityFunction.toBytes(inPackageRFile));
 			
-			logger.debug("requriment Package.R package: " + packageRFileAsString);
+			logger.debug("requriment Package.R package: " + packageRFileAsString,logBean);
 			
 			if(reqAsLists != null && !reqAsLists.isEmpty()) {
 				String packageAsString = "";
@@ -107,7 +103,7 @@ public class RDockerPreparator {
 				}
 			}
 			
-			logger.debug("Merged R packages: " + packageRFileAsString);
+			logger.debug("Merged R packages: " + packageRFileAsString, logBean);
 						
 			FileWriter writer = new FileWriter(outPackageRFile);
 			try {

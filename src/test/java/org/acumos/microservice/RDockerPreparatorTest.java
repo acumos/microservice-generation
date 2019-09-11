@@ -23,6 +23,8 @@ package org.acumos.microservice;
 import java.io.File;
 
 import org.acumos.onboarding.common.exception.AcumosServiceException;
+import org.acumos.onboarding.common.utils.LogBean;
+import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.microservice.component.docker.preparation.RDockerPreparator;
 import org.junit.Assert;
@@ -38,6 +40,11 @@ public class RDockerPreparatorTest {
 
 	String filePath = FilePathTest.filePath(); 
 	File jsonFile = new File(filePath+"modelDetails.json");
+	
+	String trackingID = "d3hvc435-3ve34-c555g-5445";
+	//File outputFolder = new File("tmp", modelId);
+	LogBean logBean = new LogBean();
+	
 
 	public RDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
@@ -46,8 +53,9 @@ public class RDockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	private String httpProxy= "http://10.1.0.6:3128";
 
+	
 	@InjectMocks
-	RDockerPreparator rDockerPreparator = new RDockerPreparator(metadataParser, httpProxy);
+	RDockerPreparator rDockerPreparator = new RDockerPreparator(metadataParser, httpProxy,logBean);
 
 	@Test
 	public void compareVersionTest() {

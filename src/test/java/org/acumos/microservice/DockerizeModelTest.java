@@ -187,6 +187,8 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		mData.setVersion("1.0");
 		
 		
+		
+		
 		String modelId = "12345";
 		File outputFolder = new File(filePath,modelId);
 		
@@ -220,8 +222,15 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 
 		PowerMockito.whenNew(PushImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pushImageCmd);
 	
+		String trackingID = "d3hvc435-3ve34-c555g-5445";
+		//File outputFolder = new File("tmp", modelId);
+		LogBean logBean = new LogBean();
+		logBean.setFileName("mslog.txt");
+		logBean.setLogPath(logPath + File.separator + trackingID);
+		LogThreadLocal logThread = new LogThreadLocal();
+		logThread.set(logBean);
 		
-		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
 		
 		
@@ -414,25 +423,32 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		UtilityFunction.deCompressGZipFile(Mockito.anyObject(),Mockito.anyObject());
 		UtilityFunction.unTarFile(Mockito.anyObject(),Mockito.anyObject());
 		
+		String trackingID = "atferc-4foeqchger-beeufdf-notaacxger";
+		LogBean logBean = new LogBean();
+		logBean.setFileName("mslog.txt");
+		logBean.setLogPath(logPath + File.separator + trackingID);
+		LogThreadLocal logThread = new LogThreadLocal();
+		logThread.set(logBean);
+		
 		mData.setRuntimeName("javageneric");
 		mData.setRuntimeVersion("0");
 		dockerizeModel.setModelOriginalName("acumosavageneric");
-		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
 		
 		mData.setRuntimeName("r");
 		dockerizeModel.setModelOriginalName("acumosr");
-		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
 		
 		mData.setRuntimeName("h2o");
 		dockerizeModel.setModelOriginalName("h2o");
-		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
 		
 		mData.setRuntimeName("javaargus");
 		dockerizeModel.setModelOriginalName("javaargus");
-		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
+		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);
 		
 		
