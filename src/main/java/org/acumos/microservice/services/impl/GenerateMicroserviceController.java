@@ -169,7 +169,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd, request_id);
 		onboardingStatus.setRequestId(request_id);
 		MDC.put(OnboardingLogConstants.MDCs.REQUEST_ID, request_id);
-		logger.debug("MicroService Async Flag: "+ microServiceAsyncFlag);
+		logger.debug("MicroService Async Flag: "+ microServiceAsyncFlag,logBean);
 		
 		if (microServiceAsyncFlag) {
 
@@ -222,7 +222,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				logger.debug("Number of artifacts: "+ artifactNameList.size());
 
-				logger.debug("Starting Microservice Generation");
+				logger.debug("Starting Microservice Generation",logBean);
 
 				String modelId = UtilityFunction.getGUID();
 				File outputFolder = new File("tmp", modelId);
@@ -392,7 +392,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 							try {
 								imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(),
-										deployment_env, outputFolder);
+										deployment_env, outputFolder, logBean);
 							} catch (Exception e) {
 								// Notify Create docker image failed
 								if (onboardingStatus != null) {
