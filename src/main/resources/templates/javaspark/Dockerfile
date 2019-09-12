@@ -9,6 +9,10 @@ ADD . /app
 #RUN echo $http_proxy
 RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 
+RUN curl --output h2o-genericjava-modelrunner.jar http://admin:admin123@35.194.88.184:8082/repository/repo_cognita_model_maven/org/acumos/generic-model-runner/h2o-genericjava-modelrunner/2.3.2/h2o-genericjava-modelrunner-2.3.2.jar
+RUN cp h2o-genericjava-modelrunner.jar app.jar
+RUN pwd
+
 #Install protoc
 RUN curl -OL https://github.com/google/protobuf/releases/download/v3.4.0/protoc-3.4.0-linux-x86_64.zip
 RUN unzip protoc-3.4.0-linux-x86_64.zip
