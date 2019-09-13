@@ -23,7 +23,7 @@ EXPOSE 3330
 #RUN cp /app/model/{1} /app/
 
 #RUN unzip model.zip
-ADD *.proto /app/model/
+#ADD *.proto /app/model/
 # Acces for executable run access
 RUN chmod 777 /app/*
 ENTRYPOINT ["./{1}"]

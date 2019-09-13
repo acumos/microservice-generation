@@ -343,18 +343,10 @@ public class DockerizeModel {
 			try {
 				UtilityFunction.unzip(localmodelFile, outputFolder.getAbsolutePath());
 
-				String mm[] = modelOriginalName.split("\\.");
+				File[] listOfFiles = tempFolder.listFiles();
 
-				File fd = new File(outputFolder.getAbsolutePath() + "/" + mm[0]);
-
-				File ff[] = fd.listFiles();
-
-				if (ff != null) {
-					for (File f : ff) {
-						FileUtils.copyFileToDirectory(f, outputFolder);
-					}
-					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + modelOriginalName));
-					UtilityFunction.deleteDirectory(new File(outputFolder.getAbsolutePath() + "/" + mm[0]));
+				for (File file : listOfFiles) {
+					UtilityFunction.moveFile(file, outputFolder);
 				}
 				
 			} catch (IOException e) {
