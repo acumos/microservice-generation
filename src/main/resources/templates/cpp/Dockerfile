@@ -25,5 +25,9 @@ EXPOSE 3330
 #RUN unzip model.zip
 #ADD *.proto /app/model/
 # Acces for executable run access
+
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/app/lib"
+RUN ldconfig
+
 RUN chmod 777 /app/*
 ENTRYPOINT ["./{1}"]
