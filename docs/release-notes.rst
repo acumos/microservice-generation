@@ -22,6 +22,11 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 3.2.0, 20 Sept 2019
+-----------------------------
+* Common Data Service client at version 3.0.0
+
+
 Version 3.1.0, 04 Sept 2019
 -----------------------------
 * Common Data Service client at version 2.2.6
