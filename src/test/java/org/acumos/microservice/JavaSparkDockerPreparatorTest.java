@@ -49,7 +49,7 @@ public class JavaSparkDockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
 	@InjectMocks
-	JavaSparkDockerPreparator javaSparkDockerPreparator = new JavaSparkDockerPreparator(metadataParser);
+	JavaSparkDockerPreparator javaSparkDockerPreparator = new JavaSparkDockerPreparator(metadataParser, "2.2.3");
 
 	@Test
 	public void compareVersionTest() {

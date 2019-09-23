@@ -28,7 +28,7 @@ RUN chown root /usr/local/bin/protoc
 EXPOSE {0}
 
 #Deploy Model service
-RUN curl --output h2o-genericjava-modelrunner.jar https://nexus.acumos.org/content/repositories/releases/org/acumos/generic-model-runner/h2o-genericjava-modelrunner/2.2.3/h2o-genericjava-modelrunner-2.2.3.jar
+RUN curl --output h2o-genericjava-modelrunner.jar https://nexus.acumos.org/content/repositories/releases/org/acumos/generic-model-runner/h2o-genericjava-modelrunner/{1}/h2o-genericjava-modelrunner-{1}.jar
 RUN cp h2o-genericjava-modelrunner.jar app.jar
 RUN pwd
 
