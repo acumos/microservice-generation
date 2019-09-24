@@ -114,7 +114,7 @@ public class JavaSparkDockerPreparator {
 			String modelname = this.metadata.getSolutionName();
 
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, "H2OModelService.jar", modelname + ".zip" });
+					new Object[] { serverPort, "H2OModelService.jar", modelname + ".jar" });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {
