@@ -26,6 +26,6 @@ EXPOSE {0}
 #RUN pwd
 
 ADD SparkModelRunnerService.jar app.jar
-ADD {2} /app/models/Model.zip
+ADD {2} /app/models/Model.jar
 ADD *.proto /app/models/
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.config.location=application.properties","-jar","/app/app.jar"]
