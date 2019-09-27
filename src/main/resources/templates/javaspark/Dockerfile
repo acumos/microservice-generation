@@ -26,6 +26,13 @@ EXPOSE {0}
 #RUN pwd
 
 ADD SparkModelRunnerService.jar app.jar
+RUN chmod 777 /app/app.jar
+RUN pwd
+
+RUN mkdir -p /app/modelCopy/
+
 ADD {2} /app/models/Model.jar
+
 ADD *.proto /app/models/
+
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.config.location=application.properties","-jar","/app/app.jar"]
