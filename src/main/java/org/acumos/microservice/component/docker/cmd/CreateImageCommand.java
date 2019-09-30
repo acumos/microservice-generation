@@ -77,6 +77,10 @@ public class CreateImageCommand extends DockerCommand {
 			boolean rm) {
 		this.dockerFolder = dockerFolder;
 		this.imageName = imageName;
+		if(imageTag.contains(".")) {
+			logger.debug("Image Tag in CreateImageCommand = "+imageTag);
+			imageTag = imageTag.substring(0, imageTag.indexOf("."));
+		}
 		this.imageTag = imageTag;
 		this.dockerFile = dockerFile;
 		this.noCache = noCache;
@@ -87,6 +91,10 @@ public class CreateImageCommand extends DockerCommand {
 			boolean rm, LogBean logBean) {
 		this.dockerFolder = dockerFolder;
 		this.imageName = imageName;
+		if(imageTag.contains(".")) {
+			logger.debug("Image Tag in CreateImageCommand = "+imageTag);
+			imageTag = imageTag.substring(0, imageTag.indexOf("."));
+		}
 		this.imageTag = imageTag;
 		this.dockerFile = dockerFile;
 		this.noCache = noCache;
@@ -108,6 +116,7 @@ public class CreateImageCommand extends DockerCommand {
 
 	@Override
 	public void execute() throws DockerException {
+		
 		if (dockerFolder == null) {
 			logger.error("dockerFolder is not configured");
 			throw new IllegalArgumentException("dockerFolder is not configured");
