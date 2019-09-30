@@ -34,5 +34,6 @@ RUN mkdir -p /app/modelCopy/
 ADD {2} /app/models/Model.jar
 
 ADD *.proto /app/models/
+RUN cp *.proto default.proto
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.config.location=application.properties","-jar","/app/app.jar"]
