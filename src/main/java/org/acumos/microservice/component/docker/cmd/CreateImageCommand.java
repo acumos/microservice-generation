@@ -77,9 +77,6 @@ public class CreateImageCommand extends DockerCommand {
 			boolean rm) {
 		this.dockerFolder = dockerFolder;
 		this.imageName = imageName;
-		if(imageTag.contains(".")) {
-			imageTag = imageTag.substring(0, imageTag.indexOf("."));
-		}
 		this.imageTag = imageTag;
 		this.dockerFile = dockerFile;
 		this.noCache = noCache;
@@ -90,9 +87,6 @@ public class CreateImageCommand extends DockerCommand {
 			boolean rm, LogBean logBean) {
 		this.dockerFolder = dockerFolder;
 		this.imageName = imageName;
-		if(imageTag.contains(".")) {
-			imageTag = imageTag.substring(0, imageTag.indexOf("."));
-		}
 		this.imageTag = imageTag;
 		this.dockerFile = dockerFile;
 		this.noCache = noCache;
