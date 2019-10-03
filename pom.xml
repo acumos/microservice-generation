@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.acumos.microservice</groupId>
 	<artifactId>microservice-generation</artifactId>
-	<version>3.4.0-SNAPSHOT</version>
+	<version>3.4.1-SNAPSHOT</version>
 	<name>Microservice generation jar</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -13,7 +13,6 @@
 		<relativePath />
 	</parent>
 	<properties>
-		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<start-class>org.acumos.microservice.MicroserviceApplication</start-class>
                 <springfox.version>2.7.0</springfox.version>
@@ -23,7 +22,7 @@
 		<docker.pull.registry>nexus3.acumos.org:10001</docker.pull.registry>
 		<!-- Supplied by Jenkins -->
 		<docker.push.registry>${env.CONTAINER_PUSH_REGISTRY}</docker.push.registry>
-		<jacocoVersion>0.7.6.201602180812</jacocoVersion>
+		<jacocoVersion>0.8.4</jacocoVersion>
 		<sonar.exclusions>**/scripts/**/*,**.js</sonar.exclusions>
 		<sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
 		<enforcer.skip>false</enforcer.skip>
@@ -160,8 +159,7 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>11</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -192,7 +190,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration> 
+				<configuration>
 					<mainClass>org.acumos.microservice.MicroserviceApplication</mainClass>
 				</configuration>
 			</plugin>
@@ -244,17 +242,15 @@
 					</execution>
 				</executions>
 			</plugin> -->
-			
 			<plugin>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
-			<!-- Override OParent version -->
 			<version>${jacocoVersion}</version>
 			<configuration>
 				<excludes>
 					<exclude>*</exclude>
 				</excludes>
-			</configuration> 
+			</configuration>
 			<executions>
 				<!-- disable jacoco executions from oparent -->
 				<execution>
@@ -283,20 +279,6 @@
 						<destFile>${sonar.jacoco.reportPath}</destFile>
 					</configuration>
 				</execution>
-				<!-- offline instrumentation for PowerMock-->
-				 <execution>
-				 	<id>portal-offline-instrument</id>
-					<goals>
-						<goal>instrument</goal>
-					</goals>
-				</execution>
-				<execution>
-					<id>portal-restore-instrumented-classes</id>
-					<phase>test</phase>
-					<goals>
-						<goal>restore-instrumented-classes</goal>
-					</goals>
-				</execution>
 				<execution>
 					<id>portal-post-unit-test</id>
 					<phase>test</phase>
@@ -307,10 +289,9 @@
 						<dataFile>${sonar.jacoco.reportPath}</dataFile>
 						<outputDirectory>${project.basedir}/target/site/jacoco</outputDirectory>
 					</configuration>
-				</execution> 
+				</execution>
 			</executions>
 		</plugin>
-			
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
@@ -326,7 +307,7 @@
 							<!--Specify a tag to avoid default tag "latest"-->
 							<name>microservice-generation:${project.version}</name>
 							<build>
-								<from>openjdk:8-jdk</from>
+								<from>adoptopenjdk/openjdk11-openj9:alpine-jre</from>
 								<tags>
 									<!--Add tag with build number-->
 									<tag>${project.version}-b${build.number}</tag>
