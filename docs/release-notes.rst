@@ -22,6 +22,11 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 3.4.0, 3 Oct 2019
+-----------------------------
+* Common Data Service client at version 3.0.0
+* As a User , I want to see an Enhance on-boarding processes to allow choice of new model vs new revision : `ACUMOS-1216 <https://jira.acumos.org/browse/ACUMOS-1216/>`_
+
 Version 3.2.0, 20 Sept 2019
 -----------------------------
 * Common Data Service client at version 3.0.0
