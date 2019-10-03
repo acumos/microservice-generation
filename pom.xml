@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.acumos.microservice</groupId>
 	<artifactId>microservice-generation</artifactId>
-	<version>3.4.0-SNAPSHOT</version>
+	<version>3.4.1-SNAPSHOT</version>
 	<name>Microservice generation jar</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -13,7 +13,7 @@
 		<relativePath />
 	</parent>
 	<properties>
-		<java.version>1.8</java.version>
+		<!--<java.version>1.8</java.version>-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<start-class>org.acumos.microservice.MicroserviceApplication</start-class>
                 <springfox.version>2.7.0</springfox.version>
@@ -160,8 +160,9 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+				<!-- 	<source>1.8</source>
+					<target>1.8</target> -->
+					<release>11</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -249,7 +250,9 @@
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<!-- Override OParent version -->
-			<version>${jacocoVersion}</version>
+			<version>0.8.1</version>
+			<!-- <version>${jacocoVersion}</version>-->
+			
 			<configuration>
 				<excludes>
 					<exclude>*</exclude>
@@ -284,19 +287,19 @@
 					</configuration>
 				</execution>
 				<!-- offline instrumentation for PowerMock-->
-				 <execution>
+				 <!-- <execution>
 				 	<id>portal-offline-instrument</id>
 					<goals>
 						<goal>instrument</goal>
 					</goals>
-				</execution>
-				<execution>
+				</execution -->
+				<!-- <execution>
 					<id>portal-restore-instrumented-classes</id>
 					<phase>test</phase>
 					<goals>
 						<goal>restore-instrumented-classes</goal>
 					</goals>
-				</execution>
+				</execution> -->
 				<execution>
 					<id>portal-post-unit-test</id>
 					<phase>test</phase>
@@ -326,7 +329,8 @@
 							<!--Specify a tag to avoid default tag "latest"-->
 							<name>microservice-generation:${project.version}</name>
 							<build>
-								<from>openjdk:8-jdk</from>
+								<!-- <from>openjdk:8-jdk</from>-->
+								<from>adoptopenjdk/openjdk11-openj9:alpine-jre</from>
 								<tags>
 									<!--Add tag with build number-->
 									<tag>${project.version}-b${build.number}</tag>
