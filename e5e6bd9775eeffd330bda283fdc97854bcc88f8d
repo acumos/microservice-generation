@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c578f713_38fff915",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T15:02:12Z",
+      "side": 1,
+      "message": "I recommend 0.8.4 which is what most others are using.",
+      "range": {
+        "startLine": 25,
+        "startChar": 17,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "e5e6bd9775eeffd330bda283fdc97854bcc88f8d",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    }
+  ]
+}
