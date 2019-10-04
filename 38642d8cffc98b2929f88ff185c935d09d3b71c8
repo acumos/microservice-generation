@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f65f574_fd8a721d",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T09:42:15Z",
+      "side": 1,
+      "message": "Remove, don\u0027t comment out",
+      "range": {
+        "startLine": 163,
+        "startChar": 4,
+        "endLine": 164,
+        "endChar": 29
+      },
+      "revId": "38642d8cffc98b2929f88ff185c935d09d3b71c8",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "548f67f3_259630b0",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T09:42:15Z",
+      "side": 1,
+      "message": "What is OParent??",
+      "range": {
+        "startLine": 252,
+        "startChar": 3,
+        "endLine": 252,
+        "endChar": 4
+      },
+      "revId": "38642d8cffc98b2929f88ff185c935d09d3b71c8",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65632d64_af1f2410",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T09:42:15Z",
+      "side": 1,
+      "message": "repair the property, don\u0027t hardcode and comment out",
+      "range": {
+        "startLine": 254,
+        "startChar": 3,
+        "endLine": 254,
+        "endChar": 4
+      },
+      "revId": "38642d8cffc98b2929f88ff185c935d09d3b71c8",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6db0423_93bb13e2",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T09:42:15Z",
+      "side": 1,
+      "message": "Clean whitespace please",
+      "range": {
+        "startLine": 260,
+        "startChar": 18,
+        "endLine": 260,
+        "endChar": 20
+      },
+      "revId": "38642d8cffc98b2929f88ff185c935d09d3b71c8",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49271f13_be325594",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T09:42:15Z",
+      "side": 1,
+      "message": "Remove don\u0027t comment out",
+      "range": {
+        "startLine": 290,
+        "startChar": 4,
+        "endLine": 295,
+        "endChar": 19
+      },
+      "revId": "38642d8cffc98b2929f88ff185c935d09d3b71c8",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15acc208_77232f3e",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T09:42:15Z",
+      "side": 1,
+      "message": "remove don\u0027t comment out",
+      "range": {
+        "startLine": 296,
+        "startChar": 5,
+        "endLine": 302,
+        "endChar": 20
+      },
+      "revId": "38642d8cffc98b2929f88ff185c935d09d3b71c8",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0812acbb_b153aee9",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 4
+      },
+      "writtenOn": "2019-10-04T09:42:15Z",
+      "side": 1,
+      "message": "REmove don\u0027t comment out",
+      "range": {
+        "startLine": 332,
+        "startChar": 8,
+        "endLine": 332,
+        "endChar": 9
+      },
+      "revId": "38642d8cffc98b2929f88ff185c935d09d3b71c8",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    }
+  ]
+}
