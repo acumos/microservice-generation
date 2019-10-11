@@ -61,90 +61,87 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-//import static org.powermock.api.easymock.PowerMock.createMock;
 import org.acumos.onboarding.common.utils.UtilityFunction;
-//import static org.easmock
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DockerizeModel.class,UtilityFunction.class,DockerClientFactory.class})
+//@RunWith(PowerMockRunner.class)
+//@PrepareForTest({DockerizeModel.class,UtilityFunction.class,DockerClientFactory.class})
 public class DockerizeModelTest  implements ResourceLoaderAware {
-	
+
 	@InjectMocks
 	@Spy  //Spy is added to support static mock 
 	DockerizeModel dockerizeModel = new DockerizeModel();
-	
+
 	ResourceLoader resourceLoader;
-	
+
 	@Mock
 	ResourceUtils resourceUtils;
 
 	@Mock
 	CommonDataServiceRestClientImpl cmnDataService;
-	
+
 	@Mock
 	OnboardingNotification onboardingNotification;
-	
+
 	@Mock
 	NexusArtifactClient artifactClient;
-	
+
 	@Mock
 	UtilityFunction utilityFunction;
-	
+
 	@Mock
 	PythonDockerPreprator pythonDockerPreprator;
-	
+
 	@Mock
 	RDockerPreparator rDockerPreparator;
-	
+
 	@Mock
 	JavaGenericDockerPreparator javaGenericDockerPreparator;
-	
+
 	@Mock
 	H2ODockerPreparator h2oDockerPreparator;
-	
+
 	@Mock
 	DockerConfiguration dockerConfiguration;
-	
+
 	@Mock
 	DockerClient dockerClient;
-	
+
 	@Mock
 	CreateImageCommand createImageCommand;
-	
+
 	@Mock
 	TagImageCommand tagImageCommand;
-	
+
 	@Mock
 	PushImageCommand pushImageCmd;
-	
+
 	@Mock
 	DeleteImageCommand deleteImageCommand;
-	
+
 	@Mock
 	CommonOnboarding commonOnboarding;
-	
+
 	@Mock
 	CompletableFuture completableFuture;
-	
+
 	String logPath = "/maven/logs/microservice-generation/applog";
-	
-   
-	/*@Test
+
+        /*@Test
 	public void generateMicroserviceAsyncDef() {
-		
+
 		//Supplier Mockito.anyObject();
-		
+
 		doNothing().when(completableFuture).supplyAsync(Mockito.anyObject());
-		
+
 		//when(completableFuture.supplyAsync(((Matchers) Mockito).anyObject()).the
 		dockerizeModel.generateMicroserviceAsyncDef(onboardingNotification, "solutioId",
-				"revisionId", "modName", "deployment_env", "authorization", "trackingID","provider");
-		
+                  "revisionId", "modName", "deployment_env", "authorization", "trackingID","provider");
+
 	}
 	*/
-	
-	@Test
+
+	//@Test
 	public void listFilesAndFilesSubDirectoriesTest() {
 		try {
 		File files = new File("model");
@@ -154,19 +151,19 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 			assert(false);
 		}
 	}
-	
-	@Test
+
+	//@Test
 	public void dockerizePythonFileTest() {
-		
+
 	try {
 
 		File files = new File("model");
 		File MetaFile = new File(files, "metadata.json");
 		String ownerId = "testuser";
-		
+
 		String filePath = FilePathTest.filePath();
 		File validJsonFile = new File(filePath + "metadata.json");
-		
+
 		ResourceUtils resourceUtilsMock = mock(ResourceUtils.class);
 		mockStatic(UtilityFunction.class);
 		mockStatic(DockerClientFactory.class);
@@ -174,54 +171,54 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		File file = mock(File.class);
 		PythonDockerPreprator pythonDockerPreprator = mock(PythonDockerPreprator.class);
 		//CreateImageCommand createImageCommand = mock(CreateImageCommand.class);
-		
+
 		DockerizeModel dockerizeModelMock = mock(DockerizeModel.class);
 		DockerClient dockerClient = mock(DockerClient.class);
-		
+
 		MetadataParser metadataParser = new MetadataParser(validJsonFile);
-		
+
 		Metadata mData = null;
-		
+
 		mData = metadataParser.getMetadata();
 		mData.setModelName("acumosmodel");
 		mData.setVersion("1.0");
-		
-		
-		
-		
+
+
+
+
 		String modelId = "12345";
 		File outputFolder = new File(filePath,modelId);
-		
+
 		File modelFile = new File("model.zip");
-		
+
 		ResourceUtils resourceUtils1 = new ResourceUtils(resourceLoader);
 		Resource[] resources = resourceUtils1.loadResources("classpath*:templates/dcae_python/*");
-		
+
 		PowerMockito.when(resourceUtils.loadResources(Mockito.anyString())).thenReturn(resources);
-		
+
 		PowerMockito.doNothing().when(UtilityFunction.class);
 		UtilityFunction.copyFile(rc, file);
-		
+
 		PowerMockito.doReturn(dockerClient).when(DockerClientFactory.class);
 		DockerClientFactory.getDockerClient(Mockito.anyObject());
-		
+
 		PowerMockito.whenNew(PythonDockerPreprator.class)
 			.withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pythonDockerPreprator);
-	
+
 		doNothing().when(pythonDockerPreprator).prepareDockerAppV2(Mockito.anyObject());
-		
+
 		doNothing().when(dockerizeModel).listFilesAndFilesSubDirectories(Mockito.anyObject());
 		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
 		doNothing().when(createImageCommand).execute();
-		
+
 		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
 		doNothing().when(createImageCommand).execute();
-		
+
 
 		PowerMockito.whenNew(TagImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(tagImageCommand);
 
 		PowerMockito.whenNew(PushImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pushImageCmd);
-	
+
 		String trackingID = "d3hvc435-3ve34-c555g-5445";
 		//File outputFolder = new File("tmp", modelId);
 		LogBean logBean = new LogBean();
@@ -229,90 +226,89 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		logBean.setLogPath(logPath + File.separator + trackingID);
 		LogThreadLocal logThread = new LogThreadLocal();
 		logThread.set(logBean);
-		
+
 		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
-		
-		
+
+
 		} catch (AcumosServiceException e) {
 			e.printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	
-	@Test
+
+
+	//@Test
 	public void dockerizeAsynchPythonFileTest() {
-		
+
 	try {
 
 		File files = new File("model");
 		File MetaFile = new File(files, "metadata.json");
 		String ownerId = "testuser";
-		
+
 		String filePath = FilePathTest.filePath();
 		File validJsonFile = new File(filePath + "metadata.json");
-		
+
 		ResourceUtils resourceUtilsMock = mock(ResourceUtils.class);
 		mockStatic(UtilityFunction.class);
 		mockStatic(DockerClientFactory.class);
 		Resource rc = mock(Resource.class);
 		File file = mock(File.class);
 		PythonDockerPreprator pythonDockerPreprator = mock(PythonDockerPreprator.class);
-		
+
 		MLPArtifact mLPArtifact = mock(MLPArtifact.class);
 		MLPTask task = mock(MLPTask.class);
 		//CreateImageCommand createImageCommand = mock(CreateImageCommand.class);
-		
+
 		DockerizeModel dockerizeModelMock = mock(DockerizeModel.class);
 		DockerClient dockerClient = mock(DockerClient.class);
-		
+
 		MetadataParser metadataParser = new MetadataParser(validJsonFile);
-		
+
 		Metadata mData = null;
-		
+
 		mData = metadataParser.getMetadata();
 		mData.setModelName("acumosmodel");
 		mData.setVersion("1.0");
-		
-		
+
+
 		String modelId = "12345";
 		File outputFolder = new File(filePath,modelId);
-		
+
 		File modelFile = new File("model.zip");
-		
+
 		ResourceUtils resourceUtils1 = new ResourceUtils(resourceLoader);
 		Resource[] resources = resourceUtils1.loadResources("classpath*:templates/dcae_python/*");
-		
+
 		PowerMockito.when(resourceUtils.loadResources(Mockito.anyString())).thenReturn(resources);
-		
+
 		PowerMockito.doNothing().when(UtilityFunction.class);
 		UtilityFunction.copyFile(rc, file);
-		
+
 		PowerMockito.doReturn(dockerClient).when(DockerClientFactory.class);
 		DockerClientFactory.getDockerClient(Mockito.anyObject());
-		
+
 		PowerMockito.whenNew(PythonDockerPreprator.class)
 			.withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pythonDockerPreprator);
-	
+
 		doNothing().when(pythonDockerPreprator).prepareDockerAppV2(Mockito.anyObject());
-		
+
 		doNothing().when(dockerizeModel).listFilesAndFilesSubDirectories(Mockito.anyObject());
-		
+
 		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean(),Mockito.anyObject()).thenReturn(createImageCommand);
 		doNothing().when(createImageCommand).execute();
-		
 
 		PowerMockito.whenNew(TagImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(tagImageCommand);
 
 		PowerMockito.whenNew(PushImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pushImageCmd);
-		
-	   PowerMockito.when(commonOnboarding.addArtifact(Mockito.anyObject(),Mockito.anyString(),Mockito.anyString(),Mockito.anyObject())).thenReturn(mLPArtifact);
-    
 
-		
+	   PowerMockito.when(commonOnboarding.addArtifact(Mockito.anyObject(),Mockito.anyString(),Mockito.anyString(),Mockito.anyObject())).thenReturn(mLPArtifact);
+   
+
+
 		String trackingID = "d3hvc435-3ve34-c555g-5445";
 		//File outputFolder = new File("tmp", modelId);
 		LogBean logBean = new LogBean();
@@ -320,164 +316,164 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		logBean.setLogPath(logPath + File.separator + trackingID);
 		LogThreadLocal logThread = new LogThreadLocal();
 		logThread.set(logBean);
-		
+
 		File outputFolder1 = new File("tmp", modelId);
 		outputFolder.mkdirs();
-		
+
 		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder1, "trackingID", "fileName", logThread, logBean, task);
 
 		assertNotNull(true);	
-		
+
 		} catch (AcumosServiceException e) {
 			assert(false);
 		} catch(Exception e) {
 			e.printStackTrace();
 			assert(false);
-			
+
 		}
-		
+
 	}
-	
-	
-	@Test
+
+
+	//@Test
 	public void dockerizeJavagenericArgusH2ORFileTest() {
-		
+
 	try {
 
 		File files = new File("model");
 		File MetaFile = new File(files, "metadata.json");
 		String ownerId = "testuser";
-		
+
 		String filePath = FilePathTest.filePath();
 		File validJsonFile = new File(filePath + "metadata.json");
-		
+
 		ResourceUtils resourceUtilsMock = mock(ResourceUtils.class);
 		mockStatic(UtilityFunction.class);
 		mockStatic(DockerClientFactory.class);
 		Resource rc = mock(Resource.class);
 		File file = mock(File.class);
 		JavaGenericDockerPreparator javaGenericDockerPreparator = mock(JavaGenericDockerPreparator.class);
-		
+
 		RDockerPreparator rDockerPreparator = mock(RDockerPreparator.class);
 		//CreateImageCommand createImageCommand = mock(CreateImageCommand.class);
 		H2ODockerPreparator h2ODockerPreparator = mock(H2ODockerPreparator.class);
-		
-		
+
+
 		DockerizeModel dockerizeModelMock = mock(DockerizeModel.class);
 		DockerClient dockerClient = mock(DockerClient.class);
-		
+
 		MetadataParser metadataParser = new MetadataParser(validJsonFile);
-		
+
 		Metadata mData = null;
-		
+
 		mData = metadataParser.getMetadata();
 		mData.setModelName("acumosmodel");
 		mData.setVersion("1.0");
-		
-		
+
+
 		String modelId = "12345";
 		File outputFolder = new File(filePath,modelId);
-		
+
 		File modelFile = new File("model.zip");
-		
+
 		ResourceUtils resourceUtils1 = new ResourceUtils(resourceLoader);
 		Resource[] resources = resourceUtils1.loadResources("classpath*:templates/java_argus/*");
-		
+
 		PowerMockito.when(resourceUtils.loadResources(Mockito.anyString())).thenReturn(resources);
-		
+
 		PowerMockito.doNothing().when(UtilityFunction.class);
 		UtilityFunction.copyFile(rc, file);
-		
+
 		PowerMockito.doReturn(dockerClient).when(DockerClientFactory.class);
 		DockerClientFactory.getDockerClient(Mockito.anyObject());
-		
+
 		PowerMockito.whenNew(JavaGenericDockerPreparator.class)
 			.withArguments(Mockito.anyObject()).thenReturn(javaGenericDockerPreparator);
-	
+
 		PowerMockito.whenNew(RDockerPreparator.class)
 		.withArguments(Mockito.anyObject() , Mockito.anyString()).thenReturn(rDockerPreparator);
-		
+
 		PowerMockito.whenNew(H2ODockerPreparator.class)
 		.withArguments(Mockito.anyObject()).thenReturn(h2ODockerPreparator);
 
-		
+
 		doNothing().when(javaGenericDockerPreparator).prepareDockerApp(Mockito.anyObject());
 		doNothing().when(rDockerPreparator).prepareDockerApp(Mockito.anyObject());
 		doNothing().when(h2ODockerPreparator).prepareDockerApp(Mockito.anyObject());
-		
-		
+
+
 		doNothing().when(dockerizeModel).listFilesAndFilesSubDirectories(Mockito.anyObject());
 		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
 		doNothing().when(createImageCommand).execute();
-		
+
 		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
 		doNothing().when(createImageCommand).execute();
-		
+
 
 		PowerMockito.whenNew(TagImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(tagImageCommand);
 
 		PowerMockito.whenNew(PushImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pushImageCmd);
-		
-		
+
+
 		PowerMockito.when(UtilityFunction.getFileName(Mockito.anyObject(),Mockito.anyString())).thenReturn("testfile");
 		UtilityFunction.deCompressGZipFile(Mockito.anyObject(),Mockito.anyObject());
 		UtilityFunction.unTarFile(Mockito.anyObject(),Mockito.anyObject());
-		
+
 		String trackingID = "atferc-4foeqchger-beeufdf-notaacxger";
 		LogBean logBean = new LogBean();
 		logBean.setFileName("mslog.txt");
 		logBean.setLogPath(logPath + File.separator + trackingID);
 		LogThreadLocal logThread = new LogThreadLocal();
 		logThread.set(logBean);
-		
+
 		mData.setRuntimeName("javageneric");
 		mData.setRuntimeVersion("0");
 		dockerizeModel.setModelOriginalName("acumosavageneric");
 		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
-		
+
 		mData.setRuntimeName("r");
 		dockerizeModel.setModelOriginalName("acumosr");
 		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
-		
+
 		mData.setRuntimeName("h2o");
 		dockerizeModel.setModelOriginalName("h2o");
 		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);	
-		
+
 		mData.setRuntimeName("javaargus");
 		dockerizeModel.setModelOriginalName("javaargus");
 		imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder,logBean);
 		assertNotNull(imageURI);
-		
-		
-		
-	
-	
+
+
+
+
+
 		} catch (AcumosServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
-	
-	
-	
-	@Test
+
+
+
+	//@Test
 	public void dockerizeJavagenericArgusH2ORFileTestAynch() {
-		
+
 	try {
 
 		File files = new File("model");
 		File MetaFile = new File(files, "metadata.json");
 		String ownerId = "testuser";
-		
+
 		String filePath = FilePathTest.filePath();
 		File validJsonFile = new File(filePath + "metadata.json");
-		
+
 		ResourceUtils resourceUtilsMock = mock(ResourceUtils.class);
 		mockStatic(UtilityFunction.class);
 		mockStatic(DockerClientFactory.class);
@@ -485,203 +481,199 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		File file = mock(File.class);
 		MLPTask task = mock(MLPTask.class);
 		JavaGenericDockerPreparator javaGenericDockerPreparator = mock(JavaGenericDockerPreparator.class);
-		
+
 		RDockerPreparator rDockerPreparator = mock(RDockerPreparator.class);
 		//CreateImageCommand createImageCommand = mock(CreateImageCommand.class);
 		H2ODockerPreparator h2ODockerPreparator = mock(H2ODockerPreparator.class);
-		
-		
+
+
 		DockerizeModel dockerizeModelMock = mock(DockerizeModel.class);
 		DockerClient dockerClient = mock(DockerClient.class);
-		
+
 		MetadataParser metadataParser = new MetadataParser(validJsonFile);
-		
+
 		Metadata mData = null;
-		
+
 		mData = metadataParser.getMetadata();
 		mData.setModelName("acumosmodel");
 		mData.setVersion("1.0");
-		
-		
+
+
 		String modelId = "12345";
 		File outputFolder = new File(filePath,modelId);
-		
+
 		File modelFile = new File("model.zip");
-		
+
 		ResourceUtils resourceUtils1 = new ResourceUtils(resourceLoader);
 		Resource[] resources = resourceUtils1.loadResources("classpath*:templates/java_argus/*");
-		
+
 		PowerMockito.when(resourceUtils.loadResources(Mockito.anyString())).thenReturn(resources);
-		
+
 		PowerMockito.doNothing().when(UtilityFunction.class);
 		UtilityFunction.copyFile(rc, file);
-		
+
 		PowerMockito.doReturn(dockerClient).when(DockerClientFactory.class);
 		DockerClientFactory.getDockerClient(Mockito.anyObject());
-		
+
 		PowerMockito.whenNew(JavaGenericDockerPreparator.class)
 			.withArguments(Mockito.anyObject()).thenReturn(javaGenericDockerPreparator);
-	
+
 		PowerMockito.whenNew(RDockerPreparator.class)
 		.withArguments(Mockito.anyObject() , Mockito.anyString()).thenReturn(rDockerPreparator);
-		
+
 		PowerMockito.whenNew(H2ODockerPreparator.class)
 		.withArguments(Mockito.anyObject()).thenReturn(h2ODockerPreparator);
 
-		
 		doNothing().when(javaGenericDockerPreparator).prepareDockerApp(Mockito.anyObject());
 		doNothing().when(rDockerPreparator).prepareDockerApp(Mockito.anyObject());
 		doNothing().when(h2ODockerPreparator).prepareDockerApp(Mockito.anyObject());
-		
-		
+
+
 		doNothing().when(dockerizeModel).listFilesAndFilesSubDirectories(Mockito.anyObject());
 		//PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
 		PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean(),Mockito.anyObject()).thenReturn(createImageCommand);
 		doNothing().when(createImageCommand).execute();
-		
+
 		//PowerMockito.whenNew(CreateImageCommand.class).withArguments(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(createImageCommand);
 		//doNothing().when(createImageCommand).execute();
-		
 
 		PowerMockito.whenNew(TagImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyBoolean(),Mockito.anyBoolean()).thenReturn(tagImageCommand);
 
 		PowerMockito.whenNew(PushImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(pushImageCmd);
-		
-		
+
+
 		PowerMockito.when(UtilityFunction.getFileName(Mockito.anyObject(),Mockito.anyString())).thenReturn("testfile");
 		UtilityFunction.deCompressGZipFile(Mockito.anyObject(),Mockito.anyObject());
 		UtilityFunction.unTarFile(Mockito.anyObject(),Mockito.anyObject());
-		
+
 		String trackingID = "atferc-4foeqchger-beeufdf-notaacxger";
 		LogBean logBean = new LogBean();
 		logBean.setFileName("mslog.txt");
 		logBean.setLogPath(logPath + File.separator + trackingID);
 		LogThreadLocal logThread = new LogThreadLocal();
 		logThread.set(logBean);
-		
-		
+
+
 		mData.setRuntimeName("javageneric");
 		mData.setRuntimeVersion("0");
 		dockerizeModel.setModelOriginalName("acumosavageneric");
 //		String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 		assertNotNull(true);	
-		
+
 		mData.setRuntimeName("r");
 		dockerizeModel.setModelOriginalName("acumosr");
 		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 		assertNotNull(true);
-		
-		
+
+
 		//String trackingID = "d3hvc435-3ve34-c555g-5445";
 		//File outputFolder = new File("tmp", modelId);
-		
-		
+
+
 		mData.setRuntimeName("h2o");
 		dockerizeModel.setModelOriginalName("h2o");
 		//imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 
 		assertNotNull(true);	
-		
+
 		mData.setRuntimeName("javaargus");
 		dockerizeModel.setModelOriginalName("javaargus");
 		//imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 		dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2", outputFolder, "trackingID", "fileName", logThread, logBean, task);
 		assertNotNull(true);
-		
-		
-		
-	
-	
+
+
+
+
+
 		} catch (AcumosServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
 
-	
-	
-	@Test
+
+	//@Test
 	public void revertbackOnboardingTest() {
-		
+
 	try {
 
-		
 		File files = new File("model");
 		File MetaFile = new File(files, "metadata.json");
 		String ownerId = "testuser";
-		
+
 		String filePath = FilePathTest.filePath();
 		String modelId = "12345";
 		File outputFolder = new File(filePath,modelId);
-		
+
 		File validJsonFile = new File(filePath + "metadata.json");
-		
+
 		mockStatic(DockerClientFactory.class);
 		CommonDataServiceRestClientImpl cmdDataSvc = mock(CommonDataServiceRestClientImpl.class);
 		NexusArtifactClient artifactClient = mock(NexusArtifactClient.class);
-		
+
 		DockerClient dockerClient = mock(DockerClient.class);
-		
+
 		MetadataParser metadataParser = new MetadataParser(validJsonFile);
-		
+
 		Metadata mData = null;
-		
+
 		mData = metadataParser.getMetadata();
 		mData.setModelName("acumosmodel");
 		mData.setVersion("1.0");
-		
+
 		PowerMockito.doReturn(dockerClient).when(DockerClientFactory.class);
 		DockerClientFactory.getDockerClient(Mockito.anyObject());
-		
+
 		PowerMockito.whenNew(NexusArtifactClient.class).withArguments(Mockito.anyObject()).thenReturn(artifactClient);
-		
+
 		MLPArtifact mLPArtifact  = new MLPArtifact();
 		mLPArtifact.setArtifactTypeCode("MI");
 		mLPArtifact.setUri("org/acumos/hello-world/2/hello-world-2.json");
-		
+
 		List<MLPArtifact> mlpArtifactList = new ArrayList();
 		mlpArtifactList.add(mLPArtifact);		
-		
+
 		// Remember-  to mock method on mock object it should on mock() method not on object created by @Mock  . e.g.  below won't work 
 		// on cmnDataService created @Mock where it should work on cmdDataSvc created by mock(....)
 		PowerMockito.when(cmdDataSvc.getSolutionRevisionArtifacts(Mockito.anyString(), Mockito.anyString())).thenReturn(mlpArtifactList);
-		
+
 		//DeleteImageCommand deleteImageCommand = new DeleteImageCommand(imageTagName, metadata.getVersion(), "");
 		PowerMockito.whenNew(DeleteImageCommand.class).withArguments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString()).thenReturn(deleteImageCommand);
-		
+
 		mData.setRuntimeName("javageneric");
 		mData.setRuntimeVersion("0");
 		mData.setSolutionId("12dgcb63f45sd");
 		dockerizeModel.setModelOriginalName("acumosavageneric");
-		
+
 	/*	LogBean logBean = new LogBean();
 		logBean.setFileName("fileName");
 		//logBean.setLogPath(logPath+File.separator+trackingID);
 
 		LogThreadLocal logThread = new LogThreadLocal();
 		logThread.set(logBean);*/
-		
+
 		//dockerizeModel.createLogFile("test");
 //		dockerizeModel.listFilesAndFilesSubDirectories(outputFolder);
 		dockerizeModel.revertbackOnboarding(mData, "solutionid", "imagclassifier");
-		
-		
-		
+
+
+
 		assert(true);	
-		
+
 		} catch (AcumosServiceException e) {
 			assert(false);
 			e.printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	
-	
+
+
 	}
 
 
@@ -691,10 +683,9 @@ public class DockerizeModelTest  implements ResourceLoaderAware {
 		// TODO Auto-generated method stub
 		 this.resourceLoader = resourceLoader;
 	}
-	
-	
- 		
-	}
-	
+
+
+ 
+}
 
 
