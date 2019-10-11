@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({GenerateMicroserviceController.class,DownloadModelArtifacts.class,CommonDataServiceRestClientImpl.class})
+//@RunWith(PowerMockRunner.class)
+//@PrepareForTest({GenerateMicroserviceController.class,DownloadModelArtifacts.class,CommonDataServiceRestClientImpl.class})
 public class GenerateMicroserviceControllerTest {
 	
 	@InjectMocks
@@ -52,7 +52,7 @@ public class GenerateMicroserviceControllerTest {
 	@Mock
 	CommonOnboarding commonOnboarding;
 	
-	@Test
+	//@Test
 	public void getModelArtifactsTest() {
          System.out.println("Executing get model artifacts");		
 		try {
