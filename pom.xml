@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.acumos.microservice</groupId>
 	<artifactId>microservice-generation</artifactId>
-	<version>3.4.0-SNAPSHOT</version>
+	<version>3.4.1-SNAPSHOT</version>
 	<name>Microservice generation jar</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -13,7 +13,6 @@
 		<relativePath />
 	</parent>
 	<properties>
-		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<start-class>org.acumos.microservice.MicroserviceApplication</start-class>
                 <springfox.version>2.7.0</springfox.version>
@@ -39,7 +38,7 @@
 		<dependency>
 			<groupId>org.acumos.on-boarding</groupId>
                   <artifactId>onboarding-common</artifactId>
-			<version>3.4.0-SNAPSHOT</version>
+			<version>3.4.11-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -160,8 +159,7 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>11</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -180,6 +178,29 @@
 					</archive>
 				</configuration>
 			</plugin>
+				<!-- Generate javadoc jar; see profile for Java 11 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.1.1</version>
+
+				<!-- spring chooses the <version>x</version> -->
+				<configuration>
+					<!-- during upgrade to jdk 11 found that portal-fe javadoc build fails
+						due to issues with different spring versions and only one is being used by
+						the javadoc:aggregate job -->
+					<skip>true</skip>
+					<aggregate>false</aggregate>	<!-- this enables aggretation -->
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- Allow the jar deployment; LF deploy step fails otherwise; a bug in JJB scripts -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -192,24 +213,11 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration> 
+				<configuration>
 					<mainClass>org.acumos.microservice.MicroserviceApplication</mainClass>
 				</configuration>
 			</plugin>
-			<!-- Generate javadoc jar; see profile for Java 8 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+
 			<!-- Generate source jar -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -244,17 +252,17 @@
 					</execution>
 				</executions>
 			</plugin> -->
-			
 			<plugin>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
-			<!-- Override OParent version -->
-			<version>${jacocoVersion}</version>
+			<!-- Override Parent version -->
+			<!-- <version>${jacocoVersion}</version> -->
+			<version>0.8.4</version>
 			<configuration>
 				<excludes>
 					<exclude>*</exclude>
 				</excludes>
-			</configuration> 
+			</configuration>
 			<executions>
 				<!-- disable jacoco executions from oparent -->
 				<execution>

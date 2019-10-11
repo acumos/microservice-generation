@@ -24,8 +24,8 @@ import java.util.List;
 
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DownloadModelArtifacts.class,CommonDataServiceRestClientImpl.class})
+//@RunWith(PowerMockRunner.class)
+//@PrepareForTest({DownloadModelArtifacts.class,CommonDataServiceRestClientImpl.class})
 public class DownloadModelArtifactsTest {
 	
 	@InjectMocks
@@ -41,7 +41,7 @@ public class DownloadModelArtifactsTest {
 	@Mock
 	NexusArtifactClient artifactClient;
 	
-	@Test
+	//@Test
 	public void getModelArtifactsTest() {
          System.out.println("Executing get model artifacts");		
 		try {
@@ -65,9 +65,9 @@ public class DownloadModelArtifactsTest {
 			mLPArtifact.setUri("org/acumos/hello-world/2/hello-world-2.json");
 			
 			List<MLPArtifact> mlpArtifactList = new ArrayList();
-			mlpArtifactList.add(mLPArtifact);		
+			mlpArtifactList.add(mLPArtifact);
 			
-			// Remember-  to mock method on mock object it should on mock() method not on object created by @Mock  . e.g.  below won't work 
+			// Remember-  to mock method on mock object it should on mock() method not on object created by @Mock  . e.g.  below won't work
 			// on cmnDataService created @Mock where it should work on cmdDataSvc created by mock(....)
 			PowerMockito.when(cmdDataSvc.getSolutionRevisionArtifacts(Mockito.anyString(), Mockito.anyString())).thenReturn(mlpArtifactList);
 			
