@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.acumos.microservice</groupId>
 	<artifactId>microservice-generation</artifactId>
-	<version>3.4.1-SNAPSHOT</version>
+	<version>3.4.2-SNAPSHOT</version>
 	<name>Microservice generation jar</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -323,7 +323,7 @@
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.21.0</version>
+				<version>0.30.0</version>
 				<configuration>
 					<verbose>true</verbose>
 					<!-- docker runs on the LF build minion so the default value is ok -->
@@ -335,7 +335,7 @@
 							<!--Specify a tag to avoid default tag "latest"-->
 							<name>microservice-generation:${project.version}</name>
 							<build>
-								<from>openjdk:8-jdk</from>
+								<from>adoptopenjdk/openjdk11-openj9:alpine-jre</from>
 								<tags>
 									<!--Add tag with build number-->
 									<tag>${project.version}-b${build.number}</tag>
