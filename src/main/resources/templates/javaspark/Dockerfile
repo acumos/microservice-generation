@@ -1,4 +1,4 @@
-FROM java:adoptopenjdk/openjdk11:latest
+FROM adoptopenjdk/openjdk11:latest
 VOLUME /tmp
 
 WORKDIR /app
