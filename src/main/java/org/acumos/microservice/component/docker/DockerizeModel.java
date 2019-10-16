@@ -125,6 +125,9 @@ public class DockerizeModel {
 	@Value("${microService.microServiceAsyncFlag}")
 	protected boolean microServiceAsyncFlag;
 	
+	@Value("${modelrunnerVersion.javaSpark}")
+	protected String sparkModelRunnerVersion;
+	
 	protected String modelOriginalName = null;
 
 	@Autowired
@@ -300,7 +303,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser);
+			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser,sparkModelRunnerVersion);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
 			for (Resource resource : resources) {
@@ -559,7 +562,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser);
+			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser, sparkModelRunnerVersion);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
 			for (Resource resource : resources) {

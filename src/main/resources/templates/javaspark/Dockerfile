@@ -1,4 +1,4 @@
-FROM java:8
+FROM java:adoptopenjdk/openjdk11:latest
 VOLUME /tmp
 
 WORKDIR /app
@@ -21,11 +21,8 @@ RUN chown root /usr/local/bin/protoc
 EXPOSE {0}
 
 #Deploy Model service
-#RUN curl --output h2o-genericjava-modelrunner.jar https://nexus.acumos.org/content/repositories/releases/org/acumos/generic-model-runner/h2o-genericjava-modelrunner/2.2.3/h2o-genericjava-modelrunner-2.2.3.jar
-#RUN cp h2o-genericjava-modelrunner.jar app.jar
-#RUN pwd
-
-ADD SparkModelRunnerService.jar app.jar
+RUN curl  --output SparkModelRunnerService.jar https://nexus.acumos.org/content/repositories/staging/org/acumos/spark-model-runner/spark-modelrunner/{1}/spark-modelrunner-{1}.jar
+RUN cp SparkModelRunnerService.jar app.jar
 RUN chmod 777 /app/app.jar
 RUN pwd
 
