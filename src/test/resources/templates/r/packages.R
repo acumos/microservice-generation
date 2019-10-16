@@ -13,4 +13,3 @@ install.packages("bindr",repos="http://cloud.r-project.org",dependencies=T)
 install.packages("forecast",repos="http://cloud.r-project.org",dependencies=T)
 install.packages("dplyr",repos="http://cloud.r-project.org",dependencies=T)
 install.packages("lubridate",repos="http://cloud.r-project.org",dependencies=T)
-
