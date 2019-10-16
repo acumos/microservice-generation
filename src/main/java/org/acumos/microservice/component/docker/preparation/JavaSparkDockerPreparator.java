@@ -43,11 +43,14 @@ public class JavaSparkDockerPreparator {
 
 	private String rVersion;
 	private String serverPort;
+	private String sparkModelRunnerVersion;
+	
 	private static final Logger log = LoggerFactory.getLogger(JavaSparkDockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public JavaSparkDockerPreparator(MetadataParser metadataParser) throws AcumosServiceException {
+	public JavaSparkDockerPreparator(MetadataParser metadataParser, String sparkModelRunnerVersion) throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
+		this.sparkModelRunnerVersion = sparkModelRunnerVersion;
 
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
 		if (runtimeVersion[0] == 0) { 
@@ -114,7 +117,7 @@ public class JavaSparkDockerPreparator {
 			String modelname = this.metadata.getSolutionName();
 
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, "H2OModelService.jar", modelname + ".jar" });
+					new Object[] { serverPort, sparkModelRunnerVersion, modelname + ".jar" });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {

@@ -41,6 +41,7 @@ public class JavaSparkDockerPreparatorTest {
 	File jsonFile = new File(filePath+"modelDetails.json");
 	File reqtxt = new File(filePath+"requirements.txt");
 	File srcFile = new File(filePath+"Dockerfile");
+	private String sparkModelRunnerVersion = "1.0.2";
 	
 	public JavaSparkDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
@@ -49,7 +50,7 @@ public class JavaSparkDockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
 	@InjectMocks
-	JavaSparkDockerPreparator javaSparkDockerPreparator = new JavaSparkDockerPreparator(metadataParser);
+	JavaSparkDockerPreparator javaSparkDockerPreparator = new JavaSparkDockerPreparator(metadataParser,sparkModelRunnerVersion);
 
 	@Test
 	public void compareVersionTest() {
