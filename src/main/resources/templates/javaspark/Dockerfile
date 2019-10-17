@@ -9,6 +9,8 @@ ADD . /app
 #RUN echo $http_proxy
 RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 
+RUN apt-get update && apt-get install -y unzip zip
+
 #Install protoc
 RUN curl -OL https://github.com/google/protobuf/releases/download/v3.4.0/protoc-3.4.0-linux-x86_64.zip
 RUN unzip protoc-3.4.0-linux-x86_64.zip
