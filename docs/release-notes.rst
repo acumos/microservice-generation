@@ -25,7 +25,9 @@ These release notes cover the microservice generation project.
 Version 3.5.0, 16 Oct 2019
 -----------------------------
 * Common Data Service client at version 3.0.0
+* YML changes - "security":{"verificationApiUrl":"<securityverificationurl>"},"modelrunnerVersion": {"javaSpark": "<version>"}
 * Common Services - Java Code upgrade to Java 11 or 12 : `ACUMOS-3327 <https://jira.acumos.org/browse/ACUMOS-3327/>`_
+* Java spark model failing with error through CLI : `ACUMOS-3569 <https://jira.acumos.org/browse/ACUMOS-3569/>`_
 
 Version 3.4.0, 3 Oct 2019
 -----------------------------
