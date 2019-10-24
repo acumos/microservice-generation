@@ -43,12 +43,15 @@ public class CPPDockerPreparator {
 
 	private String runtimeVersion;
 	private String executable;
+	private String http_proxy;
+	
 	private static final Logger log = LoggerFactory.getLogger(CPPDockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public CPPDockerPreparator(MetadataParser metadataParser) throws AcumosServiceException {
+	public CPPDockerPreparator(MetadataParser metadataParser, String http_proxy) throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
-
+		this.http_proxy = http_proxy;
+		
 		this.runtimeVersion = metadata.getRuntimeVersion();
 		this.executable = metadata.getExecutable(); 
 		
@@ -96,7 +99,7 @@ public class CPPDockerPreparator {
 
 			String dockerFileAsString = new String(UtilityFunction.toBytes(inDockerFile));
 
-			dockerFileAsString = MessageFormat.format(dockerFileAsString, new Object[] { runtimeVersion, executable});
+			dockerFileAsString = MessageFormat.format(dockerFileAsString, new Object[] { runtimeVersion, executable, http_proxy});
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {

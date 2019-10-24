@@ -51,7 +51,7 @@ public class H2ODockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
 	@InjectMocks
-	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser);
+	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser,"http_proxy");
 
 	@Test
 	public void compareVersionTest() {

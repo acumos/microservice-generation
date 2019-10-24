@@ -49,7 +49,7 @@ public class CPPDockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
 	@InjectMocks
-	CPPDockerPreparator cPPDockerPreparator = new CPPDockerPreparator(metadataParser);
+	CPPDockerPreparator cPPDockerPreparator = new CPPDockerPreparator(metadataParser, "http_proxy");
 
 	@Test
 	public void compareVersionTest() {

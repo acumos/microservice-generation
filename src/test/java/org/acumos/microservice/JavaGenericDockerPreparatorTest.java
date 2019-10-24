@@ -51,7 +51,7 @@ public class JavaGenericDockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
 	@InjectMocks
-	JavaGenericDockerPreparator javaGenericDockerPreparator = new JavaGenericDockerPreparator(metadataParser);
+	JavaGenericDockerPreparator javaGenericDockerPreparator = new JavaGenericDockerPreparator(metadataParser, "http_proxy");
 
 	public JavaGenericDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);

@@ -226,7 +226,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser);
+			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser, http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/h2o/*");
 			for (Resource resource : resources) {
@@ -264,7 +264,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser);
+			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser, http_proxy);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaGeneric/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
@@ -303,7 +303,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser,sparkModelRunnerVersion);
+			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser,sparkModelRunnerVersion, http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
 			for (Resource resource : resources) {
@@ -337,7 +337,7 @@ public class DockerizeModel {
 			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
 			
-			CPPDockerPreparator dockerPreprator = new CPPDockerPreparator(metadataParser);
+			CPPDockerPreparator dockerPreprator = new CPPDockerPreparator(metadataParser,http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/cpp/*");
 			for (Resource resource : resources) {
@@ -485,7 +485,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser);
+			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser, http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/h2o/*");
 			for (Resource resource : resources) {
@@ -523,7 +523,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser);
+			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser, http_proxy);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaGeneric/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
@@ -562,7 +562,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser, sparkModelRunnerVersion);
+			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser, sparkModelRunnerVersion, http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
 			for (Resource resource : resources) {
@@ -596,7 +596,7 @@ public class DockerizeModel {
 			outputFolder = new File(tempFolder, "app");
 			outputFolder.mkdir();
 			
-			CPPDockerPreparator dockerPreprator = new CPPDockerPreparator(metadataParser);
+			CPPDockerPreparator dockerPreprator = new CPPDockerPreparator(metadataParser, http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/cpp/*");
 			for (Resource resource : resources) {
