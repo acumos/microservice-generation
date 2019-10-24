@@ -37,21 +37,20 @@ import org.springframework.util.Assert;
 @RunWith(MockitoJUnitRunner.class)
 public class H2ODockerPreparatorTest {
 
-	 
-	String filePath = FilePathTest.filePath(); 
+	String filePath = FilePathTest.filePath();
 	File outFolder = new File(filePath);
-	File jsonFile = new File(filePath+"modelDetails.json");
-	File reqtxt = new File(filePath+"requirements.txt");
-	File srcFile = new File(filePath+"Dockerfile");
-	
+	File jsonFile = new File(filePath + "modelDetails.json");
+	File reqtxt = new File(filePath + "requirements.txt");
+	File srcFile = new File(filePath + "Dockerfile");
+
 	public H2ODockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
 	}
-	
+
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
-	
+
 	@InjectMocks
-	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser);
+	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser, "http_proxy");
 
 	@Test
 	public void compareVersionTest() {
@@ -68,30 +67,29 @@ public class H2ODockerPreparatorTest {
 		int[] baseVersion = H2ODockerPreparator.versionAsArray("1234");
 		assertNotNull(baseVersion);
 	}
-	
+
 	@Test
 	public void prepareDockerAppTest() throws AcumosServiceException {
-		
-	try {	
-		h2ODockerPreparator.prepareDockerApp(outFolder);
-	} catch(Exception e) {
-		org.junit.Assert.fail("prepareDockerApp failed : " + e.getMessage());
-	}
+
+		try {
+			h2ODockerPreparator.prepareDockerApp(outFolder);
+		} catch (Exception e) {
+			org.junit.Assert.fail("prepareDockerApp failed : " + e.getMessage());
+		}
 
 	}
-	
-	/*@Test
-	public void createDockerFileTest() throws AcumosServiceException {
-		
-		doNothing().when(h2ODockerPreparator).createDockerFile(srcFile, srcFile);
 
-	}
-	
-	@Test
-	public void createRequirementsTest() throws AcumosServiceException {
-		doNothing().when(h2ODockerPreparator).createRequirements(reqtxt, reqtxt);
-		
-	}*/
-	
-		
+	/*
+	 * @Test public void createDockerFileTest() throws AcumosServiceException {
+	 * 
+	 * doNothing().when(h2ODockerPreparator).createDockerFile(srcFile, srcFile);
+	 * 
+	 * }
+	 * 
+	 * @Test public void createRequirementsTest() throws AcumosServiceException {
+	 * doNothing().when(h2ODockerPreparator).createRequirements(reqtxt, reqtxt);
+	 * 
+	 * }
+	 */
+
 }

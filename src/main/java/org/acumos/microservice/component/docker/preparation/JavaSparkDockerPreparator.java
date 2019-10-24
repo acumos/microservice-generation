@@ -38,22 +38,25 @@ import org.acumos.onboarding.component.docker.preparation.Requirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JavaSparkDockerPreparator { 
+public class JavaSparkDockerPreparator {
 	private Metadata metadata;
 
 	private String rVersion;
 	private String serverPort;
 	private String sparkModelRunnerVersion;
-	
+	private String http_proxy;
+
 	private static final Logger log = LoggerFactory.getLogger(JavaSparkDockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public JavaSparkDockerPreparator(MetadataParser metadataParser, String sparkModelRunnerVersion) throws AcumosServiceException {
+	public JavaSparkDockerPreparator(MetadataParser metadataParser, String sparkModelRunnerVersion, String http_proxy)
+			throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
 		this.sparkModelRunnerVersion = sparkModelRunnerVersion;
+		this.http_proxy = http_proxy;
 
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
-		if (runtimeVersion[0] == 0) { 
+		if (runtimeVersion[0] == 0) {
 			int[] baseVersion = new int[] { 0, 0, 1 };
 			if (compareVersion(baseVersion, runtimeVersion) >= 0) {
 				this.rVersion = "3.3.2";
@@ -75,10 +78,9 @@ public class JavaSparkDockerPreparator {
 			input = new FileInputStream(new File(outputFolder, "application.properties"));
 			prop.load(input);
 			serverPort = prop.getProperty("server.port");
-			if(serverPort.equals(null) || serverPort.equals(""))
-			{
+			if (serverPort.equals(null) || serverPort.equals("")) {
 				serverPort = "3330";
-			}			
+			}
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
@@ -117,7 +119,7 @@ public class JavaSparkDockerPreparator {
 			String modelname = this.metadata.getSolutionName();
 
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, sparkModelRunnerVersion, modelname + ".jar" });
+					new Object[] { serverPort, sparkModelRunnerVersion, modelname + ".jar", http_proxy });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {

@@ -38,19 +38,22 @@ import org.acumos.onboarding.component.docker.preparation.Requirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class H2ODockerPreparator { 
+public class H2ODockerPreparator {
 	private Metadata metadata;
 
 	private String rVersion;
 	private String serverPort;
+	private String http_proxy;
+
 	private static final Logger log = LoggerFactory.getLogger(H2ODockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public H2ODockerPreparator(MetadataParser metadataParser) throws AcumosServiceException {
+	public H2ODockerPreparator(MetadataParser metadataParser, String http_proxy) throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
+		this.http_proxy = http_proxy;
 
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
-		if (runtimeVersion[0] == 0) { 
+		if (runtimeVersion[0] == 0) {
 			int[] baseVersion = new int[] { 0, 0, 1 };
 			if (compareVersion(baseVersion, runtimeVersion) >= 0) {
 				this.rVersion = "3.3.2";
@@ -72,10 +75,9 @@ public class H2ODockerPreparator {
 			input = new FileInputStream(new File(outputFolder, "application.properties"));
 			prop.load(input);
 			serverPort = prop.getProperty("server.port");
-			if(serverPort.equals(null) || serverPort.equals(""))
-			{
+			if (serverPort.equals(null) || serverPort.equals("")) {
 				serverPort = "3330";
-			}			
+			}
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
@@ -114,7 +116,7 @@ public class H2ODockerPreparator {
 			String modelname = this.metadata.getSolutionName();
 
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, "H2OModelService.jar", modelname + ".zip" });
+					new Object[] { serverPort, "H2OModelService.jar", modelname + ".zip", http_proxy });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {

@@ -35,21 +35,20 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class CPPDockerPreparatorTest {
 
-	 
-	String filePath = FilePathTest.filePath(); 
+	String filePath = FilePathTest.filePath();
 	File outFolder = new File(filePath);
-	File jsonFile = new File(filePath+"cpp.json");
-	File reqtxt = new File(filePath+"requirements.txt");
-	File srcFile = new File(filePath+"Dockerfile");
-	
+	File jsonFile = new File(filePath + "cpp.json");
+	File reqtxt = new File(filePath + "requirements.txt");
+	File srcFile = new File(filePath + "Dockerfile");
+
 	public CPPDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
 	}
-	
+
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
-	
+
 	@InjectMocks
-	CPPDockerPreparator cPPDockerPreparator = new CPPDockerPreparator(metadataParser);
+	CPPDockerPreparator cPPDockerPreparator = new CPPDockerPreparator(metadataParser, "http_proxy");
 
 	@Test
 	public void compareVersionTest() {
@@ -66,18 +65,16 @@ public class CPPDockerPreparatorTest {
 		int[] baseVersion = CPPDockerPreparator.versionAsArray("1234");
 		assertNotNull(baseVersion);
 	}
-	
+
 	@Test
 	public void prepareDockerAppTest() throws AcumosServiceException {
-		
-	try {	
-		cPPDockerPreparator.prepareDockerApp(outFolder);
-	} catch(Exception e) {
-		org.junit.Assert.fail("prepareDockerApp failed : " + e.getMessage());
-	}
+
+		try {
+			cPPDockerPreparator.prepareDockerApp(outFolder);
+		} catch (Exception e) {
+			org.junit.Assert.fail("prepareDockerApp failed : " + e.getMessage());
+		}
 
 	}
-	
-	
-		
+
 }
