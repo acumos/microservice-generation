@@ -5,8 +5,9 @@ WORKDIR /app
 ADD . /app
 
 #set proxy
-#ENV http_proxy http://10.53.130.56:8080
-#RUN echo $http_proxy
+ENV http_proxy {3}
+RUN echo $http_proxy
+
 RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 
 #Install protoc

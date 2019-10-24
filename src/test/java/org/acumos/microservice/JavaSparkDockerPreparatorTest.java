@@ -50,7 +50,7 @@ public class JavaSparkDockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	
 	@InjectMocks
-	JavaSparkDockerPreparator javaSparkDockerPreparator = new JavaSparkDockerPreparator(metadataParser,sparkModelRunnerVersion);
+	JavaSparkDockerPreparator javaSparkDockerPreparator = new JavaSparkDockerPreparator(metadataParser,sparkModelRunnerVersion , "http_proxy");
 
 	@Test
 	public void compareVersionTest() {

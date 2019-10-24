@@ -37,21 +37,22 @@ import org.slf4j.LoggerFactory;
 @RunWith(MockitoJUnitRunner.class)
 public class JavaGenericDockerPreparatorTest {
 
-	 String filePath = FilePathTest.filePath();
+	String filePath = FilePathTest.filePath();
 
 	public static Logger log = LoggerFactory.getLogger(JavaGenericDockerPreparatorTest.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
-	
-	File jsonFile = new File(filePath+"java_genric.json");
-	File srcFile = new File(filePath+"Dockerfile");
-	File outFile = new File(filePath+"Dockerfile");
-	File outFolder = new File(filePath+"inFile.csv");
+
+	File jsonFile = new File(filePath + "java_genric.json");
+	File srcFile = new File(filePath + "Dockerfile");
+	File outFile = new File(filePath + "Dockerfile");
+	File outFolder = new File(filePath + "inFile.csv");
 	File outFolder1 = new File(filePath);
-	
+
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
-	
+
 	@InjectMocks
-	JavaGenericDockerPreparator javaGenericDockerPreparator = new JavaGenericDockerPreparator(metadataParser);
+	JavaGenericDockerPreparator javaGenericDockerPreparator = new JavaGenericDockerPreparator(metadataParser,
+			"http_proxy");
 
 	public JavaGenericDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
@@ -71,16 +72,13 @@ public class JavaGenericDockerPreparatorTest {
 		int[] baseVersion = JavaGenericDockerPreparator.versionAsArray("1234");
 	}
 
-	/*@Test
-	public void createDockerFile() {
-		try {
-			javaGenericDockerPreparator.createDockerFile(srcFile, outFile);
-		} catch (AcumosServiceException e) {
-			Assert.fail("createDockerFile failed : " + e.getMessage());
-		}
-	}*/
-	
-	
+	/*
+	 * @Test public void createDockerFile() { try {
+	 * javaGenericDockerPreparator.createDockerFile(srcFile, outFile); } catch
+	 * (AcumosServiceException e) { Assert.fail("createDockerFile failed : " +
+	 * e.getMessage()); } }
+	 */
+
 	@Test
 	public void prepareDockerApp() {
 		try {
@@ -89,10 +87,5 @@ public class JavaGenericDockerPreparatorTest {
 			Assert.fail("prepareDockerApp failed : " + e.getMessage());
 		}
 	}
-	
-	
-	
-	
+
 }
-
-

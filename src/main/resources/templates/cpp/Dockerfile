@@ -3,9 +3,11 @@ VOLUME /tmp
 WORKDIR /app
 ADD . /app
 #set proxy - enable installation of dependencies
-#ENV http_proxy http://10.53.130.56:8080
-#RUN echo $http_proxy
+ENV http_proxy {2}
+RUN echo $http_proxy
+
 RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
+
 #RUN echo "All setup completed, removing the proxy address from the environment"
 #ENV http_proxy=""
 #RUN echo $http_proxy
