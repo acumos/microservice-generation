@@ -44,13 +44,15 @@ public class H2ODockerPreparator {
 	private String rVersion;
 	private String serverPort;
 	private String http_proxy;
+	private String H2oGenericjavaModelRunnerVersion;
 
 	private static final Logger log = LoggerFactory.getLogger(H2ODockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public H2ODockerPreparator(MetadataParser metadataParser, String http_proxy) throws AcumosServiceException {
+	public H2ODockerPreparator(MetadataParser metadataParser, String http_proxy, String H2oGenericjavaModelRunnerVersion) throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
 		this.http_proxy = http_proxy;
+		this.H2oGenericjavaModelRunnerVersion = H2oGenericjavaModelRunnerVersion;
 
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
 		if (runtimeVersion[0] == 0) {
@@ -116,7 +118,7 @@ public class H2ODockerPreparator {
 			String modelname = this.metadata.getSolutionName();
 
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, "H2OModelService.jar", modelname + ".zip", http_proxy });
+					new Object[] { serverPort, H2oGenericjavaModelRunnerVersion, modelname + ".zip", http_proxy });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {

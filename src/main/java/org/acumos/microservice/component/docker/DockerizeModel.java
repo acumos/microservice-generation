@@ -128,6 +128,9 @@ public class DockerizeModel {
 
 	@Value("${modelrunnerVersion.javaSpark}")
 	protected String sparkModelRunnerVersion;
+	
+	@Value("${modelrunnerVersion.H2o}")
+	protected String H2oGenericjavaModelRunnerVersion;
 
 	protected String modelOriginalName = null;
 
@@ -227,7 +230,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser, http_proxy);
+			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser, http_proxy, H2oGenericjavaModelRunnerVersion);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/h2o/*");
 			for (Resource resource : resources) {
@@ -486,7 +489,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser, http_proxy);
+			H2ODockerPreparator dockerPreprator = new H2ODockerPreparator(metadataParser, http_proxy, H2oGenericjavaModelRunnerVersion);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/h2o/*");
 			for (Resource resource : resources) {

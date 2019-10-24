@@ -42,6 +42,7 @@ public class H2ODockerPreparatorTest {
 	File jsonFile = new File(filePath + "modelDetails.json");
 	File reqtxt = new File(filePath + "requirements.txt");
 	File srcFile = new File(filePath + "Dockerfile");
+	private String H2oGenericjavaModelRunnerVersion = "1.0.2";
 
 	public H2ODockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
@@ -50,7 +51,7 @@ public class H2ODockerPreparatorTest {
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 
 	@InjectMocks
-	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser, "http_proxy");
+	H2ODockerPreparator h2ODockerPreparator = new H2ODockerPreparator(metadataParser, "http_proxy", H2oGenericjavaModelRunnerVersion);
 
 	@Test
 	public void compareVersionTest() {
