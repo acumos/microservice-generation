@@ -29,7 +29,12 @@ RUN chown root /usr/local/bin/protoc
 EXPOSE {0}
 
 #Deploy Model service
-ADD {1} /app/app.jar
+RUN curl  --output H2o-genericjavaModelRunnerService.jar https://nexus.acumos.org/content/repositories/staging/org/acumos/generic-model-runner/h2o-genericjava-modelrunner/{1}/h2o-genericjava-modelrunner-{1}.jar
+RUN cp H2o-genericjavaModelRunnerService.jar app.jar
+RUN chmod 777 /app/app.jar
+RUN pwd
+
+#Deploy Model service
 ADD {2} /app/models/Model.zip
 ADD *.proto /app/models/
 #RUN mkdir plugin_root /app/plugin_root
