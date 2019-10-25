@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3a3e9ef_e49ab989",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 290
+      },
+      "writtenOn": "2019-10-25T16:50:55Z",
+      "side": 0,
+      "message": "To use the self release and follow new convention for docker tagging by LF\nyou need to add acumos/ infront of the project name. See https://github.com/acumos/security-verification/blob/master/security-verification-service/pom.xml#L250\n\nAfter merge then you should be able to pull:\ndocker pull nexus3.acumos.org:10004/acumos/microservice-generation:3.5.1\n\nThis is a prereq for docker verify to pass.\n\nAlso make sure that the ref is specified for the last commit that was merged (not the release commit)",
+      "revId": "7f219817b62e17474571d99ba21864b599b99519",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    }
+  ]
+}
