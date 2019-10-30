@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.acumos.on-boarding</groupId>
 			<artifactId>onboarding-common</artifactId>
-			<version>3.5.0-SNAPSHOT</version>
+			<version>3.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -313,7 +313,7 @@
 					<images>
 						<image>
 							<!--Specify a tag to avoid default tag "latest" -->
-							<name>microservice-generation:${project.version}</name>
+							<name>acumos/microservice-generation:${project.version}</name>
 							<build>
 								<from>adoptopenjdk/openjdk11-openj9:alpine-jre</from>
 								<tags>
