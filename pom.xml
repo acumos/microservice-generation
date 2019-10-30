@@ -313,7 +313,7 @@
 					<images>
 						<image>
 							<!--Specify a tag to avoid default tag "latest" -->
-							<name>microservice-generation:${project.version}</name>
+							<name>acumos/microservice-generation:${project.version}</name>
 							<build>
 								<from>adoptopenjdk/openjdk11-openj9:alpine-jre</from>
 								<tags>
