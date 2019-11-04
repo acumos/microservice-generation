@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28fcc04b_a5dc9d49",
+        "filename": "releases/release-3.5.4-maven-docker.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 290
+      },
+      "writtenOn": "2019-11-04T19:53:50Z",
+      "side": 1,
+      "message": "In license management we don\u0027t have the /acumos/ directory. Try removing that see if it works.\nI confirmed the reference format looks ok so it may be that script is giving the wrong error message. \n\nworks\ndocker pull nexus3.acumos.org:10004/acumos/microservice-generation:3.5.4\n\nbut this doesn\u0027t work-- /acumos is not part of the registry path.\ndocker pull nexus3.acumos.org:10004/acumos/acumos/microservice-generation:3.5.4",
+      "revId": "ce0b71f4bbfec798a2bae90bda495c9c4b492642",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    }
+  ]
+}
