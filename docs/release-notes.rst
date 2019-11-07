@@ -22,6 +22,12 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 3.6.0, 07 Nov 2019
+-----------------------------
+* Common Data Service client at version 3.0.0
+* <IST>Java spark model failing with error through CLI. : `ACUMOS-3569 <https://jira.acumos.org/browse/ACUMOS-3569/>`_
+
+
 Version 3.5.1, 25 Oct 2019
 -----------------------------
 * Common Data Service client at version 3.0.0
