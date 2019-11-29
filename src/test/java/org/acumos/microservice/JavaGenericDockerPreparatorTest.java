@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
 public class JavaGenericDockerPreparatorTest {
 
 	String filePath = FilePathTest.filePath();
-
+	private String H2oGenericjavaModelRunnerVersion = "2.2.3";
+	
 	public static Logger log = LoggerFactory.getLogger(JavaGenericDockerPreparatorTest.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
@@ -52,7 +53,7 @@ public class JavaGenericDockerPreparatorTest {
 
 	@InjectMocks
 	JavaGenericDockerPreparator javaGenericDockerPreparator = new JavaGenericDockerPreparator(metadataParser,
-			"http_proxy");
+			"http_proxy", H2oGenericjavaModelRunnerVersion);
 
 	public JavaGenericDockerPreparatorTest() throws AcumosServiceException {
 		new MetadataParser(jsonFile);
