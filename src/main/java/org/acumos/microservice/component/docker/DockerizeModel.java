@@ -268,7 +268,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser, http_proxy);
+			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser, http_proxy, H2oGenericjavaModelRunnerVersion);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaGeneric/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
@@ -527,7 +527,7 @@ public class DockerizeModel {
 			File plugin_classes = new File(plugin_root, "classes");
 			plugin_classes.mkdirs();
 
-			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser, http_proxy);
+			JavaGenericDockerPreparator dockerPreprator = new JavaGenericDockerPreparator(metadataParser, http_proxy, H2oGenericjavaModelRunnerVersion );
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaGeneric/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));

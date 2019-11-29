@@ -31,7 +31,10 @@ EXPOSE {0}
 #Deploy Model service
 ADD getVersion.sh /app/bin/getVersion.sh
 RUN chmod 777 /app/bin/getVersion.sh
-ADD {1} /app/app.jar
+RUN curl  --output H2o-genericjavaModelRunnerService.jar https://nexus.acumos.org/content/repositories/releases/org/acumos/generic-model-runner/h2o-genericjava-modelrunner/{1}/h2o-genericjava-modelrunner-{1}.jar
+RUN cp H2o-genericjavaModelRunnerService.jar app.jar
+RUN chmod 777 /app/app.jar
+RUN pwd
 ADD {2} /app/models/model.jar
 ADD *.proto /app/models/
 ADD modelConfig.properties /app/models/modelConfig.properties
