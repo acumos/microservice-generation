@@ -51,12 +51,15 @@ public class RDockerPreparator {
 	private String rhttpProxy;
 	
 	private LogBean logBean;
+	
+	private String rimageName;
 
 	
 	
 	public RDockerPreparator(MetadataParser metadataParser, String httpProxy, LogBean logBean) throws AcumosServiceException {
 		this.rhttpProxy = httpProxy;
 		this.metadata = metadataParser.getMetadata();
+		this.rimageName = rimageName;
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
 		this.logBean = logBean;
 
@@ -121,7 +124,7 @@ public class RDockerPreparator {
 		try {
 			String dockerFileAsString = new String(UtilityFunction.toBytes(inDockerFile));
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { this.rhttpProxy, this.rVersion });
+					new Object[] { this.rhttpProxy, this.rVersion, this.rimageName });
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {
 				writer.write(dockerFileAsString.trim());

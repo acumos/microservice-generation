@@ -132,6 +132,9 @@ public class DockerizeModel {
 	@Value("${modelrunnerVersion.H2O}")
 	protected String H2oGenericjavaModelRunnerVersion;
 
+	@Value("${base_image.rimage}")
+    protected String rimageName;
+	
 	protected String modelOriginalName = null;
 
 	@Autowired
@@ -205,7 +208,7 @@ public class DockerizeModel {
 			dockerPreprator.prepareDockerAppV2(outputFolder);
 		} else if (metadata.getRuntimeName().equals("r")) {
 			logger.info("Inside R metadata Runtime ", logBean);
-			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy, logBean);
+			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy, logBean, rimageName);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/r/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
@@ -464,7 +467,7 @@ public class DockerizeModel {
 			dockerPreprator.prepareDockerAppV2(outputFolder);
 		} else if (metadata.getRuntimeName().equals("r")) {
 			logger.info("Inside R metadata Runtime ", logBean);
-			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy, logBean);
+			RDockerPreparator dockerPreprator = new RDockerPreparator(metadataParser, http_proxy, logBean, rimageName);
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/r/*");
 			for (Resource resource : resources) {
 				UtilityFunction.copyFile(resource, new File(outputFolder, resource.getFilename()));
