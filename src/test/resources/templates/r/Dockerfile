@@ -1,4 +1,5 @@
-FROM nexus3.acumos.org:10004/onboarding-base-r:1.0.0
+FROM {2}
+
 
 WORKDIR /app
 ADD . /app
