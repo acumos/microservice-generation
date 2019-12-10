@@ -62,14 +62,20 @@ public class ApplicationStartupPullImage
 		try {
 			//Download the rbase image at the start of the container. if there is an issue it will go ahead with starting springboot container.
 			String hostname = host + ":" + port;
-			logger.debug( rimageName + " Pull Started hostname: " + hostname);
+			logger.debug( rimageName + " Pull Started hostname debug: " + hostname);
+			logger.info( rimageName + " Pull Started hostname info: " + hostname);
+			log.info( rimageName + " Pull Started hostname log: " + hostname);
 			DockerClient dockerClient = UtilityFunction.createDockerClient("tcp://" + hostname);
 			logger.debug( "ApplicationStartupPullImage -> Docker client created");
+			logger.debug( "ApplicationStartupPullImage -> Docker client created");
+			log.info( "ApplicationStartupPullImage -> Docker client created");
 			AuthConfig authConfig = new AuthConfig().withUsername(dockerusername).withPassword(dockerpassword);
 			dockerClient.pullImageCmd(rimageName).withAuthConfig(authConfig).exec(new PullImageResultCallback())
 					.awaitSuccess();
 			logger.debug( rimageName + " Image pulled Successfully");
-
+			logger.info( rimageName + " Image pulled Successfully");
+			log.info( rimageName + " Image pulled Successfully");
+			
 		} catch (Exception e) {
 			logger.debug( "Failed to pull image " + e.getMessage());
 			logger.error("Failed to pull image " + e.getMessage());
