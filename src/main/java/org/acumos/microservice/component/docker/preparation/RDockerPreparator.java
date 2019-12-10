@@ -51,22 +51,28 @@ public class RDockerPreparator {
 	private String rhttpProxy;
 	
 	private LogBean logBean;
+	
+	private String rimageName;
 
 	
 	
-	public RDockerPreparator(MetadataParser metadataParser, String httpProxy, LogBean logBean) throws AcumosServiceException {
+	public RDockerPreparator(MetadataParser metadataParser, String httpProxy, LogBean logBean, String rimageName) throws AcumosServiceException {
 		this.rhttpProxy = httpProxy;
 		this.metadata = metadataParser.getMetadata();
+		this.rimageName = rimageName;
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
 		this.logBean = logBean;
 
 		if (runtimeVersion.length > 0) {
 			String version = Arrays.toString(runtimeVersion);
 			System.out.println("version: " + version);
-
+			logger.debug("Version Debug: " + version);
+			log.debug("Version Log Debug: " + version);
 			version = version.replaceAll(", ", ".").replace("[", "").replace("]", "");
 			this.rVersion = version;
 			System.out.println("rVersion: " + rVersion);
+			logger.debug("Version Debug: " + version);
+			log.debug("Version Log Debug: " + version);
 		} else {
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 					"Unspported r version " + metadata.getRuntimeVersion());
@@ -121,7 +127,7 @@ public class RDockerPreparator {
 		try {
 			String dockerFileAsString = new String(UtilityFunction.toBytes(inDockerFile));
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { this.rhttpProxy, this.rVersion });
+					new Object[] { this.rhttpProxy, this.rVersion, this.rimageName });
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {
 				writer.write(dockerFileAsString.trim());

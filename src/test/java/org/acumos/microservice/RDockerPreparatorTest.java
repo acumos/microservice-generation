@@ -57,10 +57,10 @@ public class RDockerPreparatorTest {
 
 	MetadataParser metadataParser = new MetadataParser(jsonFile);
 	private String httpProxy= "http://10.1.0.6:3128";
-
+	private String rimageName = "Test";
 	
 	@InjectMocks
-	RDockerPreparator rDockerPreparator = new RDockerPreparator(metadataParser, httpProxy,logBean);
+	RDockerPreparator rDockerPreparator = new RDockerPreparator(metadataParser, httpProxy,logBean, rimageName);
 
 	@Test
 	public void compareVersionTest() {
