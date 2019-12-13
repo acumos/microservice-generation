@@ -22,6 +22,14 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 3.8.0, 13 Dec 2019
+--------------------------
+* Common Data Service client at version 3.1.0
+* Security Verification at version 1.2.1
+* License-Manager-Client Library at version 1.4.3
+* Not able to on-board R model, fails at dockerized step `ACUMOS-3761 <https://jira.acumos.org/browse/ACUMOS-3761>`
+* Micro services should download model runner from nexus and package into the model docker image for H2O and java models. `ACUMOS-3759 <https://jira.acumos.org/browse/ACUMOS-3759>`_
+
 Version 3.6.0, 07 Nov 2019
 -----------------------------
 * Common Data Service client at version 3.0.0
