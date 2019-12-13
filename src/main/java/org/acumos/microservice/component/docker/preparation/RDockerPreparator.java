@@ -65,13 +65,9 @@ public class RDockerPreparator {
 
 		if (runtimeVersion.length > 0) {
 			String version = Arrays.toString(runtimeVersion);
-			System.out.println("version: " + version);
-			logger.debug("Version Debug: " + version);
 			log.debug("Version Log Debug: " + version);
 			version = version.replaceAll(", ", ".").replace("[", "").replace("]", "");
 			this.rVersion = version;
-			System.out.println("rVersion: " + rVersion);
-			logger.debug("Version Debug: " + version);
 			log.debug("Version Log Debug: " + version);
 		} else {
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
