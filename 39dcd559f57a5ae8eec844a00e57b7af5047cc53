@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "acfc898c_73b42f61",
+        "filename": "src/main/java/org/acumos/microservice/component/docker/cmd/ApplicationStartupPullImage.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 284
+      },
+      "writtenOn": "2019-12-13T13:04:09Z",
+      "side": 1,
+      "message": "changing from logger.debug to log.info as logger.debug isn\u0027t working",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 3
+      },
+      "revId": "39dcd559f57a5ae8eec844a00e57b7af5047cc53",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "741d774c_5354af77",
+        "filename": "src/main/java/org/acumos/microservice/component/docker/preparation/RDockerPreparator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 284
+      },
+      "writtenOn": "2019-12-13T13:04:09Z",
+      "side": 1,
+      "message": "changing from logger.debug to log.info as logger isn\u0027t working",
+      "range": {
+        "startLine": 68,
+        "startChar": 3,
+        "endLine": 68,
+        "endChar": 46
+      },
+      "revId": "39dcd559f57a5ae8eec844a00e57b7af5047cc53",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": false
+    }
+  ]
+}
