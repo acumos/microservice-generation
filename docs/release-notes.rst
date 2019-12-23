@@ -22,6 +22,12 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 3.8.1, 23 Dec 2019
+--------------------------
+* Common Data Service client at version 3.1.0
+* Security Verification at version 1.2.2
+* miss new logging library `ACUMOS-3848 <https://jira.acumos.org/browse/ACUMOS-3848>`
+
 Version 3.8.0, 13 Dec 2019
 --------------------------
 * Common Data Service client at version 3.1.0
