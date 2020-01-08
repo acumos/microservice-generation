@@ -429,7 +429,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_CODE,
 									HttpStatus.CREATED.toString());
 
-							return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution,task.getTaskId(),trackingID),
+							return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution,task.getTaskId(),trackingID, imageUri),
 									HttpStatus.CREATED);
 						} finally {
 
