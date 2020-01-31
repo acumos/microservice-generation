@@ -1,0 +1,10 @@
+---
+distribution_type: container
+container_release_tag: 4.2.0
+container_pull_registry: nexus3.acumos.org:10004
+container_push_registry: nexus3.acumos.org:10002
+project: microservice-generation
+ref: 6d861b0178296cf0bb6e2188f1955b19890e5948
+containers:
+        - name: microservice-generation
+          version: 4.2.0
