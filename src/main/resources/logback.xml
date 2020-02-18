@@ -93,4 +93,6 @@
 		<appender-ref ref="file-async" />
 		<appender-ref ref="STDOUT" />
 	</root>
+
+	<logger name="org.acumos.microservice" level="DEBUG" />
 </configuration>
