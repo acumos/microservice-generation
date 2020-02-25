@@ -22,6 +22,14 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 4.3.0, 25 Feb 2020
+--------------------------
+* Common Data Service client at version 3.1.1
+* Code changes to trigger docker build using Jenkins `ACUMOS-3978 <https://jira.acumos.org/browse/ACUMOS-3978>`_
+* Note: ACUMOS-3978 Disclaimer: In this release, Notifications will not be sent to CDS post the Docker Image is built and pushed to Nexus via Jenkins.
+* YML Changes - "microService": {"createImageViaJenkins": "<Boolean>"},"jenkins_config": {"jenkinsUri": "<jenkinsUri>","jenkinsUsername":"<jenkinsUsername>","jenkinsPassword":"<jenkinsPassword>"}
+
+
 Version 4.2.0, 31 Jan 2020
 --------------------------
 * Common Data Service client at version 3.1.1
@@ -29,7 +37,7 @@ Version 4.2.0, 31 Jan 2020
 
 Version 4.1.1, 21 Jan 2020
 --------------------------
-* Enrich message response with Docker URI `ACUMOS-3771 <https://jira.acumos.org/browse/ACUMOS-3771>`
+* Enrich message response with Docker URI `ACUMOS-3771 <https://jira.acumos.org/browse/ACUMOS-3771>`_
 
 
 Version 3.8.1, 23 Dec 2019
@@ -43,7 +51,7 @@ Version 3.8.0, 13 Dec 2019
 * Common Data Service client at version 3.1.0
 * Security Verification at version 1.2.1
 * License-Manager-Client Library at version 1.4.3
-* Not able to on-board R model, fails at dockerized step `ACUMOS-3761 <https://jira.acumos.org/browse/ACUMOS-3761>`
+* Not able to on-board R model, fails at dockerized step `ACUMOS-3761 <https://jira.acumos.org/browse/ACUMOS-3761>`_
 * Micro services should download model runner from nexus and package into the model docker image for H2O and java models. `ACUMOS-3759 <https://jira.acumos.org/browse/ACUMOS-3759>`_
 
 Version 3.6.0, 07 Nov 2019
