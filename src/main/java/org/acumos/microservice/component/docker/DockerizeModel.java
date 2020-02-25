@@ -20,13 +20,20 @@
  */
 package org.acumos.microservice.component.docker;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,6 +142,18 @@ public class DockerizeModel {
 	@Value("${base_image.rimage}")
     protected String rimageName;
 	
+	@Value("${jenkins_config.jenkinsUri}")
+    protected String jenkinsURI;
+	
+	@Value("${jenkins_config.jenkinsUsername}")
+    protected String jenkinsUname;
+	
+	@Value("${jenkins_config.jenkinsPassword}")
+    protected String jenkinsPwd;
+	
+	@Value("${microservice.createImageViaJenkins}")
+    protected boolean createImageViaJenkins;
+	
 	protected String modelOriginalName = null;
 
 	@Autowired
@@ -155,6 +174,7 @@ public class DockerizeModel {
 	CommonOnboarding commonOnboarding;
 
 	public static final String logPath = "/maven/logs/microservice-generation/applog";
+	public static final String dockerFilesOutputFolderPath = "/maven/logs/microservice-generation/jenkinsBuild";
 
 	Map<String, String> artifactsDetails = new HashMap<>();
 
@@ -177,6 +197,7 @@ public class DockerizeModel {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		logger.debug("Preparing app in: " + tempFolder, logBean);
+	
 		if (metadata.getRuntimeName().equals("python")) {
 			logger.info("Inside Python metadata Runtime ", logBean);
 			outputFolder = new File(tempFolder, "app");
@@ -379,40 +400,57 @@ public class DockerizeModel {
 		try {
 			logger.debug("Docker image creation started", logBean);
 			String actualModelName = getActualModelName(metadata, solutionID);
-			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName, metadata.getVersion(),
-					null, false, true);
-			createCMD.setClient(dockerClient);
-			createCMD.execute();
-			logger.debug("Docker image creation done", logBean);
-			// put catch here
-			// /Microservice/Docker image nexus creation -success
-
-			// in catch /Microservice/Docker image nexus creation -failure
-
-			// TODO: remove local image
-
-			logger.debug("Starting docker image tagging", logBean);
 			String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
+			String dockerImageURI = null;
+			
+			File file = new java.io.File(dockerFilesOutputFolderPath + File.separator + solutionID);
+			
+			//Copying files from temp folder to Docker Volume
+			try {
+				FileUtils.copyDirectoryToDirectory(outputFolder, file);
+			} catch (IOException e) {
+				logger.error("Error while copying files from outputFolder to Docker Volume : ", e);
+				e.printStackTrace();
+			}
+			
+			if (createImageViaJenkins) {
+				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
+				dockerImageURI = imageTagName + ":" + metadata.getVersion();
+				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath);
+			} else {
+				CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,
+						metadata.getVersion(), null, false, true);
+				createCMD.setClient(dockerClient);
+				createCMD.execute();
+				logger.debug("Docker image creation done", logBean);
+				// put catch here
+				// /Microservice/Docker image nexus creation -success
 
-			String dockerImageURI = imageTagName + ":" + metadata.getVersion();
+				// in catch /Microservice/Docker image nexus creation -failure
 
-			TagImageCommand tagImageCommand = new TagImageCommand(actualModelName + ":" + metadata.getVersion(),
-					imageTagName, metadata.getVersion(), true, false);
-			tagImageCommand.setClient(dockerClient);
-			tagImageCommand.execute();
-			logger.debug("Docker image tagging completed successfully", logBean);
+				// TODO: remove local image
 
-			logger.debug("Starting pushing with Imagename:" + imageTagName + " and version : " + metadata.getVersion()
-					+ " in nexus", logBean);
-			PushImageCommand pushImageCmd = new PushImageCommand(imageTagName, metadata.getVersion(), "");
-			pushImageCmd.setClient(dockerClient);
-			pushImageCmd.execute();
+				logger.debug("Starting docker image tagging", logBean);
+				//String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
 
-			logger.debug("Docker image URI : " + dockerImageURI, logBean);
+				dockerImageURI = imageTagName + ":" + metadata.getVersion();
 
-			logger.debug("Docker image pushed in nexus successfully", logBean);
+				TagImageCommand tagImageCommand = new TagImageCommand(actualModelName + ":" + metadata.getVersion(),
+						imageTagName, metadata.getVersion(), true, false);
+				tagImageCommand.setClient(dockerClient);
+				tagImageCommand.execute();
+				logger.debug("Docker image tagging completed successfully", logBean);
 
-			// Microservice/Docker image pushed to nexus -success
+				logger.debug("Starting pushing with Imagename:" + imageTagName + " and version : "
+						+ metadata.getVersion() + " in nexus", logBean);
+				PushImageCommand pushImageCmd = new PushImageCommand(imageTagName, metadata.getVersion(), "");
+				pushImageCmd.setClient(dockerClient);
+				pushImageCmd.execute();
+				logger.debug("Docker image URI : " + dockerImageURI, logBean);
+				logger.debug("Docker image pushed in nexus successfully", logBean);
+
+				// Microservice/Docker image pushed to nexus -success
+			}
 
 			return dockerImageURI;
 
@@ -650,40 +688,57 @@ public class DockerizeModel {
 		try {
 			logger.debug("Docker image creation started", logBean);
 			String actualModelName = getActualModelName(metadata, solutionID);
-			CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName, metadata.getVersion(),
-					null, false, true, logBean);
-			createCMD.setClient(dockerClient);
-			createCMD.execute();
-			logger.debug("Docker image creation done", logBean);
-			// put catch here
-			// /Microservice/Docker image nexus creation -success
-
-			// in catch /Microservice/Docker image nexus creation -failure
-
-			// TODO: remove local image
-
-			logger.debug("Starting docker image tagging", logBean);
 			String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
+			String dockerImageURI = null;
 
-			String dockerImageURI = imageTagName + ":" + metadata.getVersion();
+			File file = new java.io.File(dockerFilesOutputFolderPath + File.separator + solutionID);
+			
+			//Copying files from temp folder to Docker Volume
+			try {
+				FileUtils.copyDirectoryToDirectory(outputFolder, file);
+			} catch (IOException e) {
+				logger.error("Error while copying files from outputFolder to Docker Volume : ", e);
+				e.printStackTrace();
+			}
+			
+			if (createImageViaJenkins) {
+				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
+				dockerImageURI = imageTagName + ":" + metadata.getVersion();
+				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath);
+			} else {
+				CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,
+						metadata.getVersion(), null, false, true, logBean);
+				createCMD.setClient(dockerClient);
+				createCMD.execute();
+				logger.debug("Docker image creation done", logBean);
+				// put catch here
+				// /Microservice/Docker image nexus creation -success
 
-			TagImageCommand tagImageCommand = new TagImageCommand(actualModelName + ":" + metadata.getVersion(),
-					imageTagName, metadata.getVersion(), true, false);
-			tagImageCommand.setClient(dockerClient);
-			tagImageCommand.execute();
-			logger.debug("Docker image tagging completed successfully", logBean);
+				// in catch /Microservice/Docker image nexus creation -failure
 
-			logger.debug("Starting pushing with Imagename:" + imageTagName + " and version : " + metadata.getVersion()
-					+ " in nexus", logBean);
-			PushImageCommand pushImageCmd = new PushImageCommand(imageTagName, metadata.getVersion(), "");
-			pushImageCmd.setClient(dockerClient);
-			pushImageCmd.execute();
+				// TODO: remove local image
 
-			logger.debug("Docker image URI : " + dockerImageURI, logBean);
+				logger.debug("Starting docker image tagging", logBean);
 
-			// Microservice/Docker image pushed to nexus -success
-			logger.debug("Docker image pushed in nexus successfully", logBean);
+				dockerImageURI = imageTagName + ":" + metadata.getVersion();
 
+				TagImageCommand tagImageCommand = new TagImageCommand(actualModelName + ":" + metadata.getVersion(),
+						imageTagName, metadata.getVersion(), true, false);
+				tagImageCommand.setClient(dockerClient);
+				tagImageCommand.execute();
+				logger.debug("Docker image tagging completed successfully", logBean);
+
+				logger.debug("Starting pushing with Imagename:" + imageTagName + " and version : "
+						+ metadata.getVersion() + " in nexus", logBean);
+				PushImageCommand pushImageCmd = new PushImageCommand(imageTagName, metadata.getVersion(), "");
+				pushImageCmd.setClient(dockerClient);
+				pushImageCmd.execute();
+
+				logger.debug("Docker image URI : " + dockerImageURI, logBean);
+				// Microservice/Docker image pushed to nexus -success
+				logger.debug("Docker image pushed in nexus successfully", logBean);
+			}
+			
 			// Notify Create docker image is successful
 			if (onboardingStatus != null) {
 				try {
@@ -1229,6 +1284,54 @@ public class DockerizeModel {
 		} catch (Exception e) {
 			logger.error("Exception occured while adding DCAE Artifacts " + e);
 			throw e;
+		}
+	}
+	
+	private void callJenkinsJob(String imageTagName, String solutionID, Metadata metadata, String actualModelName,
+			String dockerFilePath) throws AcumosServiceException {
+
+		try {
+
+			URL jenkinsUrl = new URL(jenkinsURI); // Jenkins URL
+			String jenkinsUserName = jenkinsUname; // username
+			String jenkinsPassword = jenkinsPwd; // password or API token
+			String authStr = jenkinsUserName + ":" + jenkinsPassword;
+			String encoding = Base64.getEncoder().encodeToString(authStr.getBytes("utf-8"));
+
+			HttpURLConnection connection = (HttpURLConnection) jenkinsUrl.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setDoOutput(true);
+			connection.setRequestProperty("Authorization", "Basic " + encoding);
+
+			String imageTag = imageTagName;
+			String dockerImageName = imageTag+":"+metadata.getVersion();
+			String nexusUri = nexusEndPointURL;
+			String nexusUsername = nexusUserName;
+			String nexusPwd = nexusPassword;
+			String groupId = nexusGroupId.replace(".", "/");
+
+			String urlParams = "imageTag=" + imageTag + "&dockerImageName=" + dockerImageName + "&nexusUri=" + nexusUri
+					+ "&nexusUsername=" + nexusUsername + "&nexusPassword=" + nexusPwd + "&groupId=" + groupId
+					+ "&solutionId=" + solutionID + "&dockerFilePath=" + dockerFilePath;
+
+			byte[] postData = urlParams.getBytes("utf-8");
+			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+				wr.write(postData);
+			}
+
+			InputStream content = connection.getInputStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(content));
+			String line;
+			while ((line = in.readLine()) != null) {
+				logger.debug(line);
+				System.out.println(line);
+			}
+			logger.debug("Connection Response Code - " + connection.getResponseCode());
+			System.out.println("Done - " + connection.getResponseCode());
+			
+		} catch (Exception e) {
+			logger.error("Exception occurred while executing callJenkinsJob method : ", e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
