@@ -1,4 +1,3 @@
-
 /*-
  * ===============LICENSE_START=======================================================
  * Acumos
@@ -9,9 +8,9 @@
  * under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * This file is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -38,7 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
 import javax.annotation.PostConstruct;
+
 import org.acumos.cds.CodeNameType;
 import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPArtifact;
@@ -90,6 +91,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.github.dockerjava.api.DockerClient;
 
 public class DockerizeModel {
@@ -135,25 +137,25 @@ public class DockerizeModel {
 
 	@Value("${modelrunnerVersion.javaSpark}")
 	protected String sparkModelRunnerVersion;
-	
+
 	@Value("${modelrunnerVersion.H2O}")
 	protected String H2oGenericjavaModelRunnerVersion;
 
 	@Value("${base_image.rimage}")
-    protected String rimageName;
-	
+	protected String rimageName;
+
 	@Value("${jenkins_config.jenkinsUri}")
-    protected String jenkinsURI;
-	
+	protected String jenkinsURI;
+
 	@Value("${jenkins_config.jenkinsUsername}")
-    protected String jenkinsUname;
-	
+	protected String jenkinsUname;
+
 	@Value("${jenkins_config.jenkinsPassword}")
-    protected String jenkinsPwd;
-	
+	protected String jenkinsPwd;
+
 	@Value("${microservice.createImageViaJenkins}")
-    protected boolean createImageViaJenkins;
-	
+	protected boolean createImageViaJenkins;
+
 	protected String modelOriginalName = null;
 
 	@Autowired
@@ -174,7 +176,7 @@ public class DockerizeModel {
 	CommonOnboarding commonOnboarding;
 
 	public static final String logPath = "/maven/logs/microservice-generation/applog";
-	public static final String dockerFilesOutputFolderPath = "/maven/logs/microservice-generation/jenkinsBuild";
+	public static final String dockerFilesOutputFolderPath = "/jenkinsBuild/modelFiles";
 
 	Map<String, String> artifactsDetails = new HashMap<>();
 
@@ -197,7 +199,7 @@ public class DockerizeModel {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		logger.debug("Preparing app in: " + tempFolder, logBean);
-	
+
 		if (metadata.getRuntimeName().equals("python")) {
 			logger.info("Inside Python metadata Runtime ", logBean);
 			outputFolder = new File(tempFolder, "app");
@@ -402,17 +404,11 @@ public class DockerizeModel {
 			String actualModelName = getActualModelName(metadata, solutionID);
 			String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
 			String dockerImageURI = null;
-			
+
 			File file = new java.io.File(dockerFilesOutputFolderPath + File.separator + solutionID);
-			
 			//Copying files from temp folder to Docker Volume
-			try {
-				FileUtils.copyDirectoryToDirectory(outputFolder, file);
-			} catch (IOException e) {
-				logger.error("Error while copying files from outputFolder to Docker Volume : ", e);
-				e.printStackTrace();
-			}
-			
+			copyFilesAndFilesSubDirectories(outputFolder, file);
+
 			if (createImageViaJenkins) {
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
 				dockerImageURI = imageTagName + ":" + metadata.getVersion();
@@ -692,15 +688,9 @@ public class DockerizeModel {
 			String dockerImageURI = null;
 
 			File file = new java.io.File(dockerFilesOutputFolderPath + File.separator + solutionID);
-			
 			//Copying files from temp folder to Docker Volume
-			try {
-				FileUtils.copyDirectoryToDirectory(outputFolder, file);
-			} catch (IOException e) {
-				logger.error("Error while copying files from outputFolder to Docker Volume : ", e);
-				e.printStackTrace();
-			}
-			
+			copyFilesAndFilesSubDirectories(outputFolder, file);
+
 			if (createImageViaJenkins) {
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
 				dockerImageURI = imageTagName + ":" + metadata.getVersion();
@@ -738,7 +728,7 @@ public class DockerizeModel {
 				// Microservice/Docker image pushed to nexus -success
 				logger.debug("Docker image pushed in nexus successfully", logBean);
 			}
-			
+
 			// Notify Create docker image is successful
 			if (onboardingStatus != null) {
 				try {
@@ -791,7 +781,7 @@ public class DockerizeModel {
 				File file = new java.io.File(logPath + File.separator + trackingID + File.separator + fileName);
 				logger.debug("Log file length " + file.length(), logBean);
 				logger.debug("Log file Path " + file.getPath() + " Absolute Path : " + file.getAbsolutePath()
-						+ " Canonical Path: " + file.getCanonicalFile(), logBean);
+				+ " Canonical Path: " + file.getCanonicalFile(), logBean);
 
 				if (metadataParser != null && mData != null) {
 					logger.debug("Adding of log artifacts into nexus started " + fileName, logBean);
@@ -833,6 +823,23 @@ public class DockerizeModel {
 			} else if (file.isDirectory()) {
 				listFilesAndFilesSubDirectories(file);
 			}
+		}
+	}
+
+	public void copyFilesAndFilesSubDirectories(File srcDir, File destDir) {
+		try {
+			File[] fList = srcDir.listFiles();
+
+			for (File file : fList) {
+				if (file.isFile()) {
+					FileUtils.copyFileToDirectory(file, destDir);
+				} else if (file.isDirectory()) {
+					copyFilesAndFilesSubDirectories(file, destDir);
+				}
+			}
+		} catch (IOException e) {
+			logger.error("Error while copying model files to jenkins folder", e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -884,16 +891,16 @@ public class DockerizeModel {
 				/*
 				 * for (MLPArtifact mlpArtifact : artifactids) { String artifactId =
 				 * mlpArtifact.getArtifactId();
-				 * 
+				 *
 				 * // Delete SolutionRevisionArtifact logger.debug("Deleting Artifact: " +
 				 * artifactId);
 				 * cdmsClient.dropSolutionRevisionArtifact(metadata.getSolutionId(),
 				 * metadata.getRevisionId(), artifactId);
 				 * logger.debug("Successfully Deleted the SolutionRevisionArtifact");
-				 * 
+				 *
 				 * // Delete Artifact cdmsClient.deleteArtifact(artifactId);
 				 * logger.debug("Successfully Deleted the Artifact");
-				 * 
+				 *
 				 * // Delete the file from the Nexus if
 				 * (!(mlpArtifact.getArtifactTypeCode().equals("DI"))) {
 				 * nexusClient.deleteArtifact(mlpArtifact.getUri());
@@ -1286,7 +1293,7 @@ public class DockerizeModel {
 			throw e;
 		}
 	}
-	
+
 	private void callJenkinsJob(String imageTagName, String solutionID, Metadata metadata, String actualModelName,
 			String dockerFilePath) throws AcumosServiceException {
 
@@ -1328,7 +1335,7 @@ public class DockerizeModel {
 			}
 			logger.debug("Connection Response Code - " + connection.getResponseCode());
 			System.out.println("Done - " + connection.getResponseCode());
-			
+
 		} catch (Exception e) {
 			logger.error("Exception occurred while executing callJenkinsJob method : ", e.getMessage());
 			e.printStackTrace();
