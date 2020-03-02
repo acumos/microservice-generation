@@ -413,8 +413,10 @@ public class DockerizeModel {
 			copyFilesAndFilesSubDirectories(outputFolder, file);
 
 			if (createImageViaJenkins) {
+				logger.debug("Creating Image Using Jenkins");
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
 				dockerImageURI = imageTagName + ":" + metadata.getVersion();
+				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI);
 				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath);
 			} else {
 				CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,
