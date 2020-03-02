@@ -157,7 +157,7 @@ public class DockerizeModel {
 	protected boolean createImageViaJenkins;
 
 	@Value("${jenkins_config.solutionLocation}")
-	protected static String solutionLocation;
+	public static String dockerFilesOutputFolderPath;
 
 	protected String modelOriginalName = null;
 
@@ -179,7 +179,6 @@ public class DockerizeModel {
 	CommonOnboarding commonOnboarding;
 
 	public static final String logPath = "/maven/logs/microservice-generation/applog";
-	public static final String dockerFilesOutputFolderPath = solutionLocation;
 
 	Map<String, String> artifactsDetails = new HashMap<>();
 
