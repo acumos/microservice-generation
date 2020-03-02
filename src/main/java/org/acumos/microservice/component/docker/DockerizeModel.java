@@ -157,7 +157,7 @@ public class DockerizeModel {
 	protected boolean createImageViaJenkins;
 
 	@Value("${jenkins_config.solutionLocation}")
-	public static String dockerFilesOutputFolderPath;
+	protected String dockerFilesOutputFolderPath;
 
 	protected String modelOriginalName = null;
 
@@ -412,11 +412,11 @@ public class DockerizeModel {
 			copyFilesAndFilesSubDirectories(outputFolder, file);
 
 			if (createImageViaJenkins) {
-				logger.debug("Creating Image Using Jenkins");
+				logger.debug("Creating Image Using Jenkins", logBean);
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
 				dockerImageURI = imageTagName + ":" + metadata.getVersion();
-				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI);
-				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath);
+				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI, logBean);
+				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, logBean);
 			} else {
 				CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,
 						metadata.getVersion(), null, false, true);
@@ -696,9 +696,11 @@ public class DockerizeModel {
 			copyFilesAndFilesSubDirectories(outputFolder, file);
 
 			if (createImageViaJenkins) {
+				logger.debug("Creating Image Using Jenkins", logBean);
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
 				dockerImageURI = imageTagName + ":" + metadata.getVersion();
-				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath);
+				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI, logBean);
+				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, logBean);
 			} else {
 				CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,
 						metadata.getVersion(), null, false, true, logBean);
@@ -1299,10 +1301,11 @@ public class DockerizeModel {
 	}
 
 	private void callJenkinsJob(String imageTagName, String solutionID, Metadata metadata, String actualModelName,
-			String dockerFilePath) throws AcumosServiceException {
+			String dockerFilePath, LogBean logBean) throws AcumosServiceException {
 
 		try {
-
+			
+			logger.debug("Calling the Jenkins Job", logBean);
 			URL jenkinsUrl = new URL(jenkinsURI); // Jenkins URL
 			String jenkinsUserName = jenkinsUname; // username
 			String jenkinsPassword = jenkinsPwd; // password or API token
