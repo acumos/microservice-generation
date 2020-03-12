@@ -8,9 +8,9 @@
  * under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * This file is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -44,15 +44,15 @@ public class JavaGenericDockerPreparator {
 	private String rVersion;
 	private String serverPort;
 	private String http_proxy;
-	private String H2oGenericjavaModelRunnerVersion;
+	private String h2oModelRunnerUrl;
 
 	private static final Logger log = LoggerFactory.getLogger(H2ODockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public JavaGenericDockerPreparator(MetadataParser metadataParser, String http_proxy, String H2oGenericjavaModelRunnerVersion) throws AcumosServiceException {
+	public JavaGenericDockerPreparator(MetadataParser metadataParser, String http_proxy, String h2oModelRunnerUrl) throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
 		this.http_proxy = http_proxy;
-		this.H2oGenericjavaModelRunnerVersion = H2oGenericjavaModelRunnerVersion;
+		this.h2oModelRunnerUrl = h2oModelRunnerUrl;
 
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
 		if (runtimeVersion[0] == 0) {
@@ -118,7 +118,7 @@ public class JavaGenericDockerPreparator {
 
 			String modelname = this.metadata.getSolutionName();
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, H2oGenericjavaModelRunnerVersion, modelname + ".jar", http_proxy });
+					new Object[] { serverPort, h2oModelRunnerUrl, modelname + ".jar", http_proxy });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {

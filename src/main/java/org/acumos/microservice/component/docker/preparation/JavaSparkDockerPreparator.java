@@ -8,9 +8,9 @@
  * under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * This file is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -43,16 +43,16 @@ public class JavaSparkDockerPreparator {
 
 	private String rVersion;
 	private String serverPort;
-	private String sparkModelRunnerVersion;
+	private String h2oModelRunnerUrl;
 	private String http_proxy;
 
 	private static final Logger log = LoggerFactory.getLogger(JavaSparkDockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public JavaSparkDockerPreparator(MetadataParser metadataParser, String sparkModelRunnerVersion, String http_proxy)
+	public JavaSparkDockerPreparator(MetadataParser metadataParser, String h2oModelRunnerUrl, String http_proxy)
 			throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
-		this.sparkModelRunnerVersion = sparkModelRunnerVersion;
+		this.h2oModelRunnerUrl = h2oModelRunnerUrl;
 		this.http_proxy = http_proxy;
 
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
@@ -119,7 +119,7 @@ public class JavaSparkDockerPreparator {
 			String modelname = this.metadata.getSolutionName();
 
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, sparkModelRunnerVersion, modelname + ".jar", http_proxy });
+					new Object[] { serverPort, h2oModelRunnerUrl, modelname + ".jar", http_proxy });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {

@@ -23,7 +23,7 @@ RUN chown root /usr/local/bin/protoc
 EXPOSE {0}
 
 #Deploy Model service
-RUN curl  --output SparkModelRunnerService.jar https://nexus.acumos.org/content/repositories/staging/org/acumos/spark-model-runner/spark-modelrunner/{1}/spark-modelrunner-{1}.jar
+RUN curl  --output SparkModelRunnerService.jar {1}
 RUN cp SparkModelRunnerService.jar app.jar
 RUN chmod 777 /app/app.jar
 RUN pwd
