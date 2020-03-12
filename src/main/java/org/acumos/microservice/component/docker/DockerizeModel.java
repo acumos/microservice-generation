@@ -159,6 +159,15 @@ public class DockerizeModel {
 	@Value("${jenkins_config.solutionLocation}")
 	protected String dockerFilesOutputFolderPath;
 
+	@Value("${docker.registry.username}")
+	protected String nexusDockerUsername;
+
+	@Value("${docker.registry.password}")
+	protected String nexusDockerPassword;
+
+	@Value("${docker.registry.url}")
+	protected String nexusDockerUrl;
+
 	protected String modelOriginalName = null;
 
 	@Autowired
@@ -1304,7 +1313,7 @@ public class DockerizeModel {
 			String dockerFilePath, LogBean logBean) throws AcumosServiceException {
 
 		try {
-			
+
 			logger.debug("Calling the Jenkins Job", logBean);
 			URL jenkinsUrl = new URL(jenkinsURI); // Jenkins URL
 			String jenkinsUserName = jenkinsUname; // username
@@ -1317,16 +1326,12 @@ public class DockerizeModel {
 			connection.setDoOutput(true);
 			connection.setRequestProperty("Authorization", "Basic " + encoding);
 
-			String imageTag = imageTagName;
-			String dockerImageName = imageTag+":"+metadata.getVersion();
-			String nexusUri = nexusEndPointURL;
-			String nexusUsername = nexusUserName;
-			String nexusPwd = nexusPassword;
+			String dockerImageName = imageTagName+":"+metadata.getVersion();
 			String groupId = nexusGroupId.replace(".", "/");
 
-			String urlParams = "imageTag=" + imageTag + "&dockerImageName=" + dockerImageName + "&nexusUri=" + nexusUri
-					+ "&nexusUsername=" + nexusUsername + "&nexusPassword=" + nexusPwd + "&groupId=" + groupId
-					+ "&solutionId=" + solutionID + "&dockerFilePath=" + dockerFilePath;
+			String urlParams = "dockerImageName=" + dockerImageName + "&nexusDockerUrl=" + nexusDockerUrl
+					+ "&nexusDockerUsername=" + nexusDockerUsername + "&nexusDockerPassword=" + nexusDockerPassword + "&groupId=" + groupId
+					+ "&dockerFilePath=" + dockerFilePath;
 
 			byte[] postData = urlParams.getBytes("utf-8");
 			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
