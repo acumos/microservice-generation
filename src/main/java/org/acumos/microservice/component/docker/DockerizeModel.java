@@ -345,7 +345,7 @@ public class DockerizeModel {
 			plugin_classes.mkdirs();
 
 			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser,
-					h2oModelRunnerUrl, http_proxy);
+					sparkModelRunnerUrl, http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
 			for (Resource resource : resources) {
@@ -617,7 +617,7 @@ public class DockerizeModel {
 			plugin_classes.mkdirs();
 
 			JavaSparkDockerPreparator dockerPreprator = new JavaSparkDockerPreparator(metadataParser,
-					h2oModelRunnerUrl, http_proxy);
+					sparkModelRunnerUrl, http_proxy);
 
 			Resource[] resources = this.resourceUtils.loadResources("classpath*:templates/javaspark/*");
 			for (Resource resource : resources) {

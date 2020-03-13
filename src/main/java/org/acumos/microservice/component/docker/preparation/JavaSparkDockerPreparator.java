@@ -43,16 +43,16 @@ public class JavaSparkDockerPreparator {
 
 	private String rVersion;
 	private String serverPort;
-	private String h2oModelRunnerUrl;
+	private String sparkModelRunnerUrl;
 	private String http_proxy;
 
 	private static final Logger log = LoggerFactory.getLogger(JavaSparkDockerPreparator.class);
 	LoggerDelegate logger = new LoggerDelegate(log);
 
-	public JavaSparkDockerPreparator(MetadataParser metadataParser, String h2oModelRunnerUrl, String http_proxy)
+	public JavaSparkDockerPreparator(MetadataParser metadataParser, String sparkModelRunnerUrl, String http_proxy)
 			throws AcumosServiceException {
 		this.metadata = metadataParser.getMetadata();
-		this.h2oModelRunnerUrl = h2oModelRunnerUrl;
+		this.sparkModelRunnerUrl = sparkModelRunnerUrl;
 		this.http_proxy = http_proxy;
 
 		int[] runtimeVersion = versionAsArray(metadata.getRuntimeVersion());
@@ -119,7 +119,7 @@ public class JavaSparkDockerPreparator {
 			String modelname = this.metadata.getSolutionName();
 
 			dockerFileAsString = MessageFormat.format(dockerFileAsString,
-					new Object[] { serverPort, h2oModelRunnerUrl, modelname + ".jar", http_proxy });
+					new Object[] { serverPort, sparkModelRunnerUrl, modelname + ".jar", http_proxy });
 
 			FileWriter writer = new FileWriter(outDockerFile);
 			try {
