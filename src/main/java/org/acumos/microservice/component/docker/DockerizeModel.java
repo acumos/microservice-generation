@@ -1335,6 +1335,12 @@ public class DockerizeModel {
 			String version = metadata.getVersion();
 			String modelName = metadata.getModelName();
 
+			logger.debug("dockerImageName = " + dockerImageName + "\nnexusDockerUrl = " + nexusDockerUrl
+					+ "\ngroupId = " + groupId
+					+ "\ndockerFilePath = " + dockerFilePath + "\ntaskId = " + taskId.toString() + "\nmDataSolutionId = " + mDataSolutionId
+					+ "\nownerId = " + ownerId + "\nrevisionId = " + revisionId + "\nversion = " + version + "\nmodelName = " + modelName
+					+ "\nsolutionId = " + solutionId + "\ntrackingId = " + trackingId, logBean);
+
 			String urlParams = "dockerImageName=" + dockerImageName + "&nexusDockerUrl=" + nexusDockerUrl
 					+ "&nexusDockerUsername=" + nexusDockerUsername + "&nexusDockerPassword=" + nexusDockerPassword + "&groupId=" + groupId
 					+ "&dockerFilePath=" + dockerFilePath + "&taskId=" + taskId.toString() + "&mDataSolutionId=" + mDataSolutionId
