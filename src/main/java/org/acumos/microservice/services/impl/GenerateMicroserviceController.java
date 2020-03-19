@@ -1,5 +1,5 @@
 /*-
-  * ===============LICENSE_START=======================================================
+ * ===============LICENSE_START=======================================================
  * Acumos
  * ===================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property & Tech Mahindra. All rights reserved.
@@ -8,9 +8,9 @@
  * under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * This file is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -78,12 +78,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@RestController 
+@RestController
 @RequestMapping(value="/v2")
 @Api(value="Operation to to onboard a ML model",tags="Onboarding Service APIs")
 
 /**
- * 
+ *
  * @author *****
  *
  */
@@ -121,8 +121,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			@RequestHeader(value = "provider", required = false) String provider,
 			@RequestHeader(value = "Request-ID", required = false) String request_id
 			)
-			throws AcumosServiceException {
-		
+					throws AcumosServiceException {
+
 		// If trackingID is provided in the header create a
 		// OnboardingNotification object that will be used to update
 		// status
@@ -133,7 +133,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			trackingID = UUID.randomUUID().toString();
 			logger.debug("Tracking ID: "+ trackingID);
 		}
-		
+
 		String fileName = "MicroserviceGenerationLog.txt";
 		// setting log filename in ThreadLocal
 		LogBean logBean = new LogBean();
@@ -147,37 +147,37 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 		String buildVersion = UtilityFunction.getProjectVersion();
 		logger.debug("Microservice-Generation version : " + buildVersion);
-		
+
 		String deployment_env = null;
 		OnboardingNotification onboardingStatus = null;
-		
+
 		if (deploy_env == null || deploy_env.isEmpty()){
 			deployment_env = "1";
 		} else {
 			deployment_env = deploy_env.trim();
 		}
-		
+
 		logger.debug("deployment_env: "+ deployment_env);
-		
+
 		if (request_id != null) {
 			logger.debug("Request ID: "+ request_id);
 		} else {
 			request_id = UUID.randomUUID().toString();
 			logger.debug("Request ID Created: "+ request_id);
 		}
-				
+
 		onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd, request_id);
 		onboardingStatus.setRequestId(request_id);
 		MDC.put(OnboardingLogConstants.MDCs.REQUEST_ID, request_id);
 		logger.debug("MicroService Async Flag: "+ microServiceAsyncFlag,logBean);
-		
+
 		if (microServiceAsyncFlag) {
 
 			return generateMicroserviceAsyncDef(onboardingStatus, solutioId, revisionId, modName, deployment_env,
 					authorization, trackingID, provider);
 
 		} else {
-			
+
 			String artifactName = null;
 			File files = null;
 			List<String> artifactNameList = new ArrayList<String>();
@@ -185,7 +185,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			MLPSolution mlpSolution = new MLPSolution();
 			MLPSolutionRevision revision;
 			MLPTask task = null;
-			
+
 			try {
 
 				// Call to validate Token.....!
@@ -392,7 +392,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 							try {
 								imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(),
-										deployment_env, outputFolder, logBean);
+										deployment_env, outputFolder, task.getTaskId(), mData.getSolutionId(), trackingID, logBean);
 							} catch (Exception e) {
 								// Notify Create docker image failed
 								if (onboardingStatus != null) {
@@ -462,7 +462,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.debug("Log file length " + file.length());
 								logger.debug(
 										"Log file Path " + file.getPath() + " Absolute Path : " + file.getAbsolutePath()
-												+ " Canonical Path: " + file.getCanonicalFile());
+										+ " Canonical Path: " + file.getCanonicalFile());
 
 								if (metadataParser != null && mData != null) {
 									logger.debug(
@@ -597,7 +597,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		File ons = new File(filePathoutputF, "onsdemo1.yaml");
 
 		try {
-			
+
 			//call microservice
 			logger.debug("DCAE ADD Artifact Started ");
 			commonOnboarding.addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), "anomaly-in", onboardingStatus);
