@@ -68,9 +68,7 @@ import org.acumos.onboarding.common.utils.LogBean;
 import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
-import org.acumos.onboarding.common.utils.ResourceUtils;
 import org.acumos.onboarding.common.utils.UtilityFunction;
-import org.acumos.onboarding.component.docker.preparation.Metadata;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.logging.OnboardingLogConstants;
 import org.acumos.onboarding.services.impl.CommonOnboarding;
@@ -78,7 +76,6 @@ import org.acumos.onboarding.services.impl.PortalRestClientImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -206,7 +203,8 @@ public class DockerizeModel {
 	 * @Method Name : dockerizeFile Performs complete dockerization process.
 	 */
 	public String dockerizeFile(MetadataParser metadataParser, File localmodelFile, String solutionID,
-			String deployment_env, File tempFolder, LogBean logBean) throws AcumosServiceException {
+			String deployment_env, File tempFolder, Long taskId, String mDataSolutionId, String trackingId,
+			LogBean logBean) throws AcumosServiceException {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		logger.debug("Preparing app in: " + tempFolder, logBean);
@@ -425,7 +423,7 @@ public class DockerizeModel {
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
 				dockerImageURI = imageTagName + ":" + metadata.getVersion();
 				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI, logBean);
-				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, logBean);
+				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, taskId, mDataSolutionId, dockerImageURI, trackingId, logBean);
 			} else {
 				CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,
 						metadata.getVersion(), null, false, true);
@@ -474,7 +472,7 @@ public class DockerizeModel {
 
 	public void dockerizeFileAsync(OnboardingNotification onboardingStatus, MetadataParser metadataParser,
 			File localmodelFile, String solutionID, String deployment_env, File tempFolder, String trackingID,
-			String fileName, LogThreadLocal logThread, LogBean logBean, MLPTask task) throws AcumosServiceException {
+			String fileName, LogThreadLocal logThread, LogBean logBean, MLPTask task, String mDataSolutionId) throws AcumosServiceException {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		boolean isSuccess = false;
@@ -709,7 +707,7 @@ public class DockerizeModel {
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
 				dockerImageURI = imageTagName + ":" + metadata.getVersion();
 				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI, logBean);
-				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, logBean);
+				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, task.getTaskId(), mDataSolutionId, dockerImageURI, trackingID, logBean);
 			} else {
 				CreateImageCommand createCMD = new CreateImageCommand(outputFolder, actualModelName,
 						metadata.getVersion(), null, false, true, logBean);
@@ -1157,12 +1155,13 @@ public class DockerizeModel {
 					File modFile = modelFile;
 					MLPSolution mlpSoln = mlpSolution;
 					MLPTask mlpTask = task;
+					String mDataSolutionId = mData.getSolutionId();
 
 					logger.debug("Thread before calling dockerizeFileAsync --> " + Thread.currentThread().getName());
 					CompletableFuture.supplyAsync(() -> {
 						try {
 							dockerizeFileAsync(onboardingStatus, metadataParser, modFile, mlpSoln.getSolutionId(),
-									deployment_env, outputFolder, trackingID, fileName, logThread, logBean, mlpTask);
+									deployment_env, outputFolder, trackingID, fileName, logThread, logBean, mlpTask, mDataSolutionId);
 
 						} catch (Exception e) {
 
@@ -1309,8 +1308,8 @@ public class DockerizeModel {
 		}
 	}
 
-	private void callJenkinsJob(String imageTagName, String solutionID, Metadata metadata, String actualModelName,
-			String dockerFilePath, LogBean logBean) throws AcumosServiceException {
+	private void callJenkinsJob(String imageTagName, String solutionId, Metadata metadata, String actualModelName,
+			String dockerFilePath, Long taskId, String mDataSolutionId, String dockerImageURI, String trackingId, LogBean logBean) throws AcumosServiceException {
 
 		try {
 
@@ -1328,10 +1327,16 @@ public class DockerizeModel {
 
 			String dockerImageName = imageTagName+":"+metadata.getVersion();
 			String groupId = nexusGroupId.replace(".", "/");
+			String ownerId = metadata.getOwnerId();
+			String revisionId = metadata.getRevisionId();
+			String version = metadata.getVersion();
+			String modelName = metadata.getModelName();
 
 			String urlParams = "dockerImageName=" + dockerImageName + "&nexusDockerUrl=" + nexusDockerUrl
 					+ "&nexusDockerUsername=" + nexusDockerUsername + "&nexusDockerPassword=" + nexusDockerPassword + "&groupId=" + groupId
-					+ "&dockerFilePath=" + dockerFilePath;
+					+ "&dockerFilePath=" + dockerFilePath + "&taskId=" + taskId.toString() + "&mDataSolutionId=" + mDataSolutionId
+					+ "&ownerId=" + ownerId + "&revisionId=" + revisionId + "&version=" + version + "&modelName=" + modelName
+					+ "&solutionId=" + solutionId + "&trackingId=" + trackingId;
 
 			byte[] postData = urlParams.getBytes("utf-8");
 			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
