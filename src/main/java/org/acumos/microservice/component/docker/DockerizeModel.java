@@ -153,7 +153,7 @@ public class DockerizeModel {
 	@Value("${jenkins_config.jenkinsPassword}")
 	protected String jenkinsPwd;
 
-	@Value("${microservice.createImageViaJenkins}")
+	@Value("${microService.createImageViaJenkins}")
 	protected boolean createImageViaJenkins;
 
 	@Value("${jenkins_config.solutionLocation}")
