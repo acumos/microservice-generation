@@ -22,11 +22,21 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 4.5.0, 3 April 2020
+--------------------------
+* Common Data Service client at version 3.1.1
+* onboarding-common version 4.5.0
+* TOSCAModelGeneratorClient version 2.0.8
+
 Version 4.4.0, 16 March 2020
 --------------------------
 * Common Data Service client at version 3.1.1
 * H2O Modelrunner nexus url externalization `ACUMOS-4057 <https://jira.acumos.org/browse/ACUMOS-4057>`_
-* YML Changes - "modelrunnerUrl":{"h2o":"<NEXUS_REPO_URL>", "javaSpark":"<NEXUS_REPO_URL>"}
+* YML Changes – 
+	"modelrunnerUrl":{"h2o":"<NEXUS_REPO_URL>", "javaSpark":"<NEXUS_REPO_URL>"},
+	"jenkins_config": {"solutionLocation":"/var/jenkins_home/ms"}
+* YML Changes in volumes section: 
+   -  /var/acumos/ms:/var/jenkins_home/ms
 
 Version 4.3.0, 25 Feb 2020
 --------------------------
