@@ -1345,7 +1345,8 @@ public class DockerizeModel {
 					+ "&nexusDockerUsername=" + nexusDockerUsername + "&nexusDockerPassword=" + nexusDockerPassword + "&groupId=" + groupId
 					+ "&dockerFilePath=" + dockerFilePath + "&taskId=" + taskId.toString() + "&mDataSolutionId=" + mDataSolutionId
 					+ "&ownerId=" + ownerId + "&revisionId=" + revisionId + "&version=" + version + "&modelName=" + modelName
-					+ "&solutionId=" + solutionId + "&trackingId=" + trackingId;
+					+ "&solutionId=" + solutionId + "&trackingId=" + trackingId + "&jenkinsUserName=" + jenkinsUserName 
+					+ "&jenkinsPassword=" + jenkinsPassword + "&cmnDataSvcUser=" + cmnDataSvcUser + "&cmnDataSvcPwd=" + cmnDataSvcPwd;
 
 			byte[] postData = urlParams.getBytes("utf-8");
 			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
