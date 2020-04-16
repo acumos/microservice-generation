@@ -1334,19 +1334,22 @@ public class DockerizeModel {
 			String revisionId = metadata.getRevisionId();
 			String version = metadata.getVersion();
 			String modelName = metadata.getModelName();
+			String nexusArtifactID = "MicroserviceGenerationLog";
 
 			logger.debug("dockerImageName = " + dockerImageName + "\nnexusDockerUrl = " + nexusDockerUrl
 					+ "\ngroupId = " + groupId
 					+ "\ndockerFilePath = " + dockerFilePath + "\ntaskId = " + taskId.toString() + "\nmDataSolutionId = " + mDataSolutionId
 					+ "\nownerId = " + ownerId + "\nrevisionId = " + revisionId + "\nversion = " + version + "\nmodelName = " + modelName
-					+ "\nsolutionId = " + solutionId + "\ntrackingId = " + trackingId, logBean);
+					+ "\nsolutionId = " + solutionId + "\ntrackingId = " + trackingId + "\nnexusArtifactID = " + nexusArtifactID, logBean);
 
 			String urlParams = "dockerImageName=" + dockerImageName + "&nexusDockerUrl=" + nexusDockerUrl
 					+ "&nexusDockerUsername=" + nexusDockerUsername + "&nexusDockerPassword=" + nexusDockerPassword + "&groupId=" + groupId
 					+ "&dockerFilePath=" + dockerFilePath + "&taskId=" + taskId.toString() + "&mDataSolutionId=" + mDataSolutionId
 					+ "&ownerId=" + ownerId + "&revisionId=" + revisionId + "&version=" + version + "&modelName=" + modelName
 					+ "&solutionId=" + solutionId + "&trackingId=" + trackingId + "&jenkinsUserName=" + jenkinsUserName 
-					+ "&jenkinsPassword=" + jenkinsPassword + "&cmnDataSvcUser=" + cmnDataSvcUser + "&cmnDataSvcPwd=" + cmnDataSvcPwd;
+					+ "&jenkinsPassword=" + jenkinsPassword + "&cmnDataSvcUser=" + cmnDataSvcUser + "&cmnDataSvcPwd=" + cmnDataSvcPwd
+					+ "&nexusEndPointURL=" + nexusEndPointURL + "&nexusUserName=" + nexusUserName + "&nexusPassword=" + nexusPassword
+					+ "&nexusArtifactID=" + nexusArtifactID;
 
 			byte[] postData = urlParams.getBytes("utf-8");
 			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
