@@ -424,7 +424,7 @@ public class DockerizeModel {
 			if (createImageViaJenkins) {
 				logger.debug("Creating Image Using Jenkins", logBean);
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
-				dockerImageURI = imageTagName + ":" + metadata.getVersion();
+				dockerImageURI = imageTagName + ":" + metadata.getVersion() + "-Jenkins";
 				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI, logBean);
 				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, taskId, mDataSolutionId, dockerImageURI, trackingId, logBean);
 			} else {
@@ -745,72 +745,77 @@ public class DockerizeModel {
 				logger.debug("Docker image pushed in nexus successfully", logBean);
 			}
 
-			// Notify Create docker image is successful
-			if (onboardingStatus != null) {
-				try {
-					onboardingStatus.notifyOnboardingStatus("Dockerize", "SU",
-							"Created Docker Image Successfully for solution " + mData.getSolutionId(), logBean);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			if (!createImageViaJenkins) {
+				// Notify Create docker image is successful
+				if (onboardingStatus != null) {
+					try {
+						onboardingStatus.notifyOnboardingStatus("Dockerize", "SU",
+								"Created Docker Image Successfully for solution " + mData.getSolutionId(), logBean);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+
+				// Add artifacts started. Notification will be handed by
+				// addArtifact method itself for started/success/failure
+				artifactsDetails = getArtifactsDetails();
+				commonOnboarding.addArtifact(mData, dockerImageURI, getArtifactTypeCode("Docker Image"),
+						onboardingStatus, logBean);
+
+				if (deployment_env.equalsIgnoreCase("2")) {
+					logger.debug("OutputFolderPath: " + outputFolder, logBean);
+					logger.debug("AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath(), logBean);
+					addDCAEArrtifacts(mData, outputFolder, solutionID, onboardingStatus);
+				}
+
+				isSuccess = true;
 			}
-
-			// Add artifacts started. Notification will be handed by
-			// addArtifact method itself for started/success/failure
-			artifactsDetails = getArtifactsDetails();
-			commonOnboarding.addArtifact(mData, dockerImageURI, getArtifactTypeCode("Docker Image"), onboardingStatus,
-					logBean);
-
-			if (deployment_env.equalsIgnoreCase("2")) {
-				logger.debug("OutputFolderPath: " + outputFolder, logBean);
-				logger.debug("AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath(), logBean);
-				addDCAEArrtifacts(mData, outputFolder, solutionID, onboardingStatus);
-			}
-
-			isSuccess = true;
 
 		} finally {
 
 			try {
-
-				logger.debug("Thread in finally block of dockerizeFileAsync --> " + Thread.currentThread().getName(),
-						logBean);
-				UtilityFunction.deleteDirectory(outputFolder);
-				task.setModified(Instant.now());
-				if (isSuccess == false) {
-					logger.debug("Onboarding Failed, Reverting failed solutions and artifacts.", logBean);
-					task.setStatusCode("FA");
-					logger.debug("MLP task updating with the values =" + task.toString(), logBean);
-					cdmsClient.updateTask(task);
-					if (metadataParser != null && mData != null) {
-						revertbackOnboarding(mData, solutionID, imageUri);
+				if (!createImageViaJenkins) {
+					logger.debug(
+							"Thread in finally block of dockerizeFileAsync --> " + Thread.currentThread().getName(),
+							logBean);
+					UtilityFunction.deleteDirectory(outputFolder);
+					task.setModified(Instant.now());
+					if (isSuccess == false) {
+						logger.debug("Onboarding Failed, Reverting failed solutions and artifacts.", logBean);
+						task.setStatusCode("FA");
+						logger.debug("MLP task updating with the values =" + task.toString(), logBean);
+						cdmsClient.updateTask(task);
+						if (metadataParser != null && mData != null) {
+							revertbackOnboarding(mData, solutionID, imageUri);
+						}
 					}
+
+					if (isSuccess == true) {
+						task.setStatusCode("SU");
+						logger.debug("MLP task updating with the values =" + task.toString(), logBean);
+						cdmsClient.updateTask(task);
+					}
+					// push docker build log into nexus
+					File file = new java.io.File(logPath + File.separator + trackingID + File.separator + fileName);
+					logger.debug("Log file length " + file.length(), logBean);
+					logger.debug("Log file Path " + file.getPath() + " Absolute Path : " + file.getAbsolutePath()
+							+ " Canonical Path: " + file.getCanonicalFile(), logBean);
+
+					if (metadataParser != null && mData != null) {
+						logger.debug("Adding of log artifacts into nexus started " + fileName, logBean);
+
+						String nexusArtifactID = "MicroserviceGenerationLog";
+
+						commonOnboarding.addArtifact(mData, file, "LG", nexusArtifactID, onboardingStatus, logBean);
+						MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
+								OnboardingLogConstants.ResponseStatus.COMPLETED.name());
+						logger.debug("Artifacts log pushed to nexus successfully" + fileName, logBean);
+					}
+
+					// delete log file
+					UtilityFunction.deleteDirectory(file);
 				}
-
-				if (isSuccess == true) {
-					task.setStatusCode("SU");
-					logger.debug("MLP task updating with the values =" + task.toString(), logBean);
-					cdmsClient.updateTask(task);
-				}
-				// push docker build log into nexus
-				File file = new java.io.File(logPath + File.separator + trackingID + File.separator + fileName);
-				logger.debug("Log file length " + file.length(), logBean);
-				logger.debug("Log file Path " + file.getPath() + " Absolute Path : " + file.getAbsolutePath()
-				+ " Canonical Path: " + file.getCanonicalFile(), logBean);
-
-				if (metadataParser != null && mData != null) {
-					logger.debug("Adding of log artifacts into nexus started " + fileName, logBean);
-
-					String nexusArtifactID = "MicroserviceGenerationLog";
-
-					commonOnboarding.addArtifact(mData, file, "LG", nexusArtifactID, onboardingStatus, logBean);
-					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
-							OnboardingLogConstants.ResponseStatus.COMPLETED.name());
-					logger.debug("Artifacts log pushed to nexus successfully" + fileName, logBean);
-				}
-				// delete log file
-				UtilityFunction.deleteDirectory(file);
 				logThread.unset();
 				mData = null;
 
