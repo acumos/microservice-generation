@@ -22,6 +22,11 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 4.6.0, 27 April 2020
+--------------------------
+* Common Data Service client at version 3.1.1
+* Use of Jenkins to trigger the micro-service Generation `ACUMOS-3841 <https://jira.acumos.org/browse/ACUMOS-3841>`_
+
 Version 4.5.0, 3 April 2020
 --------------------------
 * Common Data Service client at version 3.1.1
