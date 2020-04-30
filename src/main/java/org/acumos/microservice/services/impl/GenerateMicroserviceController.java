@@ -42,7 +42,6 @@ import org.acumos.cds.domain.MLPSolutionRevision;
 import org.acumos.cds.domain.MLPTask;
 import org.acumos.cds.domain.MLPUser;
 import org.acumos.microservice.component.docker.DockerizeModel;
-import org.acumos.microservice.component.docker.cmd.DeleteImageCommand;
 import org.acumos.microservice.services.DockerService;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
 import org.acumos.onboarding.common.models.OnboardingNotification;
@@ -337,7 +336,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					 */
 
 					String imageUri = null;
-					String tempImageUri = null;
 					if (ownerId != null && !ownerId.isEmpty()) {
 
 						logger.debug(
@@ -346,7 +344,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						modelOriginalName = model.getOriginalFilename();
 						boolean isSuccess = false;
 
-						
+
 						try {
 
 							// Solution id creation completed
@@ -406,8 +404,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.error( "Error " + e);
 								throw e;
 							}
-							
-							if (!(imageUri!=null && imageUri.contains("-Jenkins"))) {
+
+							if (!createImageViaJenkins) {
 								// Notify Create docker image is successful
 								if (onboardingStatus != null) {
 									onboardingStatus.notifyOnboardingStatus("Dockerize", "SU",
@@ -430,23 +428,17 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								isSuccess = true;
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_CODE, HttpStatus.CREATED.toString());
 							}
-							
-							if (imageUri!=null && imageUri.contains("-Jenkins")) {
-								tempImageUri = imageUri;
-								String imageUriArray[] = imageUri.split("-");
-								imageUri = imageUriArray[0];
-							}
-							
-								return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution,
-										task.getTaskId(), trackingID, imageUri), HttpStatus.CREATED);
-								
+
+							return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution,
+									task.getTaskId(), trackingID, imageUri), HttpStatus.CREATED);
+
 						} finally {
 
 							try {
 								UtilityFunction.deleteDirectory(outputFolder);
 								task.setModified(Instant.now());
-								logger.debug("imageUri in finally = "+imageUri+" \ntempImageUri in finally = "+tempImageUri);
-								if (!(tempImageUri!=null && tempImageUri.contains("-Jenkins"))) {
+								logger.debug("createImageViaJenkins in finally of Async process = "+createImageViaJenkins);
+								if (!createImageViaJenkins) {
 									if (isSuccess == false) {
 										logger.debug("Onboarding Failed, Reverting failed solutions and artifacts.");
 										task.setStatusCode("FA");

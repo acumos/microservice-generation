@@ -424,7 +424,7 @@ public class DockerizeModel {
 			if (createImageViaJenkins) {
 				logger.debug("Creating Image Using Jenkins", logBean);
 				String dockerFilePath = dockerFilesOutputFolderPath + File.separator + solutionID + File.separator + "*";
-				dockerImageURI = imageTagName + ":" + metadata.getVersion() + "-Jenkins";
+				dockerImageURI = imageTagName + ":" + metadata.getVersion();
 				logger.debug("Docker File Path : "+dockerFilePath+" \nDocker ImageUri : "+dockerImageURI, logBean);
 				callJenkinsJob(imageTagName, solutionID, metadata, actualModelName, dockerFilePath, taskId, mDataSolutionId, dockerImageURI, trackingId, logBean);
 			} else {
@@ -800,7 +800,7 @@ public class DockerizeModel {
 					File file = new java.io.File(logPath + File.separator + trackingID + File.separator + fileName);
 					logger.debug("Log file length " + file.length(), logBean);
 					logger.debug("Log file Path " + file.getPath() + " Absolute Path : " + file.getAbsolutePath()
-							+ " Canonical Path: " + file.getCanonicalFile(), logBean);
+					+ " Canonical Path: " + file.getCanonicalFile(), logBean);
 
 					if (metadataParser != null && mData != null) {
 						logger.debug("Adding of log artifacts into nexus started " + fileName, logBean);
@@ -1191,8 +1191,12 @@ public class DockerizeModel {
 						return null;
 					});
 
-					return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution),
-							HttpStatus.CREATED);
+					String actualModelName = getActualModelName(metadataParser.getMetadata(), mlpSoln.getSolutionId());
+					String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
+					String dockerImageUri = imageTagName + ":" + metadataParser.getMetadata().getVersion();
+
+					return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution, mlpTask.getTaskId(),
+							trackingID,dockerImageUri), HttpStatus.CREATED);
 
 					// delete the Docker image
 					/*
@@ -1351,7 +1355,7 @@ public class DockerizeModel {
 					+ "&nexusDockerUsername=" + nexusDockerUsername + "&nexusDockerPassword=" + nexusDockerPassword + "&groupId=" + groupId
 					+ "&dockerFilePath=" + dockerFilePath + "&taskId=" + taskId.toString() + "&mDataSolutionId=" + mDataSolutionId
 					+ "&ownerId=" + ownerId + "&revisionId=" + revisionId + "&version=" + version + "&modelName=" + modelName
-					+ "&solutionId=" + solutionId + "&trackingId=" + trackingId + "&jenkinsUserName=" + jenkinsUserName 
+					+ "&solutionId=" + solutionId + "&trackingId=" + trackingId + "&jenkinsUserName=" + jenkinsUserName
 					+ "&jenkinsPassword=" + jenkinsPassword + "&cmnDataSvcUser=" + cmnDataSvcUser + "&cmnDataSvcPwd=" + cmnDataSvcPwd
 					+ "&nexusEndPointURL=" + nexusEndPointURL + "&nexusUserName=" + nexusUserName + "&nexusPassword=" + nexusPassword
 					+ "&nexusArtifactID=" + nexusArtifactID;
