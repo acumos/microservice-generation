@@ -11,7 +11,7 @@ RUN echo $https_proxy
 EXPOSE 3330 3330
 #install packages
 RUN Rscript packages.R
-RUN Rscript acumos.R
+#RUN Rscript acumos.R
 
 ENV http_proxy=""
 RUN echo $http_proxy
