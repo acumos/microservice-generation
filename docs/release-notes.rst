@@ -22,6 +22,12 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 4.7.0, 08 May 2020
+--------------------------
+* Common Data Service client at version 3.1.1
+* <IST>H2O- Java onboarding is failing with latest Java client 4.1.0 `ACUMOS-4106 <https://jira.acumos.org/browse/ACUMOS-4106>`_
+
+
 Version 4.6.0, 27 April 2020
 --------------------------
 * Common Data Service client at version 3.1.1
