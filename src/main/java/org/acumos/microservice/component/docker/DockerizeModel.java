@@ -68,9 +68,7 @@ import org.acumos.onboarding.common.utils.LogBean;
 import org.acumos.onboarding.common.utils.LogThreadLocal;
 import org.acumos.onboarding.common.utils.LoggerDelegate;
 import org.acumos.onboarding.common.utils.OnboardingConstants;
-import org.acumos.onboarding.common.utils.ResourceUtils;
 import org.acumos.onboarding.common.utils.UtilityFunction;
-import org.acumos.onboarding.component.docker.preparation.Metadata;
 import org.acumos.onboarding.component.docker.preparation.MetadataParser;
 import org.acumos.onboarding.logging.OnboardingLogConstants;
 import org.acumos.onboarding.services.impl.CommonOnboarding;
@@ -78,7 +76,6 @@ import org.acumos.onboarding.services.impl.PortalRestClientImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -153,7 +150,7 @@ public class DockerizeModel {
 	@Value("${jenkins_config.jenkinsPassword}")
 	protected String jenkinsPwd;
 
-	@Value("${microservice.createImageViaJenkins}")
+	@Value("${microService.createImageViaJenkins}")
 	protected boolean createImageViaJenkins;
 
 	@Value("${jenkins_config.solutionLocation}")
