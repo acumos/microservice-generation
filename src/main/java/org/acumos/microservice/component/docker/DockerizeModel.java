@@ -77,8 +77,6 @@ import org.acumos.onboarding.services.impl.CommonOnboarding;
 import org.acumos.onboarding.services.impl.PortalRestClientImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -88,7 +86,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -153,7 +150,7 @@ public class DockerizeModel {
 	@Value("${jenkins_config.jenkinsPassword}")
 	protected String jenkinsPwd;
 
-	@Value("${microservice.createImageViaJenkins}")
+	@Value("${microService.createImageViaJenkins}")
 	protected boolean createImageViaJenkins;
 
 	@Value("${jenkins_config.solutionLocation}")
