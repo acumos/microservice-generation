@@ -24,10 +24,10 @@ RUN echo $http_proxy
 #RUN apt-get update
 # clean and update sources
 RUN apt-get clean && apt-get update
-RUN apt-get -y install mysql-server
-RUN apt-get -y install default-jdk 
-RUN apt-get -y install build-essential
-RUN apt-get -y install --force-yes cpanminus && apt-get clean
+RUN apt-get -y --no-install-recommends install mysql-server
+RUN apt-get -y --no-install-recommends install default-jdk 
+RUN apt-get -y --no-install-recommends install build-essential
+RUN apt-get -y --no-install-recommends install --force-yes cpanminus && apt-get clean
 
 RUN ["cpanm","--notest", "LWP::UserAgent", "JSON"] ; exit 0
 
