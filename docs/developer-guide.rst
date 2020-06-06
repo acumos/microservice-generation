@@ -135,7 +135,7 @@ Repo URL: https://gerrit.acumos.org
 Under the dashboard page we have list of Projects,select Microservice generartion
 Project and clone this project by using below clone command:
 
-git clone ssh://<GERRIT_USER_NAME>@gerrit.acumos.org:29418/microservice-generation
+git clone --depth 1 ssh://<GERRIT_USER_NAME>@gerrit.acumos.org:29418/microservice-generation
 
 2. **After cloning import this project in your recommended IDE like STS.**
 
