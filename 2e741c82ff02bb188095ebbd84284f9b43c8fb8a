@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac869962_c1bc99fc",
+        "filename": "src/main/resources/templates/python/requirements.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 8
+      },
+      "writtenOn": "2020-07-07T16:53:05Z",
+      "side": 0,
+      "message": "This is good, but I would try removing everything except flask and gunicorn, and also adding version numbers that we know work to the packages that we don\u0027t remove.",
+      "revId": "2e741c82ff02bb188095ebbd84284f9b43c8fb8a",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    }
+  ]
+}
