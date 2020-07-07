@@ -1,6 +1,2 @@
-flask
-h5py
-scipy
-pandas
-tensorflow
-gunicorn
+flask==1.1.2
+gunicorn==20.0.4
