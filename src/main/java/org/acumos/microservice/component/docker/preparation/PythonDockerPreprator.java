@@ -225,7 +225,9 @@ public class PythonDockerPreprator {
 		String[] versionValue = metaVersion.split("\\.");
 
 		if (versionValue.length == 3) {
-			trimVersion = metaVersion.substring(0, metaVersion.length() - 2);
+			String[] minorV = versionValue[2].split("");
+			int counter = minorV.length;
+			trimVersion = metaVersion.substring(0, metaVersion.length() - (counter+1));	
 			logger.debug("Trimmed version: " + trimVersion);
 			return trimVersion;
 		} else {
