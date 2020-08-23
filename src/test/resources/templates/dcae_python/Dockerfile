@@ -14,8 +14,8 @@ RUN echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
 #--proxy http://pb00365848:!PB123456a%40@10.254.40.121:8080
 RUN apt-get clean && apt-get update && apt-get -y install libgtk2.0-dev && apt-get install -y git
 
-RUN pip install -r /app/requirements.txt && \
-   pip install acumos_dcae_model_runner
+RUN pip install --no-cache-dir -r /app/requirements.txt && \
+   pip install --no-cache-dir acumos_dcae_model_runner
 
 ENV http_proxy=""
 RUN echo $http_proxy
