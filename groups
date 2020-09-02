@@ -1,4 +1,5 @@
 # UUID                                                                                    	Group Name
 #
 42f0c83244389e408b42fa668348002012ecba46                                                  	GitHub Replication
+59d77056315f43e038f660335ae1c95de8513a06                                                  	saml/acumos-gerrit-microservice-generation-committers
 ldap:cn=acumos-gerrit-microservice-generation-committers,ou=Groups,dc=freestandards,dc=org	ldap/acumos-gerrit-microservice-generation-committers
