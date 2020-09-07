@@ -34,16 +34,12 @@ repositories:
     - 'microservice-generation'
 committers:
     - <<: *acumos_microservice-generation_ptl
-    - name: 'Mukhtar Shaikh'
-      email: 'sx00352475@techmahindra.com'
-      company: 'TechMahindra'
-      id: 'mukhtar'
-      timezone: ''
-    - name: 'Priyadarshini Londhe'
-      email: 'londhepv@TechMahindra.com'
-      company: 'TechMahindra'
-      id: 'Priyadarshini'
-      timezone: ''
+    - name: 'Philippe Dooze'
+      email: 'philippe.doozeàorange.com'
+      company: 'Orange'
+      id: 'philippdo'
+      timezone: 'Europe/Paris'
+
 tsc:
     approval: ''
     changes:
