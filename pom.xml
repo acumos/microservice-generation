@@ -29,17 +29,17 @@
 		<enforcer.skip>false</enforcer.skip>
 		<mockito.version>1.10.19</mockito.version>
 	</properties>
-	<!-- Some dependencies are specific to Acumos, but this POM defines no repositories 
-		section. The Jenkins server specifies Acumos repositories. Developers should 
-		ensure their ~/.m2/settings.xml file has the following URLs in both the repositories 
-		and pluginRepositories sections or in a profile: https://nexus.acumos.org/content/repositories/snapshots/ 
+	<!-- Some dependencies are specific to Acumos, but this POM defines no repositories
+		section. The Jenkins server specifies Acumos repositories. Developers should
+		ensure their ~/.m2/settings.xml file has the following URLs in both the repositories
+		and pluginRepositories sections or in a profile: https://nexus.acumos.org/content/repositories/snapshots/
 		https://nexus.acumos.org/content/repositories/releases/ -->
 	<dependencies>
 		<!-- Common jar for on-boarding -->
 		<dependency>
 			<groupId>org.acumos.on-boarding</groupId>
 			<artifactId>onboarding-common</artifactId>
-			<version>4.6.0</version>
+			<version>4.6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -116,7 +116,7 @@
 			<artifactId>logback-core</artifactId>
 			<!-- Spring chooses <version>${logback.version}</version> -->
 		</dependency>
-		<!-- <dependency> <groupId>com.att.eelf</groupId> <artifactId>eelf-core</artifactId> 
+		<!-- <dependency> <groupId>com.att.eelf</groupId> <artifactId>eelf-core</artifactId>
 			<version>1.0.0</version> </dependency> -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -186,8 +186,8 @@
 
 				<!-- spring chooses the <version>x</version> -->
 				<!-- <configuration> -->
-				<!-- during upgrade to jdk 11 found that portal-fe javadoc build fails 
-					due to issues with different spring versions and only one is being used by 
+				<!-- during upgrade to jdk 11 found that portal-fe javadoc build fails
+					due to issues with different spring versions and only one is being used by
 					the javadoc:aggregate job -->
 				<!-- <skip>true</skip> <aggregate>false</aggregate> -->	<!-- this enables aggretation -->
 				<!-- </configuration> -->
@@ -200,7 +200,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Allow the jar deployment; LF deploy step fails otherwise; a bug in 
+			<!-- Allow the jar deployment; LF deploy step fails otherwise; a bug in
 				JJB scripts -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -232,10 +232,10 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin> <groupId>org.jacoco</groupId> <artifactId>jacoco-maven-plugin</artifactId> 
-				<version>0.7.9</version> <executions> <execution> <id>default-prepare-agent</id> 
-				<goals> <goal>prepare-agent</goal> </goals> </execution> <execution> <id>default-report</id> 
-				<phase>prepare-package</phase> <goals> <goal>report</goal> </goals> </execution> 
+			<!-- <plugin> <groupId>org.jacoco</groupId> <artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.9</version> <executions> <execution> <id>default-prepare-agent</id>
+				<goals> <goal>prepare-agent</goal> </goals> </execution> <execution> <id>default-report</id>
+				<phase>prepare-package</phase> <goals> <goal>report</goal> </goals> </execution>
 				</executions> </plugin> -->
 
 			<plugin>

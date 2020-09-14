@@ -17,10 +17,17 @@
 .. ===============LICENSE_END=========================================================
 
 =====================================
-Microservice Generation Release Notes 
+Microservice Generation Release Notes
 =====================================
 
 These release notes cover the microservice generation project.
+
+Version 4.7.1, 15 Sept 2020
+---------------------------
+* Common Data Service client at version 3.1.1
+* Remove some install from packages.R `ACUMOS-4218 <https://jira.acumos.org/browse/ACUMOS-4218>`_
+* Remove tensorFlow in requirements.txt `ACUMOS-4229 <https://jira.acumos.org/browse/ACUMOS-4229>`_
+* Fixing Python Version Issue `ACUMOS-4260 <https://jira.acumos.org/browse/ACUMOS-4260>`_
 
 Version 4.7.0, 08 May 2020
 --------------------------
@@ -29,24 +36,24 @@ Version 4.7.0, 08 May 2020
 
 
 Version 4.6.0, 27 April 2020
---------------------------
+----------------------------
 * Common Data Service client at version 3.1.1
 * Use of Jenkins to trigger the micro-service Generation `ACUMOS-3841 <https://jira.acumos.org/browse/ACUMOS-3841>`_
 
 Version 4.5.0, 3 April 2020
---------------------------
+---------------------------
 * Common Data Service client at version 3.1.1
 * onboarding-common version 4.5.0
 * TOSCAModelGeneratorClient version 2.0.8
 
 Version 4.4.0, 16 March 2020
---------------------------
+----------------------------
 * Common Data Service client at version 3.1.1
 * H2O Modelrunner nexus url externalization `ACUMOS-4057 <https://jira.acumos.org/browse/ACUMOS-4057>`_
-* YML Changes – 
+* YML Changes –
 	"modelrunnerUrl":{"h2o":"<NEXUS_REPO_URL>", "javaSpark":"<NEXUS_REPO_URL>"},
 	"jenkins_config": {"solutionLocation":"/var/jenkins_home/ms"}
-* YML Changes in volumes section: 
+* YML Changes in volumes section:
    -  /var/acumos/ms:/var/jenkins_home/ms
 
 Version 4.3.0, 25 Feb 2020
@@ -82,43 +89,43 @@ Version 3.8.0, 13 Dec 2019
 * Micro services should download model runner from nexus and package into the model docker image for H2O and java models. `ACUMOS-3759 <https://jira.acumos.org/browse/ACUMOS-3759>`_
 
 Version 3.6.0, 07 Nov 2019
------------------------------
+--------------------------
 * Common Data Service client at version 3.0.0
 * YML changes - "security":{"verificationEnableFlag":"<Boolean>"}
 * IST2 - Onboarding block calling SV with a flag `ACUMOS-3676 <https://jira.acumos.org/browse/ACUMOS-3676/>`_
 
 
 Version 3.5.1, 25 Oct 2019
------------------------------
+--------------------------
 * Common Data Service client at version 3.0.0
 * <IST>Java spark model failing with error through CLI. : `ACUMOS-3569 <https://jira.acumos.org/browse/ACUMOS-3569/>`_
 
 Version 3.5.0, 16 Oct 2019
------------------------------
+--------------------------
 * Common Data Service client at version 3.0.0
 * YML changes - "security":{"verificationApiUrl":"<securityverificationurl>"},"modelrunnerVersion": {"javaSpark": "<version>"}
 * Common Services - Java Code upgrade to Java 11 or 12 : `ACUMOS-3327 <https://jira.acumos.org/browse/ACUMOS-3327/>`_
 * Java spark model failing with error through CLI : `ACUMOS-3569 <https://jira.acumos.org/browse/ACUMOS-3569/>`_
 
 Version 3.4.0, 3 Oct 2019
------------------------------
+-------------------------
 * Common Data Service client at version 3.0.0
 * As a User , I want to see an Enhance on-boarding processes to allow choice of new model vs new revision : `ACUMOS-1216 <https://jira.acumos.org/browse/ACUMOS-1216/>`_
 
 Version 3.2.0, 20 Sept 2019
------------------------------
+---------------------------
 * Common Data Service client at version 3.0.0
 
 
 Version 3.1.0, 04 Sept 2019
------------------------------
+---------------------------
 * Common Data Service client at version 2.2.6
 * create micro service for c/c+ model : ACUMOS-3108 <https://jira.acumos.org/browse/ACUMOS-3108/>_
 * Additional R packages needed by the model are not added : ACUMOS-3367 <https://jira.acumos.org/browse/ACUMOS-3367/>_
 * Errored model is getting onboarded successfully : ACUMOS-3022 <https://jira.acumos.org/browse/ACUMOS-3022/>_
 
 Version 3.0.0, 23  Aug 2019
------------------------------
+---------------------------
 * Common Data Service client at version 2.2.6
 * attach a license profile as JSON during on-boarding with Artifact Type LI : `ACUMOS-3171 <https://jira.acumos.org/browse/ACUMOS-3171/>`_
 
