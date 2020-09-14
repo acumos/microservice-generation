@@ -22,6 +22,13 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 4.7.1, 15 Sept 2020
+---------------------------
+* Common Data Service client at version 3.1.1
+* Remove some install from packages.R `ACUMOS-4218 <https://jira.acumos.org/browse/ACUMOS-4218>`_
+* Remove tensorFlow in requirements.txt `ACUMOS-4229 <https://jira.acumos.org/browse/ACUMOS-4229>`_
+* Fixing Python Version Issue `ACUMOS-4260 <https://jira.acumos.org/browse/ACUMOS-4260>`_
+
 Version 4.7.0, 08 May 2020
 --------------------------
 * Common Data Service client at version 3.1.1
