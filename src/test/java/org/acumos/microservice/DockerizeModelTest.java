@@ -335,7 +335,7 @@ public class DockerizeModelTest implements ResourceLoaderAware {
 			outputFolder.mkdirs();
 
 			dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2",
-					outputFolder1, "trackingID", "fileName", logThread, logBean, task, "solutionId");
+					outputFolder1, "trackingID", "fileName", logThread, logBean, task, "solutionId", false);
 
 			assertNotNull(true);
 
@@ -578,13 +578,13 @@ public class DockerizeModelTest implements ResourceLoaderAware {
 			dockerizeModel.setModelOriginalName("acumosavageneric");
 			//String imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 			dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2",
-					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId");
+					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId", false);
 			assertNotNull(true);
 
 			mData.setRuntimeName("r");
 			dockerizeModel.setModelOriginalName("acumosr");
 			dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2",
-					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId");
+					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId", false);
 			assertNotNull(true);
 
 			//String trackingID = "d3hvc435-3ve34-c555g-5445";
@@ -594,7 +594,7 @@ public class DockerizeModelTest implements ResourceLoaderAware {
 			dockerizeModel.setModelOriginalName("h2o");
 			//imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 			dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2",
-					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId");
+					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId", false);
 
 			assertNotNull(true);
 
@@ -602,7 +602,7 @@ public class DockerizeModelTest implements ResourceLoaderAware {
 			dockerizeModel.setModelOriginalName("javaargus");
 			//imageURI = dockerizeModel.dockerizeFile(metadataParser, modelFile, "solid1234", "2",outputFolder);
 			dockerizeModel.dockerizeFileAsync(onboardingNotification, metadataParser, modelFile, "1234soluid", "2",
-					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId");
+					outputFolder, "trackingID", "fileName", logThread, logBean, task, "solutionId", false);
 			assertNotNull(true);
 
 		} catch (AcumosServiceException e) {
