@@ -20,12 +20,19 @@
 
 package org.acumos.microservice.services.impl;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +44,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.acumos.cds.CodeNameType;
 import org.acumos.cds.domain.MLPCodeNamePair;
+import org.acumos.cds.domain.MLPSiteConfig;
 import org.acumos.cds.domain.MLPSolution;
 import org.acumos.cds.domain.MLPSolutionRevision;
 import org.acumos.cds.domain.MLPTask;
@@ -72,14 +80,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping(value="/v2")
-@Api(value="Operation to to onboard a ML model",tags="Onboarding Service APIs")
+@RequestMapping(value = "/v2")
+@Api(value = "Operation to to onboard a ML model", tags = "Onboarding Service APIs")
 
 /**
  *
@@ -118,19 +128,24 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			@RequestHeader(value = "Authorization", required = false) String authorization,
 			@RequestHeader(value = "tracking_id", required = false) String trackingID,
 			@RequestHeader(value = "provider", required = false) String provider,
-			@RequestHeader(value = "Request-ID", required = false) String request_id
-			)
-					throws AcumosServiceException {
+			@RequestHeader(value = "Request-ID", required = false) String request_id,
+			@RequestHeader(value = "deploy", required = false) String deployStr) throws AcumosServiceException {
 
 		// If trackingID is provided in the header create a
 		// OnboardingNotification object that will be used to update
 		// status
 		// against that trackingID
 		if (trackingID != null) {
-			logger.debug("Tracking ID: "+ trackingID);
+			logger.debug("Tracking ID: " + trackingID);
 		} else {
 			trackingID = UUID.randomUUID().toString();
-			logger.debug("Tracking ID: "+ trackingID);
+			logger.debug("Tracking ID: " + trackingID);
+		}
+
+		boolean deploy = false;
+
+		if (deployStr.equals("true")) {
+			deploy = true;
 		}
 
 		String fileName = "MicroserviceGenerationLog.txt";
@@ -150,30 +165,30 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String deployment_env = null;
 		OnboardingNotification onboardingStatus = null;
 
-		if (deploy_env == null || deploy_env.isEmpty()){
+		if (deploy_env == null || deploy_env.isEmpty()) {
 			deployment_env = "1";
 		} else {
 			deployment_env = deploy_env.trim();
 		}
 
-		logger.debug("deployment_env: "+ deployment_env);
+		logger.debug("deployment_env: " + deployment_env);
 
 		if (request_id != null) {
-			logger.debug("Request ID: "+ request_id);
+			logger.debug("Request ID: " + request_id);
 		} else {
 			request_id = UUID.randomUUID().toString();
-			logger.debug("Request ID Created: "+ request_id);
+			logger.debug("Request ID Created: " + request_id);
 		}
 
 		onboardingStatus = new OnboardingNotification(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd, request_id);
 		onboardingStatus.setRequestId(request_id);
 		MDC.put(OnboardingLogConstants.MDCs.REQUEST_ID, request_id);
-		logger.debug("MicroService Async Flag: "+ microServiceAsyncFlag,logBean);
+		logger.debug("MicroService Async Flag: " + microServiceAsyncFlag, logBean);
 
 		if (microServiceAsyncFlag) {
 
 			return generateMicroserviceAsyncDef(onboardingStatus, solutioId, revisionId, modName, deployment_env,
-					authorization, trackingID, provider);
+					authorization, trackingID, provider, deploy);
 
 		} else {
 
@@ -196,7 +211,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 				} else {
 
-					logger.error( "Either Username/Password is invalid.");
+					logger.error("Either Username/Password is invalid.");
 					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 							OnboardingLogConstants.ResponseStatus.ERROR.name());
 					MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, "Either Username/Password is invalid.");
@@ -219,9 +234,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				artifactNameList = download.getModelArtifacts(solutioId, revisionId, cmnDataSvcUser, cmnDataSvcPwd,
 						nexusEndPointURL, nexusUserName, nexusPassword, cmnDataSvcEndPoinURL);
 
-				logger.debug("Number of artifacts: "+ artifactNameList.size());
+				logger.debug("Number of artifacts: " + artifactNameList.size());
 
-				logger.debug("Starting Microservice Generation",logBean);
+				logger.debug("Starting Microservice Generation", logBean);
 
 				String modelId = UtilityFunction.getGUID();
 				File outputFolder = new File("tmp", modelId);
@@ -287,11 +302,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 							mlpSolution = commonOnboarding.createSolution(mData, onboardingStatus);
 							mData.setSolutionId(mlpSolution.getSolutionId());
-							logger.debug(
-									"New solution created Successfully for ONAP" + mlpSolution.getSolutionId());
+							logger.debug("New solution created Successfully for ONAP" + mlpSolution.getSolutionId());
 						} else {
-							logger.debug(
-									"Existing solution found for ONAP model name " + solList.get(0).getName());
+							logger.debug("Existing solution found for ONAP model name " + solList.get(0).getName());
 							mlpSolution = solList.get(0);
 							mData.setSolutionId(mlpSolution.getSolutionId());
 							mlpSolution.setName(mData.getSolutionName());
@@ -300,8 +313,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						}
 
 						revision = commonOnboarding.createSolutionRevision(mData);
-						logger.debug(
-								"Revision created Successfully  for ONAP" + revision.getRevisionId());
+						logger.debug("Revision created Successfully  for ONAP" + revision.getRevisionId());
 						mData.setRevisionId(revision.getRevisionId());
 
 						modelName = mData.getModelName() + "_" + mData.getSolutionId();
@@ -313,7 +325,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						// mlpSolution.setDescription(mData.getSolutionName());
 						mlpSolution.setUserId(mData.getOwnerId());
 					} else {
-						logger.error( "Invalid Request................");
+						logger.error("Invalid Request................");
 						throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_PARAMETER,
 								"Invalid Request...............");
 					}
@@ -329,8 +341,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 					/*
 					 * // try { // 'authorization' represents JWT token here...! if (authorization
-					 * == null) { logger.error(
-					 * "Token Not Available...!"); throw new
+					 * == null) { logger.error( "Token Not Available...!"); throw new
 					 * AcumosServiceException(AcumosServiceException.ErrorCode.OBJECT_NOT_FOUND,
 					 * "Token Not Available...!"); }
 					 */
@@ -338,12 +349,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					String imageUri = null;
 					if (ownerId != null && !ownerId.isEmpty()) {
 
-						logger.debug(
-								"Dockerization request recieved with " + model.getOriginalFilename());
+						logger.debug("Dockerization request recieved with " + model.getOriginalFilename());
 
 						modelOriginalName = model.getOriginalFilename();
 						boolean isSuccess = false;
-
 
 						try {
 
@@ -391,7 +400,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 							try {
 								imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(),
-										deployment_env, outputFolder, task.getTaskId(), mData.getSolutionId(), trackingID, logBean);
+										deployment_env, outputFolder, task.getTaskId(), mData.getSolutionId(),
+										trackingID, logBean);
 							} catch (Exception e) {
 								// Notify Create docker image failed
 								if (onboardingStatus != null) {
@@ -401,7 +411,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 										OnboardingLogConstants.ResponseStatus.ERROR.name());
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-								logger.error( "Error " + e);
+								logger.error("Error " + e);
 								throw e;
 							}
 
@@ -437,7 +447,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							try {
 								UtilityFunction.deleteDirectory(outputFolder);
 								task.setModified(Instant.now());
-								logger.debug("createImageViaJenkins in finally of Async process = "+createImageViaJenkins);
+								logger.debug(
+										"createImageViaJenkins in finally of Async process = " + createImageViaJenkins);
 								if (!createImageViaJenkins) {
 									if (isSuccess == false) {
 										logger.debug("Onboarding Failed, Reverting failed solutions and artifacts.");
@@ -475,6 +486,14 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 										logger.debug("Artifacts log pushed to nexus successfully" + fileName);
 									}
 
+									// deploy the model
+									if (deploy) {
+										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
+										// from deployment yaml
+										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config");
+										log.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
+									}
+
 									// delete the Docker image
 									/*
 									 * logger.debug(EELFLoggerDelegate.
@@ -495,7 +514,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 										OnboardingLogConstants.ResponseStatus.ERROR.name());
 								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, httpCode.toString());
-								logger.error( "RevertbackOnboarding Failed");
+								logger.error("RevertbackOnboarding Failed");
 								return new ResponseEntity<ServiceResponse>(
 										ServiceResponse.errorResponse(e.getErrorCode(), e.getMessage()), httpCode);
 							}
@@ -506,7 +525,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									OnboardingLogConstants.ResponseStatus.ERROR.name());
 							MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION,
 									"Either Username/Password is invalid");
-							logger.error( "Either Username/Password is invalid.");
+							logger.error("Either Username/Password is invalid.");
 							throw new AcumosServiceException(AcumosServiceException.ErrorCode.INVALID_TOKEN,
 									"Either Username/Password is invalid.");
 						} catch (AcumosServiceException e) {
@@ -517,7 +536,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					}
 					// }
 				} else {
-					logger.error( "Model artifacts not available..!");
+					logger.error("Model artifacts not available..!");
 					throw new AcumosServiceException("Model artifacts not available..!");
 				}
 
@@ -526,7 +545,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 						OnboardingLogConstants.ResponseStatus.ERROR.name());
-				logger.error( e.getErrorCode() + "  " + e.getMessage());
+				logger.error(e.getErrorCode() + "  " + e.getMessage());
 				if (e.getErrorCode().equalsIgnoreCase(OnboardingConstants.INVALID_PARAMETER)) {
 					httpCode = HttpStatus.BAD_REQUEST;
 				}
@@ -539,13 +558,12 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
 				// Handling #401
 				if (HttpStatus.UNAUTHORIZED == e.getStatusCode() || HttpStatus.BAD_REQUEST == e.getStatusCode()) {
-					logger.debug(
-							"Unauthorized User - Either Username/Password is invalid.");
+					logger.debug("Unauthorized User - Either Username/Password is invalid.");
 					return new ResponseEntity<ServiceResponse>(
 							ServiceResponse.errorResponse("" + HttpStatus.UNAUTHORIZED, "Unauthorized User"),
 							HttpStatus.UNAUTHORIZED);
 				} else {
-					logger.error( e.getMessage());
+					logger.error(e.getMessage());
 					e.printStackTrace();
 					return new ResponseEntity<ServiceResponse>(
 							ServiceResponse.errorResponse("" + e.getStatusCode(), e.getMessage()), e.getStatusCode());
@@ -554,7 +572,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
 						OnboardingLogConstants.ResponseStatus.ERROR.name());
 				MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-				logger.error( e.getMessage());
+				logger.error(e.getMessage());
 				e.printStackTrace();
 				if (e instanceof AcumosServiceException) {
 					return new ResponseEntity<ServiceResponse>(
@@ -566,6 +584,129 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 			}
+		}
+	}
+
+	public ResponseEntity<ServiceResponse> deployModel(String configKey) {
+
+		MLPSiteConfig mlpSiteConfig = null;
+		String jsr = null;
+		String jjb = null;
+		String param = null;
+		String param_value = null;
+		String jlog = null;
+		String jst = null;
+		try {
+
+			mlpSiteConfig = cdmsClient.getSiteConfig(configKey);
+			if (mlpSiteConfig != null) {
+
+				ObjectMapper mapper = new ObjectMapper();
+				@SuppressWarnings("unchecked")
+				Map<String, Object> slidesConfigJson = mapper.readValue(mlpSiteConfig.getConfigValue(), Map.class);
+				for (Map.Entry<String, Object> entry : slidesConfigJson.entrySet()) {
+
+					switch (entry.getKey()) {
+
+					case "jsr":
+						jsr = entry.getValue().toString();
+						logger.debug("jsr = " + jsr);
+						break;
+
+					case "jjb":
+						jjb = entry.getValue().toString();
+						logger.debug("jjb = " + jjb);
+						break;
+
+					case "param":
+						param = entry.getValue().toString();
+						logger.debug("param = " + param);
+						break;
+
+					case "param_value":
+						param_value = entry.getValue().toString();
+						logger.debug("param_value = " + param_value);
+						break;
+
+					case "jlog":
+						jlog = entry.getValue().toString();
+						logger.debug("jlog = " + jlog);
+						break;
+
+					case "jst":
+						jst = entry.getValue().toString();
+						logger.debug("jst = " + jst + "\n\n");
+						break;
+
+					default:
+						break;
+
+					}
+				}
+			}
+
+			// call the Jenkins Job for Deploying the model
+			callDeploymentJenkinsJob(jsr, jjb, param, param_value, jlog, jst);
+			return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(), HttpStatus.CREATED);
+
+		} catch (AcumosServiceException e) {
+			log.error("Exception Occurred Fetching Site Configuration Details : ", e.getMessage());
+			HttpStatus httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
+					OnboardingLogConstants.ResponseStatus.ERROR.name());
+			MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, httpCode.toString());
+			log.error("Deployment of the model Failed");
+
+			return new ResponseEntity<ServiceResponse>(ServiceResponse.errorResponse(e.getErrorCode(), e.getMessage()),
+					httpCode);
+
+		} catch (Exception ex) {
+			log.error("Exception while Deploying Model : ", ex.getMessage());
+			return new ResponseEntity<ServiceResponse>(
+					ServiceResponse.errorResponse(AcumosServiceException.ErrorCode.UNKNOWN.name(), ex.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	private void callDeploymentJenkinsJob(String jsr, String jjb, String param, String param_value, String jlog,
+			String jst) throws AcumosServiceException {
+
+		try {
+
+			logger.debug("Calling the Deployment Jenkins Job");
+			String jsrUri = jsr + "/job/" + jjb + "/buildWithParameters";
+			URL jsrURL = new URL(jsrUri); // Jenkins URL
+			String authStr = jlog + ":" + jst;
+			String encoding = Base64.getEncoder().encodeToString(authStr.getBytes("utf-8"));
+
+			HttpURLConnection connection = (HttpURLConnection) jsrURL.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setDoOutput(true);
+			connection.setRequestProperty("Authorization", "Basic " + encoding);
+
+			logger.debug("jsrUri = " + jsrUri + "\nparam = " + param + "\nparam_value = " + param_value);
+
+			String urlParams = param + "=" + param_value;
+
+			byte[] postData = urlParams.getBytes("utf-8");
+			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+				wr.write(postData);
+			}
+
+			InputStream content = connection.getInputStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(content));
+			String line;
+			while ((line = in.readLine()) != null) {
+				logger.debug(line);
+				System.out.println(line);
+			}
+			log.debug("Connection Response Code - " + connection.getResponseCode());
+			System.out.println("Done - " + connection.getResponseCode());
+
+		} catch (Exception e) {
+			log.error("Exception occurred while executing callDeploymentJenkinsJob method : ", e.getMessage());
+			throw new AcumosServiceException(AcumosServiceException.ErrorCode.CONNECTION_ISSUE,
+					"Exception occurred while connecting to deployment Jenkins job.");
 		}
 	}
 
@@ -597,20 +738,21 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 		try {
 
-			//call microservice
+			// call microservice
 			logger.debug("DCAE ADD Artifact Started ");
 			commonOnboarding.addArtifact(mData, anoIn, getArtifactTypeCode("Metadata"), "anomaly-in", onboardingStatus);
-			commonOnboarding.addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), "anomaly-out", onboardingStatus);
+			commonOnboarding.addArtifact(mData, anoOut, getArtifactTypeCode("Metadata"), "anomaly-out",
+					onboardingStatus);
 			commonOnboarding.addArtifact(mData, compo, getArtifactTypeCode("Metadata"), "component", onboardingStatus);
 			commonOnboarding.addArtifact(mData, ons, getArtifactTypeCode("Metadata"), "onsdemo1", onboardingStatus);
 			logger.debug("DCAE ADD Artifact End ");
 		}
 
 		catch (AcumosServiceException e) {
-			logger.error("Exception occured while adding DCAE Artifacts " +e);
+			logger.error("Exception occured while adding DCAE Artifacts " + e);
 			throw e;
-		} catch(Exception e){
-			logger.error("Exception occured while adding DCAE Artifacts " +e);
+		} catch (Exception e) {
+			logger.error("Exception occured while adding DCAE Artifacts " + e);
 			throw e;
 		}
 	}

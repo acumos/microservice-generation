@@ -59,6 +59,7 @@ import org.acumos.microservice.component.docker.preparation.JavaSparkDockerPrepa
 import org.acumos.microservice.component.docker.preparation.PythonDockerPreprator;
 import org.acumos.microservice.component.docker.preparation.RDockerPreparator;
 import org.acumos.microservice.services.impl.DownloadModelArtifacts;
+import org.acumos.microservice.services.impl.GenerateMicroserviceController;
 import org.acumos.nexus.client.NexusArtifactClient;
 import org.acumos.nexus.client.RepositoryLocation;
 import org.acumos.onboarding.common.exception.AcumosServiceException;
@@ -179,6 +180,8 @@ public class DockerizeModel {
 	protected MetadataParser metadataParser;
 
 	protected CommonDataServiceRestClientImpl cdmsClient;
+	
+	protected GenerateMicroserviceController generateMicroserviceController;
 
 	protected PortalRestClientImpl portalClient;
 
@@ -475,7 +478,7 @@ public class DockerizeModel {
 
 	public void dockerizeFileAsync(OnboardingNotification onboardingStatus, MetadataParser metadataParser,
 			File localmodelFile, String solutionID, String deployment_env, File tempFolder, String trackingID,
-			String fileName, LogThreadLocal logThread, LogBean logBean, MLPTask task, String mDataSolutionId) throws AcumosServiceException {
+			String fileName, LogThreadLocal logThread, LogBean logBean, MLPTask task, String mDataSolutionId, boolean deploy) throws AcumosServiceException {
 		File outputFolder = tempFolder;
 		Metadata metadata = metadataParser.getMetadata();
 		boolean isSuccess = false;
@@ -813,6 +816,15 @@ public class DockerizeModel {
 						logger.debug("Artifacts log pushed to nexus successfully" + fileName, logBean);
 					}
 
+					// deploy the model
+					if (deploy) {
+						this.generateMicroserviceController = new GenerateMicroserviceController();
+						// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
+						// from deployment yaml
+						ResponseEntity<ServiceResponse> responseEntity = generateMicroserviceController.deployModel("deployment_jenkins_config");
+						logger.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
+					}
+					
 					// delete log file
 					UtilityFunction.deleteDirectory(file);
 				}
@@ -939,7 +951,7 @@ public class DockerizeModel {
 
 	protected ResponseEntity<ServiceResponse> generateMicroserviceAsyncDef(OnboardingNotification onboardingStatus,
 			String solutioId, String revisionId, String modName, String deployment_env, String authorization,
-			String trackingID, String provider) {
+			String trackingID, String provider, boolean deploy) {
 
 		String artifactName = null;
 		File files = null;
@@ -1112,101 +1124,105 @@ public class DockerizeModel {
 				if (ownerId != null && !ownerId.isEmpty()) {
 
 					logger.debug("Dockerization request recieved with " + model.getOriginalFilename());
+					
+						modelOriginalName = model.getOriginalFilename();
+						// boolean isSuccess = false;
 
-					modelOriginalName = model.getOriginalFilename();
-					// boolean isSuccess = false;
-
-					// Solution id creation completed
-					// Notify Creation of solution ID is successful
-					if (onboardingStatus != null) {
-						// set solution Id
-						if (mlpSolution.getSolutionId() != null) {
-							onboardingStatus.setSolutionId(mlpSolution.getSolutionId());
-						}
-						// set revision id
-						if (mData.getRevisionId() != null) {
-							onboardingStatus.setRevisionId(mData.getRevisionId());
-						}
-					}
-
-					// Notify Create docker image has started
-					if (onboardingStatus != null) {
-
-						logger.debug("Setting values in Task object");
-
-						task = new MLPTask();
-						task.setTaskCode("MS");
-						task.setStatusCode("ST");
-						task.setName("MicroserviceGeneration");
-						task.setUserId(ownerId);
-						task.setCreated(Instant.now());
-						task.setModified(Instant.now());
-						task.setTrackingId(trackingID);
-						task.setSolutionId(mlpSolution.getSolutionId());
-						task.setRevisionId(mData.getRevisionId());
-
-						onboardingStatus.setTrackingId(trackingID);
-						onboardingStatus.setUserId(ownerId);
-
-						logger.debug("Task Details: " + task.toString());
-
-						task = cdmsClient.createTask(task);
-
-						logger.debug("TaskID: " + task.getTaskId());
-
-						onboardingStatus.setTaskId(task.getTaskId());
-
-						onboardingStatus.notifyOnboardingStatus("Dockerize", "ST",
-								"Create Docker Image Started for solution " + mData.getSolutionId());
-					}
-
-					File modFile = modelFile;
-					MLPSolution mlpSoln = mlpSolution;
-					MLPTask mlpTask = task;
-					String mDataSolutionId = mData.getSolutionId();
-
-					logger.debug("Thread before calling dockerizeFileAsync --> " + Thread.currentThread().getName());
-					CompletableFuture.supplyAsync(() -> {
-						try {
-							dockerizeFileAsync(onboardingStatus, metadataParser, modFile, mlpSoln.getSolutionId(),
-									deployment_env, outputFolder, trackingID, fileName, logThread, logBean, mlpTask, mDataSolutionId);
-
-						} catch (Exception e) {
-
-							try {
-								// Notify Create docker image failed
-								if (onboardingStatus != null) {
-									onboardingStatus.notifyOnboardingStatus("Dockerize", "FA", e.getMessage(), logBean);
-								}
-
-								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
-										OnboardingLogConstants.ResponseStatus.ERROR.name());
-								MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
-								logger.error("Error while creating docker image : " + e, logBean);
-								throw e;
-							} catch (Exception e1) {
-								e1.getMessage();
+						// Solution id creation completed
+						// Notify Creation of solution ID is successful
+						if (onboardingStatus != null) {
+							// set solution Id
+							if (mlpSolution.getSolutionId() != null) {
+								onboardingStatus.setSolutionId(mlpSolution.getSolutionId());
+							}
+							// set revision id
+							if (mData.getRevisionId() != null) {
+								onboardingStatus.setRevisionId(mData.getRevisionId());
 							}
 						}
-						return null;
-					});
 
-					String actualModelName = getActualModelName(metadataParser.getMetadata(), mlpSoln.getSolutionId());
-					String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
-					String dockerImageUri = imageTagName + ":" + metadataParser.getMetadata().getVersion();
+						// Notify Create docker image has started
+						if (onboardingStatus != null) {
 
-					return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution, mlpTask.getTaskId(),
-							trackingID,dockerImageUri), HttpStatus.CREATED);
+							logger.debug("Setting values in Task object");
 
-					// delete the Docker image
-					/*
-					 * logger.debug(EELFLoggerDelegate.
-					 * debugLogger,"Docker image Deletion started -> image = "+imageUri+", tag = "
-					 * +mData.getVersion()); DeleteImageCommand deleteCMD = new
-					 * DeleteImageCommand(imageUri, mData.getVersion(), null); deleteCMD.execute();
-					 * logger.debug("Docker image Deletion Done");
-					 */
+							task = new MLPTask();
+							task.setTaskCode("MS");
+							task.setStatusCode("ST");
+							task.setName("MicroserviceGeneration");
+							task.setUserId(ownerId);
+							task.setCreated(Instant.now());
+							task.setModified(Instant.now());
+							task.setTrackingId(trackingID);
+							task.setSolutionId(mlpSolution.getSolutionId());
+							task.setRevisionId(mData.getRevisionId());
 
+							onboardingStatus.setTrackingId(trackingID);
+							onboardingStatus.setUserId(ownerId);
+
+							logger.debug("Task Details: " + task.toString());
+
+							task = cdmsClient.createTask(task);
+
+							logger.debug("TaskID: " + task.getTaskId());
+
+							onboardingStatus.setTaskId(task.getTaskId());
+
+							onboardingStatus.notifyOnboardingStatus("Dockerize", "ST",
+									"Create Docker Image Started for solution " + mData.getSolutionId());
+						}
+
+						File modFile = modelFile;
+						MLPSolution mlpSoln = mlpSolution;
+						MLPTask mlpTask = task;
+						String mDataSolutionId = mData.getSolutionId();
+
+						logger.debug(
+								"Thread before calling dockerizeFileAsync --> " + Thread.currentThread().getName());
+						CompletableFuture.supplyAsync(() -> {
+							try {
+								dockerizeFileAsync(onboardingStatus, metadataParser, modFile, mlpSoln.getSolutionId(),
+										deployment_env, outputFolder, trackingID, fileName, logThread, logBean, mlpTask,
+										mDataSolutionId, deploy);
+
+							} catch (Exception e) {
+
+								try {
+									// Notify Create docker image failed
+									if (onboardingStatus != null) {
+										onboardingStatus.notifyOnboardingStatus("Dockerize", "FA", e.getMessage(),
+												logBean);
+									}
+
+									MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
+											OnboardingLogConstants.ResponseStatus.ERROR.name());
+									MDC.put(OnboardingLogConstants.MDCs.RESPONSE_DESCRIPTION, e.getMessage());
+									logger.error("Error while creating docker image : " + e, logBean);
+									throw e;
+								} catch (Exception e1) {
+									e1.getMessage();
+								}
+							}
+							return null;
+						});
+
+						String actualModelName = getActualModelName(metadataParser.getMetadata(),
+								mlpSoln.getSolutionId());
+						String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator
+								+ actualModelName;
+						String dockerImageUri = imageTagName + ":" + metadataParser.getMetadata().getVersion();
+
+						return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(mlpSolution,
+								mlpTask.getTaskId(), trackingID, dockerImageUri), HttpStatus.CREATED);
+
+						// delete the Docker image
+						/*
+						 * logger.debug(EELFLoggerDelegate.
+						 * debugLogger,"Docker image Deletion started -> image = "+imageUri+", tag = "
+						 * +mData.getVersion()); DeleteImageCommand deleteCMD = new
+						 * DeleteImageCommand(imageUri, mData.getVersion(), null); deleteCMD.execute();
+						 * logger.debug("Docker image Deletion Done");
+						 */
 				} else {
 					try {
 						MDC.put(OnboardingLogConstants.MDCs.RESPONSE_STATUS_CODE,
@@ -1320,6 +1336,7 @@ public class DockerizeModel {
 		}
 	}
 
+	//Method to create Microservice via Jenkins
 	private void callJenkinsJob(String imageTagName, String solutionId, Metadata metadata, String actualModelName,
 			String dockerFilePath, Long taskId, String mDataSolutionId, String dockerImageURI, String trackingId, LogBean logBean) throws AcumosServiceException {
 
