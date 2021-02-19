@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08b4a0e0_345b040b",
+        "filename": "src/main/java/org/acumos/microservice/services/impl/GenerateMicroserviceController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 212
+      },
+      "writtenOn": "2021-02-19T17:39:49Z",
+      "side": 1,
+      "message": "Hi Aditya why do we have the curl command in comment ?",
+      "range": {
+        "startLine": 676,
+        "startChar": 80,
+        "endLine": 676,
+        "endChar": 83
+      },
+      "revId": "834f1b2eb1a01c479c135e4c6d46fcf2b25462a3",
+      "serverId": "655300a2-7a56-4504-9153-881edd907bea",
+      "unresolved": true
+    }
+  ]
+}
