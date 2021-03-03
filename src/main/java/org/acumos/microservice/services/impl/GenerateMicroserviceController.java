@@ -597,8 +597,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String jlog = null;
 		String jst = null;
 		try {
-
+			log.debug("deployModel Method started ... ");
 			mlpSiteConfig = cdmsClient.getSiteConfig(configKey);
+			log.debug("MLPSiteConfig ConfigKey = "+mlpSiteConfig.getConfigKey()+"\nMLPSiteConfig ConfigValue = "+mlpSiteConfig.getConfigValue());
 			if (mlpSiteConfig != null) {
 
 				ObjectMapper mapper = new ObjectMapper();
@@ -610,32 +611,32 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 					case "jsr":
 						jsr = entry.getValue().toString();
-						logger.debug("jsr = " + jsr);
+						log.debug("jsr = " + jsr);
 						break;
 
 					case "jjb":
 						jjb = entry.getValue().toString();
-						logger.debug("jjb = " + jjb);
+						log.debug("jjb = " + jjb);
 						break;
 
 					case "param":
 						param = entry.getValue().toString();
-						logger.debug("param = " + param);
+						log.debug("param = " + param);
 						break;
 
 					case "param_value":
 						param_value = entry.getValue().toString();
-						logger.debug("param_value = " + param_value);
+						log.debug("param_value = " + param_value);
 						break;
 
 					case "jlog":
 						jlog = entry.getValue().toString();
-						logger.debug("jlog = " + jlog);
+						log.debug("jlog = " + jlog);
 						break;
 
 					case "jst":
 						jst = entry.getValue().toString();
-						logger.debug("jst = " + jst + "\n\n");
+						log.debug("jst = " + jst + "\n\n");
 						break;
 
 					default:
@@ -662,6 +663,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 		} catch (Exception ex) {
 			log.error("Exception while Deploying Model : ", ex.getMessage());
+			ex.printStackTrace();
 			return new ResponseEntity<ServiceResponse>(
 					ServiceResponse.errorResponse(AcumosServiceException.ErrorCode.UNKNOWN.name(), ex.getMessage()),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -673,7 +675,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 		try {
 
-			logger.debug("Calling the Deployment Jenkins Job");
+			log.debug("Calling the Deployment Jenkins Job");
 			String jsrUri = jsr + "/job/" + jjb + "/buildWithParameters";
 			URL jsrURL = new URL(jsrUri); // Jenkins URL
 			String authStr = jlog + ":" + jst;
@@ -684,7 +686,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			connection.setDoOutput(true);
 			connection.setRequestProperty("Authorization", "Basic " + encoding);
 
-			logger.debug("jsrUri = " + jsrUri + "\nparam = " + param + "\nparam_value = " + param_value);
+			log.debug("jsrUri = " + jsrUri + "\nparam = " + param + "\nparam_value = " + param_value);
 
 			String urlParams = param + "=" + param_value;
 
@@ -697,7 +699,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			BufferedReader in = new BufferedReader(new InputStreamReader(content));
 			String line;
 			while ((line = in.readLine()) != null) {
-				logger.debug(line);
+				log.debug(line);
 				System.out.println(line);
 			}
 			log.debug("Connection Response Code - " + connection.getResponseCode());
