@@ -821,10 +821,10 @@ public class DockerizeModel {
 						this.generateMicroserviceController = new GenerateMicroserviceController();
 						// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 						// from deployment yaml
-						ResponseEntity<ServiceResponse> responseEntity = generateMicroserviceController.deployModel("deployment_jenkins_config");
+						ResponseEntity<ServiceResponse> responseEntity = generateMicroserviceController.deployModel("deployment_jenkins_config", cdmsClient);
 						logger.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 					}
-					
+
 					// delete log file
 					UtilityFunction.deleteDirectory(file);
 				}
