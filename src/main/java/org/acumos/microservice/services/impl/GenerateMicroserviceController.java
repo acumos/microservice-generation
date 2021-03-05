@@ -598,10 +598,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String jst = null;
 		try {
 			log.debug("deployModel Method started ... ");
+			log.debug("cdmsClient = "+cdmsClient+", configKey = "+configKey);
 			mlpSiteConfig = cdmsClient.getSiteConfig(configKey);
-			log.debug("MLPSiteConfig ConfigKey = "+mlpSiteConfig.getConfigKey()+"\nMLPSiteConfig ConfigValue = "+mlpSiteConfig.getConfigValue());
+			log.debug("MLPSiteConfig = "+mlpSiteConfig);
+			
 			if (mlpSiteConfig != null) {
-
+				
+				log.debug("MLPSiteConfig ConfigKey = "+mlpSiteConfig.getConfigKey()+"\nMLPSiteConfig ConfigValue = "+mlpSiteConfig.getConfigValue());
 				ObjectMapper mapper = new ObjectMapper();
 				@SuppressWarnings("unchecked")
 				Map<String, Object> slidesConfigJson = mapper.readValue(mlpSiteConfig.getConfigValue(), Map.class);
@@ -644,6 +647,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 					}
 				}
+			} else {
+				log.error("ERROR: MLPSiteConfig is NULL. Nothing is fetched from CDS.");
+				throw new AcumosServiceException(AcumosServiceException.ErrorCode.OBJECT_NOT_FOUND,
+						"Exception occurred while fetching siteConfig configKey from CDS.");
 			}
 
 			// call the Jenkins Job for Deploying the model
@@ -677,6 +684,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 
 			log.debug("Calling the Deployment Jenkins Job");
 			String jsrUri = jsr + "/job/" + jjb + "/buildWithParameters";
+			log.debug("jsrUri = "+jsrUri);
 			URL jsrURL = new URL(jsrUri); // Jenkins URL
 			String authStr = jlog + ":" + jst;
 			String encoding = Base64.getEncoder().encodeToString(authStr.getBytes("utf-8"));
