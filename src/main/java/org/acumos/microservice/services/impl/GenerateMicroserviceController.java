@@ -43,6 +43,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
 import org.acumos.cds.CodeNameType;
+import org.acumos.cds.client.CommonDataServiceRestClientImpl;
 import org.acumos.cds.domain.MLPCodeNamePair;
 import org.acumos.cds.domain.MLPSiteConfig;
 import org.acumos.cds.domain.MLPSolution;
@@ -490,7 +491,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									if (deploy) {
 										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 										// from deployment yaml
-										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config");
+										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient);
 										log.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 									}
 
@@ -587,7 +588,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		}
 	}
 
-	public ResponseEntity<ServiceResponse> deployModel(String configKey) {
+	public ResponseEntity<ServiceResponse> deployModel(String configKey, CommonDataServiceRestClientImpl cdmsClient) {
 
 		MLPSiteConfig mlpSiteConfig = null;
 		String jsr = null;
@@ -598,6 +599,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String jst = null;
 		try {
 			log.debug("deployModel Method started ... ");
+			if(cdmsClient == null) {
+				cdmsClient = new CommonDataServiceRestClientImpl(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd,
+							null);
+				log.debug("cdmsClient = "+cdmsClient);
+			}
 			log.debug("cdmsClient = "+cdmsClient+", configKey = "+configKey);
 			mlpSiteConfig = cdmsClient.getSiteConfig(configKey);
 			log.debug("MLPSiteConfig = "+mlpSiteConfig);
