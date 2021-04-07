@@ -594,7 +594,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String jsr = null;
 		String jjb = null;
 		String param = null;
-		String param_value = null;
+		String paramValue = null;
 		String jlog = null;
 		String jst = null;
 		try {
@@ -633,9 +633,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						log.debug("param = " + param);
 						break;
 
-					case "param_value":
-						param_value = entry.getValue().toString();
-						log.debug("param_value = " + param_value);
+					case "paramValue":
+						paramValue = entry.getValue().toString();
+						log.debug("paramValue = " + paramValue);
 						break;
 
 					case "jlog":
@@ -660,7 +660,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			}
 
 			// call the Jenkins Job for Deploying the model
-			callDeploymentJenkinsJob(jsr, jjb, param, param_value, jlog, jst);
+			callDeploymentJenkinsJob(jsr, jjb, param, paramValue, jlog, jst);
 			return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(), HttpStatus.CREATED);
 
 		} catch (AcumosServiceException e) {
@@ -683,7 +683,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		}
 	}
 
-	private void callDeploymentJenkinsJob(String jsr, String jjb, String param, String param_value, String jlog,
+	private void callDeploymentJenkinsJob(String jsr, String jjb, String param, String paramValue, String jlog,
 			String jst) throws AcumosServiceException {
 
 		try {
@@ -700,9 +700,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			connection.setDoOutput(true);
 			connection.setRequestProperty("Authorization", "Basic " + encoding);
 
-			log.debug("jsrUri = " + jsrUri + "\nparam = " + param + "\nparam_value = " + param_value);
+			log.debug("jsrUri = " + jsrUri + "\nparam = " + param + "\nparamValue = " + paramValue);
 
-			String urlParams = param + "=" + param_value;
+			String urlParams = param + "=" + paramValue;
 
 			byte[] postData = urlParams.getBytes("utf-8");
 			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
