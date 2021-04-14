@@ -1,5 +1,5 @@
 ---
-distribution_type: container
+#distribution_type: container
 container_release_tag: 5.0.4
 container_pull_registry: nexus3.acumos.org:10004
 container_push_registry: nexus3.acumos.org:10002
