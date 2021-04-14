@@ -24,6 +24,7 @@ These release notes cover the microservice generation project.
 
 Version 5.0.4, 14 April 2021
 ----------------------------
+* Common Data Service client at version 3.1.1
 * Create deployment backend `ACUMOS-4310 <https://jira.acumos.org/browse/ACUMOS-4310>`_
 
 Version 4.7.1, 15 Sept 2020
