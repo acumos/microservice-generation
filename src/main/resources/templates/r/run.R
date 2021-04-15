@@ -1,10 +1,10 @@
-#matching acumos R package version 0.2-8
 ready_path<-function(path){
   if (dir.exists(path)) {
     given_dir <- path
     if(!(file.exists(file.path(given_dir, "component.bin"))
     &&file.exists(file.path(given_dir, "component.proto"))
-    &&file.exists(file.path(given_dir, "meta.json")))){
+	&&file.exists(file.path(given_dir, "meta.json"))
+    &&file.exists(file.path(given_dir, "component.swagger.yaml")))){
       ready_dir <- tempfile("acumos-runtime")
       if (!all(dir.create(ready_dir))) stop("unable to create temporary directory in `",ready_dir,"' to copy and rename the components")
       binFile<-tools::list_files_with_exts(given_dir, exts = 'bin', all.files = FALSE, full.names = TRUE)
@@ -25,6 +25,12 @@ ready_path<-function(path){
         file.link(jsonFile, file.path(ready_dir, "meta.json"))
       }else{
         stop('no json file sharing the bin and proto files name')
+      }
+	  if(file.exists(paste0(fileName,'.swagger.yaml'))){
+        jsonFile<-paste0(fileName,'.json')
+        file.link(jsonFile, file.path(ready_dir, "component.swagger.yaml"))
+      }else{
+        stop('no swagger.yaml file sharing the json, bin and proto files name')
       }
       target<-ready_dir
     }else{
