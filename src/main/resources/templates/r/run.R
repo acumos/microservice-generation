@@ -7,7 +7,7 @@ ready_path<-function(path){
        &&file.exists(file.path(given_dir, "meta.json"))
        &&file.exists(file.path(given_dir, "component.swagger.yaml"))) 
       | 
-      (file.exists(file.path(given_dir, "component.zip"))
+      (file.exists(file.path(given_dir, "model.zip"))
        &&file.exists(file.path(given_dir, "component.proto"))
        &&file.exists(file.path(given_dir, "meta.json")))
     )){
@@ -20,7 +20,7 @@ ready_path<-function(path){
         file.copy(binFile, file.path(ready_dir, "component.bin"))
       }else if(length(zipFile)>0){
         fileName<-tools::file_path_sans_ext(zipFile)
-        file.copy(zipFile, file.path(ready_dir, "component.zip"))
+        file.copy(zipFile, file.path(ready_dir, "model.zip"))
       }else{
         stop('no bin or zip file')
       }
