@@ -144,9 +144,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		}
 
 		boolean deploy = false;
-
-		if (deployStr.equals("true")) {
-			deploy = true;
+		
+		if(deployStr != null) {
+			if (deployStr.equals("true")) {
+				deploy = true;
+			}
 		}
 
 		String fileName = "MicroserviceGenerationLog.txt";
