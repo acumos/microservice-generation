@@ -10,7 +10,7 @@ ENV https_proxy {0}
 
 EXPOSE 3330 3330
 #install packages
-#RUN Rscript packages.R
+RUN Rscript packages.R
 RUN Rscript acumos.R
 
 ENV http_proxy=""
