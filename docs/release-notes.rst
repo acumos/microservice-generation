@@ -22,6 +22,13 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
+Version 5.1.1, 06 june 2021
+---------------------------
+* Common Data Service client at version 3.1.1
+* acumos-r-client version is equal to 4.1 inside the MS it should be 4.3  `ACUMOS-4340 <https://jira.acumos.org/browse/ACUMOS-4340>`_
+* not able to create microservice after on-boarding `ACUMOS-4339 <https://jira.acumos.org/browse/ACUMOS-4339>`_
+* use of Json and Swagger UI with R models `ACUMOS-4326 <https://jira.acumos.org/browse/ACUMOS-4326>`_
+
 Version 5.0.4, 14 April 2021
 ----------------------------
 * Common Data Service client at version 3.1.1
