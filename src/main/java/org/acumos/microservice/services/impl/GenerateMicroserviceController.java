@@ -493,7 +493,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									if (deploy) {
 										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 										// from deployment yaml
-										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient);
+										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri);
 										log.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 									}
 
@@ -590,7 +590,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		}
 	}
 
-	public ResponseEntity<ServiceResponse> deployModel(String configKey, CommonDataServiceRestClientImpl cdmsClient) {
+	public ResponseEntity<ServiceResponse> deployModel(String configKey, CommonDataServiceRestClientImpl cdmsClient, String imageUri) {
 
 		MLPSiteConfig mlpSiteConfig = null;
 		String jsr = null;
@@ -662,7 +662,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			}
 
 			// call the Jenkins Job for Deploying the model
-			callDeploymentJenkinsJob(jsr, jjb, param, paramValue, jlog, jst);
+			callDeploymentJenkinsJob(jsr, jjb, param, paramValue, jlog, jst, imageUri);
 			return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(), HttpStatus.CREATED);
 
 		} catch (AcumosServiceException e) {
@@ -686,7 +686,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	}
 
 	private void callDeploymentJenkinsJob(String jsr, String jjb, String param, String paramValue, String jlog,
-			String jst) throws AcumosServiceException {
+			String jst, String imageUri) throws AcumosServiceException {
 
 		try {
 
@@ -703,8 +703,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			connection.setRequestProperty("Authorization", "Basic " + encoding);
 
 			log.debug("jsrUri = " + jsrUri + "\nparam = " + param + "\nparamValue = " + paramValue);
-
-			String urlParams = param + "=" + paramValue;
+			
+			//Setting the parameters. There may be a need to handle them in jenkins job
+			String urlParams = param + "=" + paramValue + "&dockerImageUri=" + imageUri;
 
 			byte[] postData = urlParams.getBytes("utf-8");
 			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
