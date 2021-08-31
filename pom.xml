@@ -5,13 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.acumos.microservice</groupId>
 	<artifactId>microservice-generation</artifactId>
-	<version>5.1.2-SNAPSHOT</version>
+	<version>5.1.3-SNAPSHOT</version>
 	<name>Microservice generation jar</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.1.RELEASE</version>
-		<relativePath />
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,6 +28,23 @@
 		<enforcer.skip>false</enforcer.skip>
 		<mockito.version>1.10.19</mockito.version>
 	</properties>
+        <build>
+          <extensions xmlns="http://maven.apache.org/EXTENSIONS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/EXTENSIONS/1.0.0 http://maven.apache.org/xsd/core-extensions-1.0.0.xsd">
+            <!-- Repository on AMAZON S3 -->
+            <extension>
+                <groupId>org.springframework.build</groupId>
+                <artifactId>aws-maven</artifactId>
+                <version>5.0.0.RELEASE</version>
+            </extension>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>2.4</version>
+            </extension>
+          </extensions>
+        </build>
 	<!-- Some dependencies are specific to Acumos, but this POM defines no repositories
 		section. The Jenkins server specifies Acumos repositories. Developers should
 		ensure their ~/.m2/settings.xml file has the following URLs in both the repositories
