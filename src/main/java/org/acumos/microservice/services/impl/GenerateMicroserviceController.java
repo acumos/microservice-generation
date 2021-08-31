@@ -636,7 +636,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						break;
 
 					case "paramValue":
-						paramValue = entry.getValue().toString();
+						paramValue = imageUri;
 						log.debug("paramValue = " + paramValue);
 						break;
 
@@ -662,7 +662,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			}
 
 			// call the Jenkins Job for Deploying the model
-			callDeploymentJenkinsJob(jsr, jjb, param, paramValue, jlog, jst, imageUri);
+			callDeploymentJenkinsJob(jsr, jjb, param, paramValue, jlog, jst);
 			return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(), HttpStatus.CREATED);
 
 		} catch (AcumosServiceException e) {
@@ -686,7 +686,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	}
 
 	private void callDeploymentJenkinsJob(String jsr, String jjb, String param, String paramValue, String jlog,
-			String jst, String imageUri) throws AcumosServiceException {
+			String jst) throws AcumosServiceException {
 
 		try {
 
@@ -705,7 +705,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			log.debug("jsrUri = " + jsrUri + "\nparam = " + param + "\nparamValue = " + paramValue);
 			
 			//Setting the parameters. There may be a need to handle them in jenkins job
-			String urlParams = param + "=" + paramValue + "&dockerImageUri=" + imageUri;
+			String urlParams = param + "=" + paramValue;
 
 			byte[] postData = urlParams.getBytes("utf-8");
 			try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
