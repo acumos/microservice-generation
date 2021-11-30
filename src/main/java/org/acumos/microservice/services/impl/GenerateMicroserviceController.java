@@ -694,7 +694,9 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			String jsrUri = jsr + "/job/" + jjb + "/buildWithParameters";
 			log.debug("jsrUri = "+jsrUri);
 			URL jsrURL = new URL(jsrUri); // Jenkins URL
+			log.debug("jsrURL = "+jsrURL);
 			String authStr = jlog + ":" + jst;
+			log.debug("authStr = "+authStr);
 			String encoding = Base64.getEncoder().encodeToString(authStr.getBytes("utf-8"));
 
 			HttpURLConnection connection = (HttpURLConnection) jsrURL.openConnection();
@@ -723,6 +725,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			System.out.println("Done - " + connection.getResponseCode());
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("Exception occurred while executing callDeploymentJenkinsJob method : ", e.getMessage());
 			throw new AcumosServiceException(AcumosServiceException.ErrorCode.CONNECTION_ISSUE,
 					"Exception occurred while connecting to deployment Jenkins job.");
