@@ -599,6 +599,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String paramValue = null;
 		String jlog = null;
 		String jst = null;
+		paramValue = imageUri;
 		try {
 			log.debug("deployModel Method started ... ");
 			if(cdmsClient == null) {
@@ -633,11 +634,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					case "param":
 						param = entry.getValue().toString();
 						log.debug("param = " + param);
-						break;
-
-					case "paramValue":
-						paramValue = imageUri;
-						log.debug("paramValue = " + paramValue);
 						break;
 
 					case "jlog":
