@@ -405,6 +405,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(),
 										deployment_env, outputFolder, task.getTaskId(), mData.getSolutionId(),
 										trackingID, logBean);
+								logger.debug("imageUri1 : " + imageUri);
 							} catch (Exception e) {
 								// Notify Create docker image failed
 								if (onboardingStatus != null) {
@@ -493,6 +494,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									if (deploy) {
 										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 										// from deployment yaml
+										logger.debug("imageUri2 : " + imageUri);
 										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri);
 										log.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 									}
