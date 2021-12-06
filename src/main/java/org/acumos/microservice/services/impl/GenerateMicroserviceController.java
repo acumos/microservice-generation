@@ -349,7 +349,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					 * "Token Not Available...!"); }
 					 */
 
-					String imageUri = null;
+					String imageUri = "toto";
 					if (ownerId != null && !ownerId.isEmpty()) {
 
 						logger.debug("Dockerization request recieved with " + model.getOriginalFilename());
@@ -401,7 +401,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 										"Create Docker Image Started for solution " + mData.getSolutionId());
 							}
 
-							try {
+							try {   
+								logger.debug("imageUri1 : " + imageUri);
 								imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(),
 										deployment_env, outputFolder, task.getTaskId(), mData.getSolutionId(),
 										trackingID, logBean);
