@@ -402,11 +402,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 							}
 
 							try {   
-								logger.debug("imageUri1 : " + imageUri);
+								log.debug("imageUri1 : " + imageUri);
 								imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(),
 										deployment_env, outputFolder, task.getTaskId(), mData.getSolutionId(),
 										trackingID, logBean);
-								logger.debug("imageUri1 : " + imageUri);
+								log.debug("imageUri1 : " + imageUri);
 							} catch (Exception e) {
 								// Notify Create docker image failed
 								if (onboardingStatus != null) {
@@ -495,7 +495,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									if (deploy) {
 										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 										// from deployment yaml
-										logger.debug("imageUri2 : " + imageUri);
+										log.debug("imageUri2 : " + imageUri);
 										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri);
 										log.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 									}
@@ -599,7 +599,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String jsr = null;
 		String jjb = null;
 		String param = null;
-		String paramValue = null;
+		//String paramValue = null;
 		String jlog = null;
 		String jst = null;
 		paramValue = imageUri;
@@ -661,6 +661,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 			}
 
 			// call the Jenkins Job for Deploying the model
+			log.debug("paramValue :" +paramValue);
 			callDeploymentJenkinsJob(jsr, jjb, param, paramValue, jlog, jst);
 			return new ResponseEntity<ServiceResponse>(ServiceResponse.successResponse(), HttpStatus.CREATED);
 
