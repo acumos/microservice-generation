@@ -517,8 +517,8 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									if (deploy) {
 										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 										// from deployment yaml
-										logger.debug("imageUri at 498 : " + imageUri);
-										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri);
+										logger.debug("imageUri at 498 : " + imageUri_test);
+										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri_test);
 										logger.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 									}
 
