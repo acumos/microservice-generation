@@ -419,7 +419,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.error("Error " + e);
 								throw e;
 							}
-
+							log.debug("imageUri at 422 : " + imageUri);   
 							if (!createImageViaJenkins) {
 								// Notify Create docker image is successful
 								if (onboardingStatus != null) {
@@ -438,6 +438,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									logger.debug("AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath());
 									addDCAEArrtifacts(mData, outputFolder, mlpSolution.getSolutionId(),
 											onboardingStatus);
+									log.debug("imageUri at 441 : " + imageUri);   
 								}
 
 								isSuccess = true;
@@ -450,6 +451,7 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						} finally {
 
 							try {
+								log.debug("imageUri at 453 : " + imageUri);   
 								UtilityFunction.deleteDirectory(outputFolder);
 								task.setModified(Instant.now());
 								logger.debug(
@@ -465,13 +467,13 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 													mlpSolution.getSolutionId(), imageUri);
 										}
 									}
-
+									log.debug("imageUri at 468 : " + imageUri);   
 									if (isSuccess == true) {
 										task.setStatusCode("SU");
 										logger.debug("MLP task updating with the values =" + task.toString());
 										cdmsClient.updateTask(task);
 									}
-
+									log.debug("imageUri at 474 : " + imageUri);   
 									// push docker build log into nexus
 									File file = new java.io.File(
 											logPath + File.separator + trackingID + File.separator + fileName);
@@ -491,11 +493,12 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 										logger.debug("Artifacts log pushed to nexus successfully" + fileName);
 									}
 
+									log.debug("imageUri at 494 : " + imageUri);   
 									// deploy the model
 									if (deploy) {
 										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 										// from deployment yaml
-										log.debug("imageUri2 : " + imageUri);
+										log.debug("imageUri at 498 : " + imageUri);
 										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri);
 										log.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 									}
