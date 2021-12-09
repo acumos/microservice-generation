@@ -748,6 +748,7 @@ public class DockerizeModel {
 				logger.debug("Docker image pushed in nexus successfully", logBean);
 			}
 
+			imageUri=dockerImageURI;
 			if (!createImageViaJenkins) {
 				// Notify Create docker image is successful
 				if (onboardingStatus != null) {
