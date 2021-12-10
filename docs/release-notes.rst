@@ -22,7 +22,12 @@ Microservice Generation Release Notes
 
 These release notes cover the microservice generation project.
 
-Version 5.1.1, 06 june 2021
+Version 5.2.3, 10 December 2021
+-------------------------------
+* Common Data Service client at version 3.1.1
+* Retrieve docker URI and use it in the request towards external jenkins server when deploy=True `ACUMOS-4346 <https://jira.acumos.org/browse/ACUMOS-4346>`_
+
+Version 5.1.1, 06 June 2021
 ---------------------------
 * Common Data Service client at version 3.1.1
 * acumos-r-client version is equal to 4.1 inside the MS it should be 4.3  `ACUMOS-4340 <https://jira.acumos.org/browse/ACUMOS-4340>`_
