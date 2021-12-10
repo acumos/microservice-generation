@@ -106,11 +106,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 	CommonOnboarding commonOnboarding;
 	public static final String logPath = "/maven/logs/microservice-generation/applog";
 
-	//@Autowired
-	//protected DockerConfiguration dockerConfiguration;
-
-	//protected MetadataParser metadataParser;
-	
 	public GenerateMicroserviceController() {
 		// Property values are injected after the constructor finishes
 	}
@@ -355,7 +350,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 					 */
 
 					String imageUri = null;
-					String imageUri_test = null;
 					if (ownerId != null && !ownerId.isEmpty()) {
 
 						logger.debug("Dockerization request recieved with " + model.getOriginalFilename());
@@ -407,24 +401,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 										"Create Docker Image Started for solution " + mData.getSolutionId());
 							}
 
-							try {   
-								logger.debug("imageUri at 405  : " + imageUri);
+							try { 
 								imageUri = dockerizeFile(metadataParser, modelFile, mlpSolution.getSolutionId(),
 										deployment_env, outputFolder, task.getTaskId(), mData.getSolutionId(),
 										trackingID, logBean);
-								logger.debug("imageUri1 at 409 : " + imageUri);
-
-								Metadata metadata = metadataParser.getMetadata();
-								
-								String actualModelName = getActualModelName(metadata, mlpSolution.getSolutionId());
-								logger.debug("actualModelName :"+actualModelName );
-								String imageTagName = dockerConfiguration.getImagetagPrefix() + File.separator + actualModelName;
-                                                                logger.debug("imageTagName :"+imageTagName );
-
-								imageUri_test = imageTagName + ":" + metadata.getVersion();
-								logger.debug("imageUri_test :"+imageUri_test); 
-
-
 
 							} catch (Exception e) {
 								// Notify Create docker image failed
@@ -438,7 +418,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 								logger.error("Error " + e);
 								throw e;
 							}
-							logger.debug("imageUri at 422 : " + imageUri);   
 							if (!createImageViaJenkins) {
 								// Notify Create docker image is successful
 								if (onboardingStatus != null) {
@@ -457,7 +436,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 									logger.debug("AbsolutePath OutputFolderPath: " + outputFolder.getAbsolutePath());
 									addDCAEArrtifacts(mData, outputFolder, mlpSolution.getSolutionId(),
 											onboardingStatus);
-									logger.debug("imageUri at 441 : " + imageUri);   
 								}
 
 								isSuccess = true;
@@ -470,7 +448,6 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 						} finally {
 
 							try {
-								logger.debug("imageUri at 453 : " + imageUri);   
 								UtilityFunction.deleteDirectory(outputFolder);
 								task.setModified(Instant.now());
 								logger.debug(
@@ -486,13 +463,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 													mlpSolution.getSolutionId(), imageUri);
 										}
 									}
-									logger.debug("imageUri at 468 : " + imageUri);   
 									if (isSuccess == true) {
 										task.setStatusCode("SU");
 										logger.debug("MLP task updating with the values =" + task.toString());
 										cdmsClient.updateTask(task);
 									}
-									logger.debug("imageUri at 474 : " + imageUri);   
 									// push docker build log into nexus
 									File file = new java.io.File(
 											logPath + File.separator + trackingID + File.separator + fileName);
@@ -512,13 +487,11 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 										logger.debug("Artifacts log pushed to nexus successfully" + fileName);
 									}
 
-									logger.debug("imageUri at 494 : " + imageUri);   
 									// deploy the model
 									if (deploy) {
 										// configKey=deployment_jenkins_config. Hard Coding it for now. Can be fetched
 										// from deployment yaml
-										logger.debug("imageUri at 498 : " + imageUri_test);
-										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri_test);
+										ResponseEntity<ServiceResponse> responseEntity = deployModel("deployment_jenkins_config", cdmsClient, imageUri);
 										logger.debug("Response Code of Model Deployment = "+responseEntity.getStatusCode());
 									}
 
@@ -621,12 +594,10 @@ public class GenerateMicroserviceController extends DockerizeModel implements Do
 		String jsr = null;
 		String jjb = null;
 		String param = null;
-		//String paramValue = null;
 		String jlog = null;
 		String jst = null;
 		String paramValue = imageUri;
 		try {   
-			logger.debug("imageUri in deployModel Method :: "+imageUri);
 			log.debug("deployModel Method started ... ");
 			if(cdmsClient == null) {
 				cdmsClient = new CommonDataServiceRestClientImpl(cmnDataSvcEndPoinURL, cmnDataSvcUser, cmnDataSvcPwd,
